@@ -1,0 +1,16 @@
+#version 330 core
+
+layout (location = 0) in vec3 vPos;
+layout (location = 1) in vec3 vNormal;     // 있다면
+layout (location = 2) in vec2 vTexCoord;   // ★ 텍스처 좌표 받기
+
+uniform mat4 MVP;
+
+out vec2 TexCoord;    // 프래그먼트 쉐이더로 넘길 텍스처 좌표
+
+void main()
+{
+    gl_Position =MVP * vec4(vPos, 1.0);
+
+    TexCoord = vTexCoord;   //  꼭 넘겨줘야 함
+}
