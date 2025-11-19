@@ -26,10 +26,12 @@ void MouseMove(int x, int y);
 AK_47 rifle;
 //임시로 플레이어 대충 vec3사용 그리고 카메라로 대충할거
 glm::vec3 playerPos = glm::vec3(0.0f, 0.0f, 5.0f);
+glm::vec3 playerFront = glm::vec3(0.0f, 0.0f, -1.0f);
 bool keys[256] = { false, };
+float sensitivity = 50.0f;
 //델타타임을 위한것들
 auto lastTime = std::chrono::high_resolution_clock::now();
-
+float deltaTime = 0.0f;
 
 
 
@@ -82,7 +84,7 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	glutMouseFunc(mouseCallback);
 	glutKeyboardFunc(KeyboardDown);
 	glutKeyboardUpFunc(KeyboardUp);
-
+	glutMotionFunc(MouseMove);
 	glutPassiveMotionFunc(MouseMove);
 
 	//--- 세이더 프로그램 만들기
@@ -173,7 +175,7 @@ GLvoid drawScene() {
 	//플레이어==카메라
 	glm::mat4 view = glm::lookAt(
 		playerPos,
-		playerPos + glm::vec3(0.0f, 0.0f, -1.0f),
+		playerPos + playerFront,
 		glm::vec3(0.0f, 1.0f, 0.0f)
 	);
 	GLuint viewLoc = glGetUniformLocation(shaderProgramID, "view");
@@ -192,7 +194,7 @@ GLvoid drawScene() {
 //--- 다시그리기 콜백 함수
 GLvoid Reshape(int w, int h) //--- 콜백 함수: 다시 그리기 콜백 함수
 {
-	width = w;      // ★ 반드시 갱신해줘야 함
+	width = w;      
 	height = h;
 	glViewport(0, 0, w, h);
 }
@@ -229,6 +231,14 @@ GLvoid KeyboardDown(unsigned char key, int x, int y) {
 	case'd':
 		keys['d'] = true;
 		break;
+	case'+':
+		sensitivity += 5.0f;
+		break;
+	case'-':
+		sensitivity -= 5.0f;
+		if (sensitivity < 5.0f)
+			sensitivity = 5.0f;
+		break;
 	case 'q':
 		exit(0);
 		break;
@@ -257,7 +267,29 @@ void MouseMove(int x, int y) {
 
 	float glX = (2.0f * x) / width - 1.0f;
 	float glY = 1.0f - (2.0f * y) / height;
+	int dx = x - centerX;
+	int dy = y - centerY;
+	//화면이동
+	float sensitive = deltaTime*sensitivity;
+	static float yaw = -90.0f; // 초기 yaw 값을 -90도로 설정
+	static float pitch = 0.0f;
+	yaw += dx * sensitive;
+	pitch -= dy * sensitive;
+	//피치값 제한
+	if (pitch > 89.0f)
+		pitch = 89.0f;
+	if (pitch < -89.0f)
+		pitch = -89.0f;
+	//방향벡터 계산
+	glm::vec3 front;
+	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+	front.y = sin(glm::radians(pitch));
+	front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+	playerFront = glm::normalize(front);
 
+
+	// 다시 마우스를 중앙으로 이동
+	glutWarpPointer(centerX, centerY);
 
 
 }
@@ -268,18 +300,17 @@ void TimerFunction(int value)
 {
 	//델타타임 계산
 	auto currentTime = std::chrono::high_resolution_clock::now();
-	float deltaTime = std::chrono::duration<float>(currentTime - lastTime).count();
+	deltaTime = std::chrono::duration<float>(currentTime - lastTime).count();
 	lastTime = currentTime;
 	//플레이어 이동
 	float speed = 5.0f; // 이동 속도
-	if (keys['w'])
-		playerPos += glm::vec3(0.0f, 0.0f, -1.0f) * speed * deltaTime;
-	if (keys['s'])
-		playerPos += glm::vec3(0.0f, 0.0f, 1.0f) * speed * deltaTime;
-	if (keys['a'])
-		playerPos += glm::vec3(-1.0f, 0.0f, 0.0f) * speed * deltaTime;
-	if (keys['d'])
-		playerPos += glm::vec3(1.0f, 0.0f, 0.0f) * speed * deltaTime;
+	glm::vec3 forward = glm::normalize(glm::vec3(playerFront.x, 0.0f, playerFront.z));
+	glm::vec3 right = glm::normalize(glm::cross(forward, glm::vec3(0.0f, 1.0f, 0.0f)));
+
+	if (keys['w']) playerPos += forward * speed * deltaTime;
+	if (keys['s']) playerPos -= forward * speed * deltaTime;
+	if (keys['a']) playerPos -= right * speed * deltaTime;
+	if (keys['d']) playerPos += right * speed * deltaTime;
 
 
 	drawScene();
