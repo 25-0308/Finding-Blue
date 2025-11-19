@@ -227,7 +227,7 @@ void drawObject(GLuint shader, RenderableObject& obj)
 	glm::mat4 MVP =   obj.modelMatrix;
 
 	glUniformMatrix4fv(
-		glGetUniformLocation(shader, "MVP"),
+		glGetUniformLocation(shader, "modelTransform"),
 		1, GL_FALSE,
 		glm::value_ptr(MVP)
 	);

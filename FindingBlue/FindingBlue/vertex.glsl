@@ -1,16 +1,23 @@
 #version 330 core
 
 layout (location = 0) in vec3 vPos;
-layout (location = 1) in vec3 vNormal;     // 있다면
-layout (location = 2) in vec2 vTexCoord;   // ★ 텍스처 좌표 받기
+layout (location = 1) in vec3 vNormal;
+layout (location = 2) in vec2 vTexCoord;
 
-uniform mat4 MVP;
+uniform mat4 modelTransform;
+uniform mat4 view;
+uniform mat4 projection;
 
-out vec2 TexCoord;    // 프래그먼트 쉐이더로 넘길 텍스처 좌표
+out vec3 FragPos;
+out vec3 Normal;
+out vec2 TexCoord;
 
 void main()
 {
-    gl_Position =MVP * vec4(vPos, 1.0);
+    gl_Position = projection * view * modelTransform * vec4(vPos, 1.0);
 
-    TexCoord = vTexCoord;   //  꼭 넘겨줘야 함
+    FragPos = vec3(modelTransform * vec4(vPos, 1.0));
+    Normal = mat3(transpose(inverse(modelTransform))) * vNormal;
+
+    TexCoord = vTexCoord;  // ★ 텍스쳐 전달
 }
