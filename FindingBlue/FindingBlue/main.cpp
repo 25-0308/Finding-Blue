@@ -3,7 +3,7 @@
 #include "ModelLoader.h"
 #include"ak_47.h"
 #include<iostream>
-
+#include<chrono>
 
 
 //--- 아래 5개 함수는 사용자 정의 함수 임
@@ -18,11 +18,18 @@ GLvoid Reshape(int w, int h);
 void mouseCallback(int button, int state, int x, int y);
 void initBuffer();
 void TimerFunction(int value);
-GLvoid Keyboard(unsigned char key, int x, int y);
+GLvoid KeyboardDown(unsigned char key, int x, int y);
+GLvoid KeyboardUp(unsigned char key, int x, int y);
 void MouseMove(int x, int y);
 
 //내가 추가한 변수임
 AK_47 rifle;
+//임시로 플레이어 대충 vec3사용 그리고 카메라로 대충할거
+glm::vec3 playerPos = glm::vec3(0.0f, 0.0f, 5.0f);
+bool keys[256] = { false, };
+//델타타임을 위한것들
+auto lastTime = std::chrono::high_resolution_clock::now();
+
 
 
 
@@ -70,8 +77,8 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	initBuffer(); 
 	rifle.init();
 	glutMouseFunc(mouseCallback);
-	glutKeyboardFunc(Keyboard);
-	
+	glutKeyboardFunc(KeyboardDown);
+	glutKeyboardUpFunc(KeyboardUp);
 
 	glutPassiveMotionFunc(MouseMove);
 
@@ -160,7 +167,19 @@ GLvoid drawScene() {
 	glEnable(GL_DEPTH_TEST);
 	
 
-	//draw_object(&sphere);
+	//플레이어==카메라
+	glm::mat4 view = glm::lookAt(
+		playerPos,
+		playerPos + glm::vec3(0.0f, 0.0f, -1.0f),
+		glm::vec3(0.0f, 1.0f, 0.0f)
+	);
+	GLuint viewLoc = glGetUniformLocation(shaderProgramID, "view");
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+	//투영행렬
+	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
+	GLuint projLoc = glGetUniformLocation(shaderProgramID, "projection");
+	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+	
 
 	rifle.draw(shaderProgramID);
 
@@ -190,18 +209,20 @@ void mouseCallback(int button, int state, int x, int y) {
 
 	}
 }
-GLvoid Keyboard(unsigned char key, int x, int y) {
+GLvoid KeyboardDown(unsigned char key, int x, int y) {
 	switch (key) {
 
-	case'y':
-		obj_angle += 5.0f;
-		if (obj_angle >= 360.0f)
-			obj_angle -= 360.0f;
+	case'w':
+		keys['w'] = true;
 		break;
-	case'Y':
-		obj_angle -= 5.0f;
-		if (obj_angle < 0.0f)
-			obj_angle += 360.0f;
+	case'a':
+		keys['a'] = true;
+		break;
+	case's':
+		keys['s'] = true;
+		break;
+	case'd':
+		keys['d'] = true;
 		break;
 	case 'q':
 		exit(0);
@@ -209,7 +230,24 @@ GLvoid Keyboard(unsigned char key, int x, int y) {
 	}
 	glutPostRedisplay();
 }
+GLvoid KeyboardUp(unsigned char key, int x, int y) {
+	switch (key) {
+	case'w':
+		keys['w'] = false;
+		break;
+	case'a':
+		keys['a'] = false;
+		break;
+	case's':
+		keys['s'] = false;
+		break;
+	case'd':
+		keys['d'] = false;
+		break;
 
+	}
+	glutPostRedisplay();
+}
 void MouseMove(int x, int y) {
 
 	float glX = (2.0f * x) / width - 1.0f;
@@ -223,7 +261,22 @@ void MouseMove(int x, int y) {
 
 void TimerFunction(int value)
 {
-	
+	//델타타임 계산
+	auto currentTime = std::chrono::high_resolution_clock::now();
+	float deltaTime = std::chrono::duration<float>(currentTime - lastTime).count();
+	lastTime = currentTime;
+	//플레이어 이동
+	float speed = 5.0f; // 이동 속도
+	if (keys['w'])
+		playerPos += glm::vec3(0.0f, 0.0f, -1.0f) * speed * deltaTime;
+	if (keys['s'])
+		playerPos += glm::vec3(0.0f, 0.0f, 1.0f) * speed * deltaTime;
+	if (keys['a'])
+		playerPos += glm::vec3(-1.0f, 0.0f, 0.0f) * speed * deltaTime;
+	if (keys['d'])
+		playerPos += glm::vec3(1.0f, 0.0f, 0.0f) * speed * deltaTime;
+
+
 	drawScene();
 
 	glutTimerFunc(value, TimerFunction, value);
