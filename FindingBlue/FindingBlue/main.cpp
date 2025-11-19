@@ -1,6 +1,7 @@
 //--- 필요한 헤더파일 선언
 #define _CRT_SECURE_NO_WARNINGS 
 #include "ModelLoader.h"
+#include"ak_47.h"
 #include<iostream>
 
 
@@ -21,7 +22,10 @@ GLvoid Keyboard(unsigned char key, int x, int y);
 void MouseMove(int x, int y);
 
 //내가 추가한 변수임
-RenderableObject ak;
+AK_47 rifle;
+
+
+
 float obj_angle = 0.0f;
 //--- 필요한 변수 선언
 GLint width = 800, height = 800;
@@ -63,11 +67,11 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	make_vertexShaders(); //--- 버텍스 세이더 만들기
 	make_fragmentShaders(); //--- 프래그먼트 세이더 만들기
 	shaderProgramID = make_shaderProgram();
-	initBuffer();
-	CreateRenderableObject("asset/ak_47/ak_v2.obj", "asset/ak_47/ak_v2.png", ak);
-	
+	initBuffer(); 
+	rifle.init();
 	glutMouseFunc(mouseCallback);
 	glutKeyboardFunc(Keyboard);
+	
 
 	glutPassiveMotionFunc(MouseMove);
 
@@ -158,9 +162,7 @@ GLvoid drawScene() {
 
 	//draw_object(&sphere);
 
-		
-	drawObject(shaderProgramID, ak);
-
+	rifle.draw(shaderProgramID);
 
 
 	glutSwapBuffers();
