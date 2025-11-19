@@ -36,6 +36,8 @@ auto lastTime = std::chrono::high_resolution_clock::now();
 float obj_angle = 0.0f;
 //--- 필요한 변수 선언
 GLint width = 800, height = 800;
+int centerX = width / 2;
+int centerY = height / 2;
 GLuint shaderProgramID; //--- 세이더 프로그램 이름
 GLuint vertexShader; //--- 버텍스 세이더 객체
 GLuint fragmentShader; //--- 프래그먼트 세이더 객체
@@ -66,6 +68,7 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitWindowPosition(100, 0);
 	glutInitWindowSize(width, height);
+	//glutSetCursor(GLUT_CURSOR_NONE);
 	glutCreateWindow("Example1");
 	//--- GLEW 초기화하기
 	glewExperimental = GL_TRUE;
@@ -189,6 +192,8 @@ GLvoid drawScene() {
 //--- 다시그리기 콜백 함수
 GLvoid Reshape(int w, int h) //--- 콜백 함수: 다시 그리기 콜백 함수
 {
+	width = w;      // ★ 반드시 갱신해줘야 함
+	height = h;
 	glViewport(0, 0, w, h);
 }
 void initBuffer() {
