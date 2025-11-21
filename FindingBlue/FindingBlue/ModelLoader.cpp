@@ -162,7 +162,6 @@ GLuint LoadTexture(const char* path) {
 }
 bool CreateRenderableObject(
 	const char* objPath,
-	const char* texPath,
 	RenderableObject& outObj
 ) {
 	Model model;
@@ -172,9 +171,7 @@ bool CreateRenderableObject(
 
 	auto mesh = BuildMesh(model);
 
-	// ---- GPU 버퍼 생성 ----
 	GLuint vao, vbo;
-
 	glGenVertexArrays(1, &vao);
 	glGenBuffers(1, &vbo);
 
@@ -186,27 +183,18 @@ bool CreateRenderableObject(
 		mesh.data(),
 		GL_STATIC_DRAW);
 
-	// pos
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GPUVertex), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	// normal
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GPUVertex), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-	// uv
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(GPUVertex), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 
-	// ---- 텍스처 로드 ----
-	GLuint tex = LoadTexture(texPath);
-
-	// ---- RenderableObject에 저장 ----
 	outObj.VAO = vao;
 	outObj.VBO = vbo;
-	outObj.textureID = tex;
 	outObj.vertexCount = mesh.size();
-
 	outObj.modelMatrix = glm::mat4(1.0f);
 
 	return true;
@@ -216,7 +204,8 @@ void drawObject(GLuint shader, RenderableObject& obj)
 	glUseProgram(shader);
 
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, obj.textureID);
+	
+	//glBindTexture(GL_TEXTURE_2D, obj.textureID);
 	glUniform1i(glGetUniformLocation(shader, "tex"), 0);
 
 	glBindVertexArray(obj.VAO);

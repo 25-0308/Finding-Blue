@@ -23,19 +23,23 @@ GLvoid KeyboardUp(unsigned char key, int x, int y);
 void MouseMove(int x, int y);
 
 //내가 추가한 변수임
-AK_47 rifle;
+AK_47* rifle;
 //임시로 플레이어 대충 vec3사용 그리고 카메라로 대충할거
 glm::vec3 playerPos = glm::vec3(0.0f, 0.0f, 5.0f);
+glm::vec3 playerFront = glm::vec3(0.0f, 0.0f, -1.0f);
 bool keys[256] = { false, };
+float sensitivity = 50.0f;
 //델타타임을 위한것들
 auto lastTime = std::chrono::high_resolution_clock::now();
-
+float deltaTime = 0.0f;
 
 
 
 float obj_angle = 0.0f;
 //--- 필요한 변수 선언
 GLint width = 800, height = 800;
+int centerX = width / 2;
+int centerY = height / 2;
 GLuint shaderProgramID; //--- 세이더 프로그램 이름
 GLuint vertexShader; //--- 버텍스 세이더 객체
 GLuint fragmentShader; //--- 프래그먼트 세이더 객체
@@ -66,6 +70,7 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitWindowPosition(100, 0);
 	glutInitWindowSize(width, height);
+	//glutSetCursor(GLUT_CURSOR_NONE);
 	glutCreateWindow("Example1");
 	//--- GLEW 초기화하기
 	glewExperimental = GL_TRUE;
@@ -75,11 +80,13 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	make_fragmentShaders(); //--- 프래그먼트 세이더 만들기
 	shaderProgramID = make_shaderProgram();
 	initBuffer(); 
-	rifle.init();
+	glEnable(GL_DEPTH_TEST);
+	rifle = new AK_47();
+	rifle->init();
 	glutMouseFunc(mouseCallback);
 	glutKeyboardFunc(KeyboardDown);
 	glutKeyboardUpFunc(KeyboardUp);
-
+	glutMotionFunc(MouseMove);
 	glutPassiveMotionFunc(MouseMove);
 
 	//--- 세이더 프로그램 만들기
@@ -88,7 +95,7 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	glutTimerFunc(1, TimerFunction, 1);
 	glutReshapeFunc(Reshape);
 	glutMainLoop();
-	glEnable(GL_DEPTH_TEST);
+	
 
 
 }
@@ -170,7 +177,7 @@ GLvoid drawScene() {
 	//플레이어==카메라
 	glm::mat4 view = glm::lookAt(
 		playerPos,
-		playerPos + glm::vec3(0.0f, 0.0f, -1.0f),
+		playerPos + playerFront,
 		glm::vec3(0.0f, 1.0f, 0.0f)
 	);
 	GLuint viewLoc = glGetUniformLocation(shaderProgramID, "view");
@@ -181,7 +188,7 @@ GLvoid drawScene() {
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 	
 
-	rifle.draw(shaderProgramID);
+	rifle->draw(shaderProgramID);
 
 
 	glutSwapBuffers();
@@ -189,6 +196,8 @@ GLvoid drawScene() {
 //--- 다시그리기 콜백 함수
 GLvoid Reshape(int w, int h) //--- 콜백 함수: 다시 그리기 콜백 함수
 {
+	width = w;      
+	height = h;
 	glViewport(0, 0, w, h);
 }
 void initBuffer() {
@@ -224,6 +233,14 @@ GLvoid KeyboardDown(unsigned char key, int x, int y) {
 	case'd':
 		keys['d'] = true;
 		break;
+	case'+':
+		sensitivity += 5.0f;
+		break;
+	case'-':
+		sensitivity -= 5.0f;
+		if (sensitivity < 5.0f)
+			sensitivity = 5.0f;
+		break;
 	case 'q':
 		exit(0);
 		break;
@@ -252,7 +269,29 @@ void MouseMove(int x, int y) {
 
 	float glX = (2.0f * x) / width - 1.0f;
 	float glY = 1.0f - (2.0f * y) / height;
+	int dx = x - centerX;
+	int dy = y - centerY;
+	//화면이동
+	float sensitive = deltaTime*sensitivity;
+	static float yaw = -90.0f; // 초기 yaw 값을 -90도로 설정
+	static float pitch = 0.0f;
+	yaw += dx * sensitive;
+	pitch -= dy * sensitive;
+	//피치값 제한
+	if (pitch > 89.0f)
+		pitch = 89.0f;
+	if (pitch < -89.0f)
+		pitch = -89.0f;
+	//방향벡터 계산
+	glm::vec3 front;
+	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+	front.y = sin(glm::radians(pitch));
+	front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+	playerFront = glm::normalize(front);
 
+
+	// 다시 마우스를 중앙으로 이동
+	glutWarpPointer(centerX, centerY);
 
 
 }
@@ -263,18 +302,17 @@ void TimerFunction(int value)
 {
 	//델타타임 계산
 	auto currentTime = std::chrono::high_resolution_clock::now();
-	float deltaTime = std::chrono::duration<float>(currentTime - lastTime).count();
+	deltaTime = std::chrono::duration<float>(currentTime - lastTime).count();
 	lastTime = currentTime;
 	//플레이어 이동
 	float speed = 5.0f; // 이동 속도
-	if (keys['w'])
-		playerPos += glm::vec3(0.0f, 0.0f, -1.0f) * speed * deltaTime;
-	if (keys['s'])
-		playerPos += glm::vec3(0.0f, 0.0f, 1.0f) * speed * deltaTime;
-	if (keys['a'])
-		playerPos += glm::vec3(-1.0f, 0.0f, 0.0f) * speed * deltaTime;
-	if (keys['d'])
-		playerPos += glm::vec3(1.0f, 0.0f, 0.0f) * speed * deltaTime;
+	glm::vec3 forward = glm::normalize(glm::vec3(playerFront.x, 0.0f, playerFront.z));
+	glm::vec3 right = glm::normalize(glm::cross(forward, glm::vec3(0.0f, 1.0f, 0.0f)));
+
+	if (keys['w']) playerPos += forward * speed * deltaTime;
+	if (keys['s']) playerPos -= forward * speed * deltaTime;
+	if (keys['a']) playerPos -= right * speed * deltaTime;
+	if (keys['d']) playerPos += right * speed * deltaTime;
 
 
 	drawScene();
