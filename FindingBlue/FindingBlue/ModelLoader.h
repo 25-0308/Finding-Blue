@@ -37,7 +37,6 @@ struct RenderableObject {
 // OBJ + Texture ·Îµù API
 bool CreateRenderableObject(
     const char* objPath,
-    const char* texPath,
     RenderableObject& outObj
 );
 void drawObject(GLuint shader, RenderableObject& obj);

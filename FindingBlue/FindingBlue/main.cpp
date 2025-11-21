@@ -23,7 +23,7 @@ GLvoid KeyboardUp(unsigned char key, int x, int y);
 void MouseMove(int x, int y);
 
 //내가 추가한 변수임
-AK_47 rifle;
+AK_47* rifle;
 //임시로 플레이어 대충 vec3사용 그리고 카메라로 대충할거
 glm::vec3 playerPos = glm::vec3(0.0f, 0.0f, 5.0f);
 glm::vec3 playerFront = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -80,7 +80,9 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	make_fragmentShaders(); //--- 프래그먼트 세이더 만들기
 	shaderProgramID = make_shaderProgram();
 	initBuffer(); 
-	rifle.init();
+	glEnable(GL_DEPTH_TEST);
+	rifle = new AK_47();
+	rifle->init();
 	glutMouseFunc(mouseCallback);
 	glutKeyboardFunc(KeyboardDown);
 	glutKeyboardUpFunc(KeyboardUp);
@@ -93,7 +95,7 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	glutTimerFunc(1, TimerFunction, 1);
 	glutReshapeFunc(Reshape);
 	glutMainLoop();
-	glEnable(GL_DEPTH_TEST);
+	
 
 
 }
@@ -186,7 +188,7 @@ GLvoid drawScene() {
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 	
 
-	rifle.draw(shaderProgramID);
+	rifle->draw(shaderProgramID);
 
 
 	glutSwapBuffers();
