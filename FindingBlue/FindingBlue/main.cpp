@@ -288,7 +288,7 @@ void TimerFunction(int value)
 	deltaTime = std::chrono::duration<float>(currentTime - lastTime).count();
 	lastTime = currentTime;
 	player.move(deltaTime);
-
+	rifle->update(deltaTime, player.position,camera.yaw,camera.pitch);
 	drawScene();
 
 	glutTimerFunc(value, TimerFunction, value);
