@@ -134,16 +134,16 @@
     <None Include="vertex.glsl" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ak47.cpp" />
-    <ClCompile Include="camera.cpp" />
-    <ClCompile Include="club.cpp" />
-    <ClCompile Include="Enemy.cpp" />
-    <ClCompile Include="field.cpp" />
+    <ClCompile Include="camera\camera.cpp" />
+    <ClCompile Include="enemy\Enemy.cpp" />
+    <ClCompile Include="field\field.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="ModelLoader.cpp" />
-    <ClCompile Include="object.cpp" />
-    <ClCompile Include="player.cpp" />
-    <ClCompile Include="TextManager.cpp" />
+    <ClCompile Include="object\ModelLoader.cpp" />
+    <ClCompile Include="object\object.cpp" />
+    <ClCompile Include="object\TextManager.cpp" />
+    <ClCompile Include="player\player.cpp" />
+    <ClCompile Include="weapon\ak47.cpp" />
+    <ClCompile Include="weapon\club.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ak_47.h" />

@@ -1,3 +1,3 @@
-#include "TextManager.h"
+#include "../TextManager.h"
 
 std::unordered_map<std::string, GLuint> TextureManager::texCache;

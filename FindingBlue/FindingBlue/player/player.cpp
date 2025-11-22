@@ -1,4 +1,4 @@
-#include "Player.h"
+#include "../Player.h"
 #include <GL/glm/gtc/matrix_transform.hpp>
 
 void Player::move(float deltaTime)

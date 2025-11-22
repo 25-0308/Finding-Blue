@@ -1,4 +1,4 @@
-#include "Camera.h"
+#include "../Camera.h"
 
 void Camera::updateDirection(float dx, float dy, float deltaTime)
 {

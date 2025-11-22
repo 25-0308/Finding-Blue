@@ -1,7 +1,7 @@
-#include"ak_47.h"
+#include"../club.h"
 
 
-void AK_47::update(float deltaTime, glm::vec3 position, float yaw, float pitch)
+void CLUB::update(float deltaTime, glm::vec3 position, float yaw, float pitch)
 {
     this->position = position;
     this->front = front;
@@ -17,21 +17,21 @@ void AK_47::update(float deltaTime, glm::vec3 position, float yaw, float pitch)
     glm::vec3 right = glm::normalize(glm::cross(front, glm::vec3(0, 1, 0)));
     glm::vec3 up = glm::normalize(glm::cross(right, front));
 
-  
-    glm::vec3 offset = right * 0.2f   // 화면 오른쪽으로
+
+    glm::vec3 offset = right * 0.4f   // 화면 오른쪽으로
         + up * -0.2f    // 화면 아래로
-        + front * 0.3f; // 화면 안쪽으로
+        + front * 0.5f; // 화면 안쪽으로
 
     glm::vec3 gunPos = position + offset;
 
     // 총 위치 설정
-    this->wood.position = gunPos;
+    this->hand.position = gunPos;
     this->metal.position = gunPos;
     //방향설정
-    wood.rotation.y = -glm::radians(yaw);
-	metal.rotation.y = -glm::radians(yaw);
+    hand.rotation.y = -glm::radians(yaw);
+    metal.rotation.y = -glm::radians(yaw);
 
-    
+
 
 }
 
