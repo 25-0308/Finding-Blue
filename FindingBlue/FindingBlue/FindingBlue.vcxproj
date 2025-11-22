@@ -135,15 +135,23 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ak47.cpp" />
+    <ClCompile Include="camera.cpp" />
+    <ClCompile Include="field.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ModelLoader.cpp" />
     <ClCompile Include="object.cpp" />
+    <ClCompile Include="player.cpp" />
+    <ClCompile Include="TextManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ak_47.h" />
+    <ClInclude Include="camera.h" />
+    <ClInclude Include="field.h" />
     <ClInclude Include="ModelLoader.h" />
     <ClInclude Include="object.h" />
+    <ClInclude Include="player.h" />
     <ClInclude Include="stb_image.h" />
+    <ClInclude Include="TextManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

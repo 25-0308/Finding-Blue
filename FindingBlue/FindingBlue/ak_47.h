@@ -22,4 +22,10 @@ public:
         wood.draw(shader);
         metal.draw(shader);
     }
+	//여기 아래로는 cpp 파일에 작성할 것들
+    void update(float deltaTime);
+
+
+
+
 };

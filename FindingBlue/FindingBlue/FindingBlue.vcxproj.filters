@@ -16,6 +16,18 @@
     <Filter Include="소스 파일\object">
       <UniqueIdentifier>{cc585fb9-ca8b-41b8-addc-15f8b6ad699e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Player">
+      <UniqueIdentifier>{f8bf5040-1f09-4ced-832d-499856624551}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\camera">
+      <UniqueIdentifier>{d417e81f-dfc0-49df-ba23-26138a4a6aff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\player">
+      <UniqueIdentifier>{0e4ffd9a-99a5-4f20-a33a-0cab3e596d96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\camera">
+      <UniqueIdentifier>{dfd971ee-eaa7-4dd7-bf8f-56526651e272}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="fragment.glsl">
@@ -38,6 +50,18 @@
     <ClCompile Include="ak47.cpp">
       <Filter>소스 파일\object</Filter>
     </ClCompile>
+    <ClCompile Include="TextManager.cpp">
+      <Filter>소스 파일\object</Filter>
+    </ClCompile>
+    <ClCompile Include="field.cpp">
+      <Filter>소스 파일\object</Filter>
+    </ClCompile>
+    <ClCompile Include="player.cpp">
+      <Filter>소스 파일\player</Filter>
+    </ClCompile>
+    <ClCompile Include="camera.cpp">
+      <Filter>소스 파일\camera</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stb_image.h">
@@ -51,6 +75,18 @@
     </ClInclude>
     <ClInclude Include="ak_47.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TextManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="field.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="camera.h">
+      <Filter>헤더 파일\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="player.h">
+      <Filter>헤더 파일\Player</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
