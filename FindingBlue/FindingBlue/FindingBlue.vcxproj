@@ -137,6 +137,7 @@
     <ClCompile Include="ak47.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="club.cpp" />
+    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="field.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ModelLoader.cpp" />
@@ -148,6 +149,7 @@
     <ClInclude Include="ak_47.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="club.h" />
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="field.h" />
     <ClInclude Include="ModelLoader.h" />
     <ClInclude Include="object.h" />

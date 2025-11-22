@@ -4,6 +4,7 @@
 #include"ak_47.h"
 #include"club.h"
 #include"field.h"
+#include"Enemy.h"
 #include<iostream>
 #include<chrono>
 #include"player.h"
@@ -32,7 +33,8 @@ CLUB* club;
 //플레이어
 Player player;
 Camera camera(player);
-
+//적
+ENEMY* enemy;
 
 
 //델타타임을 위한것들
@@ -93,6 +95,8 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	club->init();
 	field = new FIELD();
 	field->init();
+	enemy = new ENEMY();
+	enemy->init();
 	glutMouseFunc(mouseCallback);
 	glutKeyboardFunc(KeyboardDown);
 	glutKeyboardUpFunc(KeyboardUp);
@@ -200,6 +204,11 @@ GLvoid drawScene() {
 	club->draw(shaderProgramID);
 	field->draw(shaderProgramID);
 
+
+	//적
+	enemy->draw(shaderProgramID);
+
+
 	glutSwapBuffers();
 }
 //--- 다시그리기 콜백 함수
@@ -295,6 +304,7 @@ void TimerFunction(int value)
 	player.move(deltaTime);
 	rifle->update(deltaTime, player.position,camera.yaw,camera.pitch);
 	club->update(deltaTime, player.position, camera.yaw, camera.pitch);
+	enemy->update();
 	drawScene();
 
 	glutTimerFunc(value, TimerFunction, value);
