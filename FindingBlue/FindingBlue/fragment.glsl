@@ -6,7 +6,7 @@ in vec2 TexCoord;
 
 out vec4 FragColor;
 
-uniform sampler2D tex;        // ★ 텍스처
+uniform sampler2D tex;        //  텍스처
 uniform vec3 lightPos;
 uniform vec3 lightColor;
 uniform vec3 viewPos;

@@ -28,6 +28,12 @@
     <Filter Include="소스 파일\camera">
       <UniqueIdentifier>{dfd971ee-eaa7-4dd7-bf8f-56526651e272}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\enemy">
+      <UniqueIdentifier>{cb497581-6b7c-4a23-9ea1-6e7f03b8ff37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\weapon">
+      <UniqueIdentifier>{148fb5de-7f3e-479d-9154-7a4f29640bd3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="fragment.glsl">
@@ -62,6 +68,9 @@
     <ClCompile Include="camera.cpp">
       <Filter>소스 파일\camera</Filter>
     </ClCompile>
+    <ClCompile Include="club.cpp">
+      <Filter>소스 파일\weapon</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stb_image.h">
@@ -87,6 +96,9 @@
     </ClInclude>
     <ClInclude Include="player.h">
       <Filter>헤더 파일\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="club.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -2,6 +2,7 @@
 #define _CRT_SECURE_NO_WARNINGS 
 #include "ModelLoader.h"
 #include"ak_47.h"
+#include"club.h"
 #include"field.h"
 #include<iostream>
 #include<chrono>
@@ -27,6 +28,7 @@ void MouseMove(int x, int y);
 //내가 추가한 변수임
 AK_47* rifle;
 FIELD* field;
+CLUB* club;
 //플레이어
 Player player;
 Camera camera(player);
@@ -87,6 +89,8 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	glEnable(GL_DEPTH_TEST);
 	rifle = new AK_47();
 	rifle->init();
+	club = new CLUB();
+	club->init();
 	field = new FIELD();
 	field->init();
 	glutMouseFunc(mouseCallback);
@@ -187,12 +191,13 @@ GLvoid drawScene() {
 	GLuint viewLoc = glGetUniformLocation(shaderProgramID, "view");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 	//투영행렬
-	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
+	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 150.0f);
 	GLuint projLoc = glGetUniformLocation(shaderProgramID, "projection");
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 	
 
-	rifle->draw(shaderProgramID);
+	//rifle->draw(shaderProgramID);
+	club->draw(shaderProgramID);
 	field->draw(shaderProgramID);
 
 	glutSwapBuffers();
@@ -289,6 +294,7 @@ void TimerFunction(int value)
 	lastTime = currentTime;
 	player.move(deltaTime);
 	rifle->update(deltaTime, player.position,camera.yaw,camera.pitch);
+	club->update(deltaTime, player.position, camera.yaw, camera.pitch);
 	drawScene();
 
 	glutTimerFunc(value, TimerFunction, value);

@@ -81,4 +81,11 @@ FIELD::FIELD() {
 
         }
     }
+    //«œ¥√ ¿”Ω√∑Œ «ÿ∫Ω
+	sky = Object("asset/sky/sky.obj", "asset/sky/sky.png");
+	sky.obj.modelMatrix = glm::mat4(1.0f);
+	sky.obj.modelMatrix = glm::translate(sky.obj.modelMatrix, glm::vec3(50.0f, 0.0f, 50.0f));
+	sky.scale = glm::vec3(2.0f);
+
+
 }

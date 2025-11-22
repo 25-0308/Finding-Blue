@@ -11,6 +11,7 @@ class FIELD {
 public:
     Object tile;
     Object wall;
+    Object sky;
     std::vector<Object> tiles;
 	std::vector<Object> walls;
     FIELD();
@@ -19,6 +20,7 @@ public:
             t.init();
 		for (auto& w : walls)
 			w.init();
+		sky.init();
     }
 
     void draw(GLuint shader) {
@@ -26,5 +28,6 @@ public:
             t.draw(shader);
 		for (auto& w : walls)
 			w.draw(shader);
+		sky.draw(shader);
     }
 };
