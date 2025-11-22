@@ -1,13 +1,18 @@
 #pragma once
 #include "Object.h"
+
+
+
+
+
 class FIELD {
    
 
 public:
     Object tile;
-
+    Object wall;
     std::vector<Object> tiles;
-
+	std::vector<Object> walls;
     FIELD() {
         const char* obj = "asset/tile/tile.obj";
         const char* tex = "asset/tile/tile.png";
@@ -25,6 +30,67 @@ public:
                 t.scale = glm::vec3(0.5f);
 
                 tiles.push_back(t);
+                //벽만드는거 일단 가장자리만
+                if (x == 0 || x == W - 1 || y == 0 || y == H - 1) {
+
+                    // 기본 벽 하나 생성
+                    Object w("asset/tile/wall.obj", "asset/tile/wall.png");
+                    w.position = glm::vec3(x * tileSize, -0.75f, y * tileSize);
+                    w.scale = glm::vec3(0.5f);
+
+                    // 벽 방향 설정
+					if (x == 0) {// 왼쪽 벽
+                        w.rotation.y = glm::radians(90.0f);
+						w.position.x -= 2.5f; // 벽이 타일 밖으로 약간 나가도록 조정
+                    }
+                    else if (x == W - 1)
+					{   // 오른쪽 벽
+                        w.rotation.y = glm::radians(-90.0f);
+						w.position.x += 2.5f; // 벽이 타일 밖으로 약간 나가도록 조정
+                    }
+                    else if (y == 0)
+					{   // 아래쪽 벽
+                        w.rotation.y = glm::radians(180.0f);
+						w.position.z -= 2.5f; // 벽이 타일 밖으로 약간 나가도록 조정
+                    }
+                    else
+					{  // 위쪽 벽
+                        w.rotation.y = glm::radians(0.0f);
+						w.position.z += 2.5f; // 벽이 타일 밖으로 약간 나가도록 조정
+                    }
+
+                    walls.push_back(w);
+
+                    //  모서리면 벽 하나 더
+                    if ((x == 0 || x == W - 1) && (y == 0 || y == H - 1)) {
+
+                        Object w2("asset/tile/wall.obj", "asset/tile/wall.png");
+                        w2.position = glm::vec3(x * tileSize, -0.75f, y * tileSize);
+                        w2.scale = glm::vec3(0.5f);
+
+                        // 두 번째 벽의 방향은 y축 기준 반대 방향으로 세팅
+                        if (x == 0 && y == 0)
+                        {
+                            w2.rotation.y = glm::radians(180.0f); // 위쪽
+							w2.position.z -= 2.5f; // 벽이 타일 밖으로 약간 나가도록 조정
+                        }
+                        else if (x == 0 && y == H - 1) {
+                            w2.rotation.y = glm::radians(0.0f);
+							w2.position.z += 2.5f; // 벽이 타일 밖으로 약간 나가도록 조정
+                        }
+                        else if (x == W - 1 && y == 0) {
+                            w2.rotation.y = glm::radians(180.0f);
+							w2.position.z -= 2.5f; // 벽이 타일 밖으로 약간 나가도록 조정
+                        }
+                        else if (x == W - 1 && y == H - 1) {
+                            w2.rotation.y = glm::radians(0.0f);
+							w2.position.z += 2.5f; // 벽이 타일 밖으로 약간 나가도록 조정
+                        }
+
+                        walls.push_back(w2);
+                    }
+                }
+				
             }
         }
     }
@@ -32,10 +98,14 @@ public:
     void init() {
         for (auto& t : tiles)
             t.init();
+		for (auto& w : walls)
+			w.init();
     }
 
     void draw(GLuint shader) {
         for (auto& t : tiles)
             t.draw(shader);
+		for (auto& w : walls)
+			w.draw(shader);
     }
 };
