@@ -1,8 +1,8 @@
 #pragma once
 #define _CRT_SECURE_NO_WARNINGS 
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-#include "ModelLoader.h"
+#include "../stb_image.h"
+#include "../ModelLoader.h"
 const int MAX_LINE_LENGTH = 10000;
 
 
