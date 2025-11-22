@@ -207,7 +207,7 @@ void drawObject(GLuint shader, RenderableObject& obj)
 	
 	//glBindTexture(GL_TEXTURE_2D, obj.textureID);
 	glUniform1i(glGetUniformLocation(shader, "tex"), 0);
-
+	glUniform1i(glGetUniformLocation(shader, "useLight"), 1);
 	glBindVertexArray(obj.VAO);
 
 	// MVP ¼³Á¤

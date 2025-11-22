@@ -9,7 +9,7 @@
 #include<chrono>
 #include"player.h"
 #include"camera.h"
-
+#include"light.h"
 //--- 아래 5개 함수는 사용자 정의 함수 임
 void make_vertexShaders();
 void make_fragmentShaders();
@@ -35,6 +35,8 @@ Player player;
 Camera camera(player);
 //적
 ENEMY* enemy;
+//조명 일단 하나만
+Lighting light1;
 
 
 //델타타임을 위한것들
@@ -97,6 +99,9 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	field->init();
 	enemy = new ENEMY();
 	enemy->init();
+	//조명초기화
+	light1.lightPos = glm::vec3(47.5f, 20.0f, 47.5f);
+	//light1.lightPos = glm::vec3(10.0, 1.0f, 10.0);
 	glutMouseFunc(mouseCallback);
 	glutKeyboardFunc(KeyboardDown);
 	glutKeyboardUpFunc(KeyboardUp);
@@ -186,7 +191,8 @@ GLvoid drawScene() {
 
 
 	glEnable(GL_DEPTH_TEST);
-	
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 
 	//플레이어==카메라
 	glm::mat4 view = camera.getView();
@@ -199,6 +205,9 @@ GLvoid drawScene() {
 	GLuint projLoc = glGetUniformLocation(shaderProgramID, "projection");
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 	
+
+	//조명적용
+	light1.apply(shaderProgramID);
 
 	//rifle->draw(shaderProgramID);
 	club->draw(shaderProgramID);
@@ -304,7 +313,7 @@ void TimerFunction(int value)
 	player.move(deltaTime);
 	rifle->update(deltaTime, player.position,camera.yaw,camera.pitch);
 	club->update(deltaTime, player.position, camera.yaw, camera.pitch);
-	enemy->update();
+	enemy->update(deltaTime,player.position);
 	drawScene();
 
 	glutTimerFunc(value, TimerFunction, value);

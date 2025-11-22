@@ -15,8 +15,8 @@ public:
     Object metal;
 
     CLUB()
-        : hand("asset/bbadda/bbadda.obj", "asset/ak_47/ak_v2.png"),
-        metal("asset/bbadda/hand.obj", "asset/ak_47/ak_v2.png")
+        : hand("asset/bbadda/hand.obj", "asset/bbadda/club.png"),
+        metal("asset/bbadda/bbadda.obj", "asset/bbadda/club.png")
     {
     }
 
@@ -28,9 +28,18 @@ public:
     }
 
     void draw(GLuint shader) {
-
-        hand.draw(shader);
+        glUniform1f(glGetUniformLocation(shader, "material.shininess"), 256.0f);
+        glUniform1f(glGetUniformLocation(shader, "material.specularStrength"), 2.0f);
+        glUniform1f(glGetUniformLocation(shader, "material.metallic"), 1.0f);
+        glUniform1f(glGetUniformLocation(shader, "lightIntensity"), 1.0f);
         metal.draw(shader);
+        glUniform1f(glGetUniformLocation(shader, "material.shininess"), 0.0f);
+        glUniform1f(glGetUniformLocation(shader, "material.specularStrength"), 0.001f);
+        glUniform1f(glGetUniformLocation(shader, "material.metallic"), 0.0f);
+        glUniform1f(glGetUniformLocation(shader, "lightIntensity"), 1.0f);
+    
+  
+        hand.draw(shader);
     }
     //여기 아래로는 cpp 파일에 작성할 것들
     void update(float deltaTime, glm::vec3 position, float yaw, float pitch);

@@ -68,7 +68,7 @@ public:
 
     }
     //여기 아래로는 cpp 파일에 작성할 것들
-    void update();
+    void update(float deltaTime,glm::vec3 target);
 
 
 

@@ -30,6 +30,8 @@ void AK_47::update(float deltaTime, glm::vec3 position, float yaw, float pitch)
     //방향설정
     wood.rotation.y = -glm::radians(yaw);
 	metal.rotation.y = -glm::radians(yaw);
+	wood.rotation.z = glm::radians(pitch);
+	metal.rotation.z = glm::radians(pitch);
 
     
 

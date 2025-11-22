@@ -27,9 +27,19 @@ public:
     }
 
     void draw(GLuint shader) {
-        
-        wood.draw(shader);
+
+      
+        glUniform1f(glGetUniformLocation(shader, "material.shininess"), 256.0f);
+        glUniform1f(glGetUniformLocation(shader, "material.specularStrength"), 10.0f);
+        glUniform1f(glGetUniformLocation(shader, "material.metallic"), 1.0f);
+        glUniform1f(glGetUniformLocation(shader, "lightIntensity"), 2.5f);
         metal.draw(shader);
+        glUniform1f(glGetUniformLocation(shader, "material.shininess"), 8.0f);
+        glUniform1f(glGetUniformLocation(shader, "material.specularStrength"), 0.2f);
+        glUniform1f(glGetUniformLocation(shader, "material.metallic"), 0.0f);
+        glUniform1f(glGetUniformLocation(shader, "lightIntensity"), 1.0f);
+
+        wood.draw(shader);
     }
 	//여기 아래로는 cpp 파일에 작성할 것들
     void update(float deltaTime, glm::vec3 position, float yaw, float pitch);
