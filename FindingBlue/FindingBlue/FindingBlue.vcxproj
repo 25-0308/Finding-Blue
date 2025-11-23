@@ -135,6 +135,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="camera\camera.cpp" />
+    <ClCompile Include="Collision.cpp" />
     <ClCompile Include="enemy\Enemy.cpp" />
     <ClCompile Include="field\field.cpp" />
     <ClCompile Include="main.cpp" />
@@ -149,6 +150,7 @@
     <ClInclude Include="ak_47.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="club.h" />
+    <ClInclude Include="Collision.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="field.h" />
     <ClInclude Include="light.h" />

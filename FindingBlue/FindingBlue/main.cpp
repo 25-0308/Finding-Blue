@@ -27,6 +27,7 @@ GLvoid KeyboardUp(unsigned char key, int x, int y);
 void MouseMove(int x, int y);
 
 //내가 추가한 변수임
+bool map_loaded = true;
 AK_47* rifle;
 FIELD* field;
 CLUB* club;
@@ -34,7 +35,20 @@ CLUB* club;
 Player player;
 Camera camera(player);
 //적
-ENEMY* enemy;
+std::vector<ENEMY>* enemies = new std::vector<ENEMY>();
+glm::vec3 E_pos_list[10] = {
+	{20.0,-0.7f,20.0f},
+	{50.0,-0.7,20.f},
+		{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{}
+
+};
 //조명 일단 하나만
 Lighting light1;
 
@@ -97,8 +111,12 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	club->init();
 	field = new FIELD();
 	field->init();
-	enemy = new ENEMY();
-	enemy->init();
+	//적생성인데
+	for (int i = 0;i < 2;++i) {
+		enemies->emplace_back();                  // 벡터 안에 직접 생성
+		enemies->back().init(E_pos_list[i]);      // 바로 초기화
+	}
+	
 	//조명초기화
 	light1.lightPos = glm::vec3(47.5f, 20.0f, 47.5f);
 	//light1.lightPos = glm::vec3(10.0, 1.0f, 10.0);
@@ -209,14 +227,16 @@ GLvoid drawScene() {
 	//조명적용
 	light1.apply(shaderProgramID);
 
-	//rifle->draw(shaderProgramID);
+	rifle->draw(shaderProgramID);
 	club->draw(shaderProgramID);
+	if(map_loaded)
 	field->draw(shaderProgramID);
 
 
 	//적
-	enemy->draw(shaderProgramID);
-
+	for (auto& e : *enemies) {
+		e.draw(shaderProgramID);
+	}
 
 	glutSwapBuffers();
 }
@@ -263,11 +283,19 @@ GLvoid KeyboardDown(unsigned char key, int x, int y) {
 	case'+':
 		camera.sensitivity += 5.0f;
 		break;
+	case'f':
+		rifle->get_weapon(player.position);
+		club->get_weapon(player.position);
+		break;
 	case'-':
 		camera.sensitivity -= 5.0f;
 		if (camera.sensitivity < 5.0f)
 			camera.sensitivity = 5.0f;
 		break;
+	case'm':
+		map_loaded = !map_loaded;
+		break;
+
 	case 'q':
 		exit(0);
 		break;
@@ -313,7 +341,9 @@ void TimerFunction(int value)
 	player.move(deltaTime);
 	rifle->update(deltaTime, player.position,camera.yaw,camera.pitch);
 	club->update(deltaTime, player.position, camera.yaw, camera.pitch);
-	enemy->update(deltaTime,player.position);
+	for (auto& e : *enemies) {
+		e.update(deltaTime,player.position);
+	}
 	drawScene();
 
 	glutTimerFunc(value, TimerFunction, value);

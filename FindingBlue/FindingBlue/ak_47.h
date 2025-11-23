@@ -1,12 +1,13 @@
 #pragma once
 #include "Object.h"
 
-class AK_47 {
+class AK_47 : public Weapon {
 private:
     //총이 가지고 있어야하는 그런것들임
 	glm::vec3 position;
 	glm::vec3 front;    
 
+    bool is_get = false;
 
 
 public:
@@ -23,7 +24,7 @@ public:
         wood.init();
         metal.init();
 		wood.scale = metal.scale = glm::vec3(0.3f);
-
+		wood.position = metal.position = glm::vec3(5.0f, -0.2f, 10.0f);
     }
 
     void draw(GLuint shader) {
@@ -43,7 +44,7 @@ public:
     }
 	//여기 아래로는 cpp 파일에 작성할 것들
     void update(float deltaTime, glm::vec3 position, float yaw, float pitch);
-
+    void get_weapon(glm::vec3 playerPos);
 
 
 
