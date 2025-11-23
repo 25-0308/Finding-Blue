@@ -1,7 +1,10 @@
 #include "Collision.h"
+#include <GL/glut.h>
+#include <GL/glm/gtc/type_ptr.hpp>
 #include <algorithm>
 #include <vector>
 #include <array>
+
 
 namespace Debug_Draw {
 	std::vector<glm::vec3> lines;
@@ -10,6 +13,20 @@ namespace Debug_Draw {
 		lines.push_back(start);
 		lines.push_back(end);
 		lines.push_back(color);
+	}
+	void Render() {
+		glDisable(GL_TEXTURE_2D);
+		glLineWidth(2.0f);
+		glBegin(GL_LINES);
+		for (size_t i = 0; i + 2 < lines.size(); i += 3) {
+			glColor3fv(glm::value_ptr(lines[i + 2]));
+			glVertex3fv(glm::value_ptr(lines[i]));
+			glVertex3fv(glm::value_ptr(lines[i + 1]));
+		}
+		glEnd();
+		glLineWidth(1.0f);
+		glEnable(GL_TEXTURE_2D);
+		lines.clear(); // 다음 프레임을 위해 초기화
 	}
 }
 

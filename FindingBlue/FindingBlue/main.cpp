@@ -9,6 +9,7 @@
 #include<chrono>
 #include"player.h"
 #include"camera.h"
+#include"Collision.h"
 
 //--- 아래 5개 함수는 사용자 정의 함수 임
 void make_vertexShaders();
@@ -208,6 +209,7 @@ GLvoid drawScene() {
 	//적
 	enemy->draw(shaderProgramID);
 
+	//Debug_Draw::Render();
 
 	glutSwapBuffers();
 }
