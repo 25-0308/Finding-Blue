@@ -1,16 +1,16 @@
 #include "Collision.h"
 #include <algorithm>
-#include <cmath>
 #include <vector>
+#include <array>
 
 namespace Debug_Draw {
 	std::vector<glm::vec3> lines;
-	void AddLine(const glm::vec3& start, const glm::vec3& end, const glm::vec3& color = glm::vec3(1.0f, 0.0f, 0.0f) {
+
+	void AddLine(const glm::vec3& start, const glm::vec3& end, const glm::vec3& color) {
 		lines.push_back(start);
 		lines.push_back(end);
 		lines.push_back(color);
-	} // 선 추가
-	void Render();
+	}
 }
 
 Collision::Collision(const glm::vec3 half) : halfsize(half){}
@@ -31,17 +31,17 @@ bool Collision::check_collision(const Collision& other) const {
 void Collision::updateBox(const glm::vec3& localHalfsize,
 	const glm::quat& rotation, const glm::vec3& position) {
 	
-	glm::mat3 rot = mat3_cast(rotation);
+	glm::mat3 rot = glm::mat3_cast(rotation);
 
 	glm::vec3 corners[8] = {
-		rot * vec3(-localHalfSize.x, -localHalfSize.y, -localHalfSize.z),
-		rot * vec3(localHalfSize.x, -localHalfSize.y, -localHalfSize.z),
-		rot * vec3(localHalfSize.x,  localHalfSize.y, -localHalfSize.z),
-		rot * vec3(-localHalfSize.x,  localHalfSize.y, -localHalfSize.z),
-		rot * vec3(-localHalfSize.x, -localHalfSize.y,  localHalfSize.z),
-		rot * vec3(localHalfSize.x, -localHalfSize.y,  localHalfSize.z),
-		rot * vec3(localHalfSize.x,  localHalfSize.y,  localHalfSize.z),
-		rot * vec3(-localHalfSize.x,  localHalfSize.y,  localHalfSize.z)
+		rot * glm::vec3(-localHalfsize.x, -localHalfsize.y, -localHalfsize.z),
+		rot * glm::vec3(localHalfsize.x, -localHalfsize.y, -localHalfsize.z),
+		rot * glm::vec3(localHalfsize.x,  localHalfsize.y, -localHalfsize.z),
+		rot * glm::vec3(-localHalfsize.x,  localHalfsize.y, -localHalfsize.z),
+		rot * glm::vec3(-localHalfsize.x, -localHalfsize.y,  localHalfsize.z),
+		rot * glm::vec3(localHalfsize.x, -localHalfsize.y,  localHalfsize.z),
+		rot * glm::vec3(localHalfsize.x,  localHalfsize.y,  localHalfsize.z),
+		rot * glm::vec3(-localHalfsize.x,  localHalfsize.y,  localHalfsize.z)
 	};
 
 	glm::vec3 minPoint = corners[0] + position;
@@ -49,8 +49,8 @@ void Collision::updateBox(const glm::vec3& localHalfsize,
 
 	for (int i = 1; i < 8; ++i) {
 		glm::vec3 point = corners[i] + position;
-		minPoint = glm::min(minPoint, worldCorner);
-		maxPoint = glm::max(maxPoint, worldCorner);
+		minPoint = glm::min(minPoint, point);
+		maxPoint = glm::max(maxPoint, point);
 	}
 
 	center = (minPoint + maxPoint) * 0.5f;
@@ -73,9 +73,9 @@ void Collision::Debug_Draw(const glm::vec3& color) const {
 	};
 
 	const int edges[24] = {
-		0, 1, 1, 2, 2, 3, 3, 0,
-		4, 5, 5, 6, 6, 7, 7, 4,
-		0, 4, 1, 5, 2, 6, 3, 7
+		0, 1, 1, 2, 2, 3, 3, 0,//아래
+		4, 5, 5, 6, 6, 7, 7, 4,//위
+		0, 4, 1, 5, 2, 6, 3, 7//옆
 	};
 	for (int i = 0; i < 24; i += 2) {
 		Debug_Draw::AddLine(v[edges[i]], v[edges[i + 1]], color);
