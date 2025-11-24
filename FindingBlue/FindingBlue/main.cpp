@@ -24,6 +24,7 @@ void initBuffer();
 void TimerFunction(int value);
 GLvoid KeyboardDown(unsigned char key, int x, int y);
 GLvoid KeyboardUp(unsigned char key, int x, int y);
+void mouseWheel(int button, int dir, int x, int y);
 void MouseMove(int x, int y);
 
 //내가 추가한 변수임
@@ -125,6 +126,7 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	glutKeyboardUpFunc(KeyboardUp);
 	glutMotionFunc(MouseMove);
 	glutPassiveMotionFunc(MouseMove);
+	glutMouseWheelFunc(mouseWheel);
 
 	//--- 세이더 프로그램 만들기
 	glutDisplayFunc(drawScene); //--- 출력 콜백 함수
@@ -378,3 +380,16 @@ void TimerFunction(int value)
 
 
 
+void mouseWheel(int button, int dir, int x, int y) {
+	if (dir > 0) {
+		//휠올림
+		player.change_weapon((player.currentWeapon + 1) % player.weapons.size());
+	}
+	else {
+		//휠내림
+		int new_index = player.currentWeapon - 1;
+		if (new_index < 0)
+			new_index = player.weapons.size() - 1;
+		player.change_weapon(new_index);
+	}
+}
