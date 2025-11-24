@@ -5,7 +5,7 @@
 void ENEMY::update(float deltaTime, glm::vec3 target) {
 	//거리에 따라 행동 다르게
 	float distance = glm::length(target - this->position);
-	
+	collision.center = this->position;
 	if (distance < 3.0f) {
 		//달려옴
 		this->run(deltaTime, target);
@@ -13,6 +13,9 @@ void ENEMY::update(float deltaTime, glm::vec3 target) {
 	else if (distance >= 3.0f) {
 		this->idle(deltaTime);
 	}
+	//collision.updateBox(glm::vec3(0.5f), this->position, glm::vec3(1.0f));
+
+	//std::cout <<"Epos" << this->position.x << "," << this->position.y << "," << this->position.z << std::endl;
 }
 
 void ENEMY::run(float deltaTime,glm::vec3 target) {

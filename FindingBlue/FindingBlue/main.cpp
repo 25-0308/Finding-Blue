@@ -10,6 +10,7 @@
 #include"player.h"
 #include"camera.h"
 #include"light.h"
+#include"bullet.h"
 //--- 아래 5개 함수는 사용자 정의 함수 임
 void make_vertexShaders();
 void make_fragmentShaders();
@@ -32,6 +33,10 @@ bool map_loaded = true;
 AK_47* rifle;
 FIELD* field;
 CLUB* club;
+
+//총알 저장할 벡터
+std::vector<BULLET>* bullets = new std::vector<BULLET>();
+
 //플레이어
 Player player;
 Camera camera(player);
@@ -238,12 +243,20 @@ GLvoid drawScene() {
 	player.draw_weapon(shaderProgramID);
 	if(map_loaded)
 	field->draw(shaderProgramID);
-
+	
 
 	//적
 	for (auto& e : *enemies) {
 		e.draw(shaderProgramID);
 	}
+
+	glm::mat4 MVP = glm::mat4(1.0);
+	glUniformMatrix4fv(
+		glGetUniformLocation(shaderProgramID, "modelTransform"),
+		1, GL_FALSE,
+		glm::value_ptr(MVP)
+	);
+	Debug_Draw::Render();
 
 	glutSwapBuffers();
 }
@@ -373,6 +386,23 @@ void TimerFunction(int value)
 		if (rifle==(player.weapons[player.currentWeapon])) {
 			camera.pitch += (rand() % 100/100.0f) * 40.0f*deltaTime; //좌우약간흔들림
 		}
+		//적과 플레이어 거리가 가까우면 적 제거
+		if (club == (player.weapons[player.currentWeapon])) {
+			//for (int i = 0; i < enemies->size(); i++)
+			//{
+			//	ENEMY* e = (*enemies)[i];
+
+			//	if (e->hit(player.position))
+			//	{
+			//		delete e;  // 메모리 해제
+			//		enemies->erase(enemies->begin() + i); // 포인터 제거
+			//		i--;
+			//	}
+			//}
+
+
+		}
+		
 		
 	}
 	for (auto& e : *enemies) {

@@ -1,6 +1,7 @@
 #pragma once
 #include "Object.h"
-
+#include"Collision.h"
+#include<iostream>
 class ENEMY {
 private:
     //총이 가지고 있어야하는 그런것들임
@@ -18,6 +19,7 @@ private:
 
 	bool body_bobbing_dir = true;
 	float body_bobbing_angle = 0.0f;
+	Collision collision;
 
 	//다리부분
 	bool Rleg1_rotate_dir = true;
@@ -41,6 +43,8 @@ public:
 	Object Rleg2;
 	Object Lleg1;
 	Object Lleg2;
+
+	
     ENEMY()
 		: head("asset/enemy/blue/head.obj", "asset/enemy/blue/blue_enemy.png"),
 		body("asset/enemy/blue/body.obj", "asset/enemy/blue/blue_enemy.png"),
@@ -66,11 +70,13 @@ public:
 		Rleg2.init();
 		Lleg1.init();
 		Lleg2.init();
+	
 		this->position = glm::vec3(position.x, position.y, position.z);
 		this->scale = glm::vec3(0.3f);
 		head.scale = body.scale = Rarm1.scale = Rarm2.scale = Larm1.scale = Larm2.scale = Rleg1.scale = Rleg2.scale = Lleg1.scale = Lleg2.scale = this->scale;
 		head.position = body.position = Rarm1.position = Rarm2.position = Larm1.position = Larm2.position = Rleg1.position = Rleg2.position = Lleg1.position = Lleg2.position = this->position;
-		
+		collision.center = this->position;
+
 		//나머지 파츠들도	위치 맞춰주기(피봇조절)
 		Rarm1.pivot = glm::vec3(0.0f, 0.6f, 0.0f);
 		Larm1.pivot = glm::vec3(0.0f, 0.6f, 0.0f);
@@ -93,7 +99,7 @@ public:
 
     void draw(GLuint shader) {
 		head.draw(shader);
-		body.draw(shader);
+		//body.draw(shader);
 		Rarm1.draw(shader);
 		Rarm2.draw(shader);
 		Larm1.draw(shader);
@@ -102,12 +108,16 @@ public:
 		Rleg2.draw(shader);
 		Lleg1.draw(shader);
 		Lleg2.draw(shader);
-
+		collision.Debug_Draw();
     }
     //여기 아래로는 cpp 파일에 작성할 것들
 	void update(float deltaTime,glm::vec3 target);
     void run(float deltaTime,glm::vec3 target);
 	void idle(float deltaTime);
+	bool hit(glm::vec3 pos) {
+		float distance = glm::length(pos - this->position);
+		return distance < 2.0f;
+	}
 
 
 

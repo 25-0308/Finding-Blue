@@ -63,6 +63,7 @@ void AK_47::attack(float deltaTime) {
 			this->recoil_mode = true;
             this->offsets.z = 0.1f;
             //이 부분에 총알 생성 넣으면 될거같다
+			bullets.push_back(shoot_bullet(this->position, this->front));
 		}
 	}
     else if (this->recoil_mode) {
@@ -93,4 +94,12 @@ void AK_47::zoom_in(bool mode, float deltaTime) {
             offsets.x = 0.0f;
         }
     }
+}
+
+BULLET shoot_bullet(glm::vec3 postion, glm::vec3 direction) {
+	BULLET new_bullet;
+	new_bullet.init();
+	new_bullet.set_position(postion);
+	new_bullet.set_front(direction);
+	return new_bullet;
 }
