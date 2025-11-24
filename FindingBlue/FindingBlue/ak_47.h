@@ -1,6 +1,7 @@
 #pragma once
 #include "Object.h"
 #include"weapon.h"
+#include"bullet.h"
 class AK_47 : public Weapon {
 private:
     //총이 가지고 있어야하는 그런것들임
@@ -10,11 +11,14 @@ private:
     bool is_get = false;
 	bool recoil_mode = false;
 
+    //총알 목록들
+	std::vector<BULLET*> bullets;
 
 public:
     Object wood;
     Object metal;
     glm::vec3 offsets = glm::vec3(0.0f);
+	glm::vec3 for_bullet_offset = glm::vec3(0.0f);
     AK_47()
         : wood("asset/ak_47/ak_47_wood.obj", "asset/ak_47/ak_v2.png"),
         metal("asset/ak_47/ak_47_metal.obj", "asset/ak_47/ak_v2.png")
@@ -41,6 +45,14 @@ public:
             glUniform1f(glGetUniformLocation(shader, "lightIntensity"), 1.0f);
 
             wood.draw(shader);
+
+            //총알이 안비어있다면 드로우
+            if (!bullets.empty()) {
+				for (auto& b : bullets) {
+					b->draw(shader);
+				}
+              
+            }
         
     }
 	//여기 아래로는 cpp 파일에 작성할 것들
@@ -50,9 +62,10 @@ public:
         return is_get;
     }
     void attack(float deltaTime) override; //총 반동도 여기 넣을ㄹ거
+  
     bool get_recoil_mode() { return this->recoil_mode; };
 	void set_recoil_mode(bool mode) { this->recoil_mode = mode; };
     void zoom_in(bool mode, float deltaTime)override;
 
 };
-
+BULLET* shoot_bullet(glm::vec3 postion, glm::vec3 direction);

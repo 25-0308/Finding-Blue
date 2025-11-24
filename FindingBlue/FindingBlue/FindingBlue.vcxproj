@@ -134,6 +134,7 @@
     <None Include="vertex.glsl" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="bullet.cpp" />
     <ClCompile Include="camera\camera.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="enemy\Enemy.cpp" />
@@ -148,6 +149,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ak_47.h" />
+    <ClInclude Include="bullet.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="club.h" />
     <ClInclude Include="Collision.h" />

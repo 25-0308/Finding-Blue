@@ -1,4 +1,4 @@
-//--- í•„ìš”í•œ í—¤ë”íŒŒì¼ ì„ ì–¸
+//--- ÇÊ¿äÇÑ Çì´õÆÄÀÏ ¼±¾ğ
 #define _CRT_SECURE_NO_WARNINGS 
 #include "ModelLoader.h"
 #include"ak_47.h"
@@ -10,7 +10,8 @@
 #include"player.h"
 #include"camera.h"
 #include"light.h"
-//--- ì•„ë˜ 5ê°œ í•¨ìˆ˜ëŠ” ì‚¬ìš©ì ì •ì˜ í•¨ìˆ˜ ì„
+#include"bullet.h"
+//--- ¾Æ·¡ 5°³ ÇÔ¼ö´Â »ç¿ëÀÚ Á¤ÀÇ ÇÔ¼ö ÀÓ
 void make_vertexShaders();
 void make_fragmentShaders();
 GLuint make_shaderProgram();
@@ -18,7 +19,7 @@ GLvoid drawScene();
 GLvoid Reshape(int w, int h);
 
 
-//ë‚´ê°€ ì¶”ê°€í•œ í•¨ìˆ˜ì„
+//³»°¡ Ãß°¡ÇÑ ÇÔ¼öÀÓ
 void mouseCallback(int button, int state, int x, int y);
 void initBuffer();
 void TimerFunction(int value);
@@ -27,15 +28,19 @@ GLvoid KeyboardUp(unsigned char key, int x, int y);
 void mouseWheel(int button, int dir, int x, int y);
 void MouseMove(int x, int y);
 
-//ë‚´ê°€ ì¶”ê°€í•œ ë³€ìˆ˜ì„
+//³»°¡ Ãß°¡ÇÑ º¯¼öÀÓ
 bool map_loaded = true;
 AK_47* rifle;
 FIELD* field;
 CLUB* club;
-//í”Œë ˆì´ì–´
+
+//ÃÑ¾Ë ÀúÀåÇÒ º¤ÅÍ
+std::vector<BULLET>* bullets = new std::vector<BULLET>();
+
+//ÇÃ·¹ÀÌ¾î
 Player player;
 Camera camera(player);
-//ì 
+//Àû
 std::vector<ENEMY>* enemies = new std::vector<ENEMY>();
 glm::vec3 E_pos_list[10] = {
 	{20.0,-0.7f,20.0f},
@@ -50,24 +55,24 @@ glm::vec3 E_pos_list[10] = {
 	{}
 
 };
-//ì¡°ëª… ì¼ë‹¨ í•˜ë‚˜ë§Œ
+//Á¶¸í ÀÏ´Ü ÇÏ³ª¸¸
 Lighting light1;
 
 
-//ë¸íƒ€íƒ€ì„ì„ ìœ„í•œê²ƒë“¤
+//µ¨Å¸Å¸ÀÓÀ» À§ÇÑ°Íµé
 auto lastTime = std::chrono::high_resolution_clock::now();
 float deltaTime = 0.0f;
 
 
 
 float obj_angle = 0.0f;
-//--- í•„ìš”í•œ ë³€ìˆ˜ ì„ ì–¸
+//--- ÇÊ¿äÇÑ º¯¼ö ¼±¾ğ
 GLint width = 800, height = 800;
 int centerX = width / 2;
 int centerY = height / 2;
-GLuint shaderProgramID; //--- ì„¸ì´ë” í”„ë¡œê·¸ë¨ ì´ë¦„
-GLuint vertexShader; //--- ë²„í…ìŠ¤ ì„¸ì´ë” ê°ì²´
-GLuint fragmentShader; //--- í”„ë˜ê·¸ë¨¼íŠ¸ ì„¸ì´ë” ê°ì²´
+GLuint shaderProgramID; //--- ¼¼ÀÌ´õ ÇÁ·Î±×·¥ ÀÌ¸§
+GLuint vertexShader; //--- ¹öÅØ½º ¼¼ÀÌ´õ °´Ã¼
+GLuint fragmentShader; //--- ÇÁ·¡±×¸ÕÆ® ¼¼ÀÌ´õ °´Ã¼
 char* filetobuf(const char* file)
 {
 	FILE* fptr;
@@ -85,24 +90,24 @@ char* filetobuf(const char* file)
 	buf[length] = 0; // Null terminator
 	return buf; // Return the buffer
 }
-//--- ë©”ì¸ í•¨ìˆ˜
+//--- ¸ŞÀÎ ÇÔ¼ö
 
-void main(int argc, char** argv) //--- ìœˆë„ìš° ì¶œë ¥í•˜ê³  ì½œë°±í•¨ìˆ˜ ì„¤ì •
+void main(int argc, char** argv) //--- À©µµ¿ì Ãâ·ÂÇÏ°í Äİ¹éÇÔ¼ö ¼³Á¤
 {
 
-	//--- ìœˆë„ìš° ìƒì„±í•˜ê¸°
+	//--- À©µµ¿ì »ı¼ºÇÏ±â
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitWindowPosition(100, 0);
 	glutInitWindowSize(width, height);
 	//glutSetCursor(GLUT_CURSOR_NONE);
 	glutCreateWindow("Example1");
-	//--- GLEW ì´ˆê¸°í™”í•˜ê¸°
+	//--- GLEW ÃÊ±âÈ­ÇÏ±â
 	glewExperimental = GL_TRUE;
 	glewInit();
-	//--- ì„¸ì´ë” ì½ì–´ì™€ì„œ ì„¸ì´ë” í”„ë¡œê·¸ë¨ ë§Œë“¤ê¸°: ì‚¬ìš©ì ì •ì˜í•¨ìˆ˜ í˜¸ì¶œ
-	make_vertexShaders(); //--- ë²„í…ìŠ¤ ì„¸ì´ë” ë§Œë“¤ê¸°
-	make_fragmentShaders(); //--- í”„ë˜ê·¸ë¨¼íŠ¸ ì„¸ì´ë” ë§Œë“¤ê¸°
+	//--- ¼¼ÀÌ´õ ÀĞ¾î¿Í¼­ ¼¼ÀÌ´õ ÇÁ·Î±×·¥ ¸¸µé±â: »ç¿ëÀÚ Á¤ÀÇÇÔ¼ö È£Ãâ
+	make_vertexShaders(); //--- ¹öÅØ½º ¼¼ÀÌ´õ ¸¸µé±â
+	make_fragmentShaders(); //--- ÇÁ·¡±×¸ÕÆ® ¼¼ÀÌ´õ ¸¸µé±â
 	shaderProgramID = make_shaderProgram();
 	initBuffer(); 
 	glEnable(GL_DEPTH_TEST);
@@ -112,13 +117,13 @@ void main(int argc, char** argv) //--- ìœˆë„ìš° ì¶œë ¥í•˜ê³  ì½œë°±í•¨ìˆ˜ ì„¤ì 
 	club->init();
 	field = new FIELD();
 	field->init();
-	//ì ìƒì„±ì¸ë°
+	//Àû»ı¼ºÀÎµ¥
 	for (int i = 0;i < 2;++i) {
-		enemies->emplace_back();                  // ë²¡í„° ì•ˆì— ì§ì ‘ ìƒì„±
-		enemies->back().init(E_pos_list[i]);      // ë°”ë¡œ ì´ˆê¸°í™”
+		enemies->emplace_back();                  // º¤ÅÍ ¾È¿¡ Á÷Á¢ »ı¼º
+		enemies->back().init(E_pos_list[i]);      // ¹Ù·Î ÃÊ±âÈ­
 	}
 	
-	//ì¡°ëª…ì´ˆê¸°í™”
+	//Á¶¸íÃÊ±âÈ­
 	light1.lightPos = glm::vec3(47.5f, 20.0f, 47.5f);
 	//light1.lightPos = glm::vec3(10.0, 1.0f, 10.0);
 	glutMouseFunc(mouseCallback);
@@ -128,8 +133,8 @@ void main(int argc, char** argv) //--- ìœˆë„ìš° ì¶œë ¥í•˜ê³  ì½œë°±í•¨ìˆ˜ ì„¤ì 
 	glutPassiveMotionFunc(MouseMove);
 	glutMouseWheelFunc(mouseWheel);
 
-	//--- ì„¸ì´ë” í”„ë¡œê·¸ë¨ ë§Œë“¤ê¸°
-	glutDisplayFunc(drawScene); //--- ì¶œë ¥ ì½œë°± í•¨ìˆ˜
+	//--- ¼¼ÀÌ´õ ÇÁ·Î±×·¥ ¸¸µé±â
+	glutDisplayFunc(drawScene); //--- Ãâ·Â Äİ¹é ÇÔ¼ö
 	//glutIdleFunc(drawScene);
 	glutTimerFunc(1, TimerFunction, 1);
 	glutReshapeFunc(Reshape);
@@ -138,12 +143,12 @@ void main(int argc, char** argv) //--- ìœˆë„ìš° ì¶œë ¥í•˜ê³  ì½œë°±í•¨ìˆ˜ ì„¤ì 
 
 
 }
-//--- ë²„í…ìŠ¤ ì„¸ì´ë” ê°ì²´ ë§Œë“¤ê¸°
+//--- ¹öÅØ½º ¼¼ÀÌ´õ °´Ã¼ ¸¸µé±â
 void make_vertexShaders()
 {
 	GLchar* vertexSource;
-	//--- ë²„í…ìŠ¤ ì„¸ì´ë” ì½ì–´ ì €ì¥í•˜ê³  ì»´íŒŒì¼ í•˜ê¸°
-	//--- filetobuf: ì‚¬ìš©ìì •ì˜ í•¨ìˆ˜ë¡œ í…ìŠ¤íŠ¸ë¥¼ ì½ì–´ì„œ ë¬¸ìì—´ì— ì €ì¥í•˜ëŠ” í•¨ìˆ˜
+	//--- ¹öÅØ½º ¼¼ÀÌ´õ ÀĞ¾î ÀúÀåÇÏ°í ÄÄÆÄÀÏ ÇÏ±â
+	//--- filetobuf: »ç¿ëÀÚÁ¤ÀÇ ÇÔ¼ö·Î ÅØ½ºÆ®¸¦ ÀĞ¾î¼­ ¹®ÀÚ¿­¿¡ ÀúÀåÇÏ´Â ÇÔ¼ö
 	vertexSource = filetobuf("vertex.glsl");
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShader, 1, &vertexSource, NULL);
@@ -154,16 +159,16 @@ void make_vertexShaders()
 	if (!result)
 	{
 		glGetShaderInfoLog(vertexShader, 512, NULL, errorLog);
-		std::cerr << "ERROR: vertex shader ì»´íŒŒì¼ ì‹¤íŒ¨\n" << errorLog << std::endl;
+		std::cerr << "ERROR: vertex shader ÄÄÆÄÀÏ ½ÇÆĞ\n" << errorLog << std::endl;
 		return;
 	}
 }
-//--- í”„ë˜ê·¸ë¨¼íŠ¸ ì„¸ì´ë” ê°ì²´ ë§Œë“¤ê¸°
+//--- ÇÁ·¡±×¸ÕÆ® ¼¼ÀÌ´õ °´Ã¼ ¸¸µé±â
 void make_fragmentShaders()
 {
 	GLchar* fragmentSource;
-	//--- í”„ë˜ê·¸ë¨¼íŠ¸ ì„¸ì´ë” ì½ì–´ ì €ì¥í•˜ê³  ì»´íŒŒì¼í•˜ê¸°
-	fragmentSource = filetobuf("fragment.glsl"); // í”„ë˜ê·¸ì„¸ì´ë” ì½ì–´ì˜¤ê¸°
+	//--- ÇÁ·¡±×¸ÕÆ® ¼¼ÀÌ´õ ÀĞ¾î ÀúÀåÇÏ°í ÄÄÆÄÀÏÇÏ±â
+	fragmentSource = filetobuf("fragment.glsl"); // ÇÁ·¡±×¼¼ÀÌ´õ ÀĞ¾î¿À±â
 	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
 	glCompileShader(fragmentShader);
@@ -173,36 +178,36 @@ void make_fragmentShaders()
 	if (!result)
 	{
 		glGetShaderInfoLog(fragmentShader, 512, NULL, errorLog);
-		std::cerr << "ERROR: frag_shader ì»´íŒŒì¼ ì‹¤íŒ¨\n" << errorLog << std::endl;
+		std::cerr << "ERROR: frag_shader ÄÄÆÄÀÏ ½ÇÆĞ\n" << errorLog << std::endl;
 		return;
 	}
 }
-//--- ì„¸ì´ë” í”„ë¡œê·¸ë¨ ë§Œë“¤ê³  ì„¸ì´ë” ê°ì²´ ë§í¬í•˜ê¸°
+//--- ¼¼ÀÌ´õ ÇÁ·Î±×·¥ ¸¸µé°í ¼¼ÀÌ´õ °´Ã¼ ¸µÅ©ÇÏ±â
 GLuint make_shaderProgram()
 {
 	GLint result;
 	GLchar* errorLog = NULL;
 	GLuint shaderID;
-	shaderID = glCreateProgram(); //--- ì„¸ì´ë” í”„ë¡œê·¸ë¨ ë§Œë“¤ê¸°
-	glAttachShader(shaderID, vertexShader); //--- ì„¸ì´ë” í”„ë¡œê·¸ë¨ì— ë²„í…ìŠ¤ ì„¸ì´ë” ë¶™ì´ê¸°
-	glAttachShader(shaderID, fragmentShader); //--- ì„¸ì´ë” í”„ë¡œê·¸ë¨ì— í”„ë˜ê·¸ë¨¼íŠ¸ ì„¸ì´ë” ë¶™ì´ê¸°
-	glLinkProgram(shaderID); //--- ì„¸ì´ë” í”„ë¡œê·¸ë¨ ë§í¬í•˜ê¸°
-	glDeleteShader(vertexShader); //--- ì„¸ì´ë” ê°ì²´ë¥¼ ì„¸ì´ë” í”„ë¡œê·¸ë¨ì— ë§í¬í–ˆìŒìœ¼ë¡œ, ì„¸ì´ë” ê°ì²´ ìì²´ëŠ” ì‚­ì œ ê°€ëŠ¥
+	shaderID = glCreateProgram(); //--- ¼¼ÀÌ´õ ÇÁ·Î±×·¥ ¸¸µé±â
+	glAttachShader(shaderID, vertexShader); //--- ¼¼ÀÌ´õ ÇÁ·Î±×·¥¿¡ ¹öÅØ½º ¼¼ÀÌ´õ ºÙÀÌ±â
+	glAttachShader(shaderID, fragmentShader); //--- ¼¼ÀÌ´õ ÇÁ·Î±×·¥¿¡ ÇÁ·¡±×¸ÕÆ® ¼¼ÀÌ´õ ºÙÀÌ±â
+	glLinkProgram(shaderID); //--- ¼¼ÀÌ´õ ÇÁ·Î±×·¥ ¸µÅ©ÇÏ±â
+	glDeleteShader(vertexShader); //--- ¼¼ÀÌ´õ °´Ã¼¸¦ ¼¼ÀÌ´õ ÇÁ·Î±×·¥¿¡ ¸µÅ©ÇßÀ½À¸·Î, ¼¼ÀÌ´õ °´Ã¼ ÀÚÃ¼´Â »èÁ¦ °¡´É
 	glDeleteShader(fragmentShader);
-	glGetProgramiv(shaderID, GL_LINK_STATUS, &result); // ---ì„¸ì´ë”ê°€ ì˜ ì—°ê²°ë˜ì—ˆëŠ”ì§€ ì²´í¬í•˜ê¸°
+	glGetProgramiv(shaderID, GL_LINK_STATUS, &result); // ---¼¼ÀÌ´õ°¡ Àß ¿¬°áµÇ¾ú´ÂÁö Ã¼Å©ÇÏ±â
 	if (!result) {
 		glGetProgramInfoLog(shaderID, 512, NULL, errorLog);
-		std::cerr << "ERROR: shader program ì—°ê²° ì‹¤íŒ¨\n" << errorLog << std::endl;
+		std::cerr << "ERROR: shader program ¿¬°á ½ÇÆĞ\n" << errorLog << std::endl;
 		return false;
 	}
-	glUseProgram(shaderID); //--- ë§Œë“¤ì–´ì§„ ì„¸ì´ë” í”„ë¡œê·¸ë¨ ì‚¬ìš©í•˜ê¸°
-	//--- ì—¬ëŸ¬ ê°œì˜ ì„¸ì´ë”í”„ë¡œê·¸ë¨ ë§Œë“¤ ìˆ˜ ìˆê³ , ê·¸ ì¤‘ í•œê°œì˜ í”„ë¡œê·¸ë¨ì„ ì‚¬ìš©í•˜ë ¤ë©´
-	//--- glUseProgram í•¨ìˆ˜ë¥¼ í˜¸ì¶œí•˜ì—¬ ì‚¬ìš© í•  íŠ¹ì • í”„ë¡œê·¸ë¨ì„ ì§€ì •í•œë‹¤.
-	//--- ì‚¬ìš©í•˜ê¸° ì§ì „ì— í˜¸ì¶œí•  ìˆ˜ ìˆë‹¤.
+	glUseProgram(shaderID); //--- ¸¸µé¾îÁø ¼¼ÀÌ´õ ÇÁ·Î±×·¥ »ç¿ëÇÏ±â
+	//--- ¿©·¯ °³ÀÇ ¼¼ÀÌ´õÇÁ·Î±×·¥ ¸¸µé ¼ö ÀÖ°í, ±× Áß ÇÑ°³ÀÇ ÇÁ·Î±×·¥À» »ç¿ëÇÏ·Á¸é
+	//--- glUseProgram ÇÔ¼ö¸¦ È£ÃâÇÏ¿© »ç¿ë ÇÒ Æ¯Á¤ ÇÁ·Î±×·¥À» ÁöÁ¤ÇÑ´Ù.
+	//--- »ç¿ëÇÏ±â Á÷Àü¿¡ È£ÃâÇÒ ¼ö ÀÖ´Ù.
 	return shaderID;
 }
 
-//--- ì¶œë ¥ ì½œë°± í•¨ìˆ˜
+//--- Ãâ·Â Äİ¹é ÇÔ¼ö
 GLvoid drawScene() {
 	//glClearColor(0.0, 0.0, 0.0, 1.0f);
 	glClearColor(1.0, 1.0, 1.0, 1.0f);
@@ -214,19 +219,19 @@ GLvoid drawScene() {
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 
-	//í”Œë ˆì´ì–´==ì¹´ë©”ë¼
+	//ÇÃ·¹ÀÌ¾î==Ä«¸Ş¶ó
 	glm::mat4 view = camera.getView();
 	
 
 	GLuint viewLoc = glGetUniformLocation(shaderProgramID, "view");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-	//íˆ¬ì˜í–‰ë ¬
+	//Åõ¿µÇà·Ä
 	glm::mat4 projection = glm::perspective(glm::radians(player.FOV), (float)width / (float)height, 0.1f, 150.0f);
 	GLuint projLoc = glGetUniformLocation(shaderProgramID, "projection");
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 	
 
-	//ì¡°ëª…ì ìš©
+	//Á¶¸íÀû¿ë
 	light1.apply(shaderProgramID);
 
 	if(!rifle->get_is_get())
@@ -234,23 +239,29 @@ GLvoid drawScene() {
 	if (!club->get_is_get())
 		club->draw(shaderProgramID);
 
-	//í”Œë ˆì´ì–´ ë¬´ê¸° ê·¸ë¦¬ê¸°
+	//ÇÃ·¹ÀÌ¾î ¹«±â ±×¸®±â
 	player.draw_weapon(shaderProgramID);
 	if(map_loaded)
 	field->draw(shaderProgramID);
+	
 
-
-	//ì 
+	//Àû
 	for (auto& e : *enemies) {
 		e.draw(shaderProgramID);
 	}
 
+	glm::mat4 MVP = glm::mat4(1.0);
+	glUniformMatrix4fv(
+		glGetUniformLocation(shaderProgramID, "modelTransform"),
+		1, GL_FALSE,
+		glm::value_ptr(MVP)
+	);
 	Debug_Draw::Render();
 
 	glutSwapBuffers();
 }
-//--- ë‹¤ì‹œê·¸ë¦¬ê¸° ì½œë°± í•¨ìˆ˜
-GLvoid Reshape(int w, int h) //--- ì½œë°± í•¨ìˆ˜: ë‹¤ì‹œ ê·¸ë¦¬ê¸° ì½œë°± í•¨ìˆ˜
+//--- ´Ù½Ã±×¸®±â Äİ¹é ÇÔ¼ö
+GLvoid Reshape(int w, int h) //--- Äİ¹é ÇÔ¼ö: ´Ù½Ã ±×¸®±â Äİ¹é ÇÔ¼ö
 {
 	width = w;      
 	height = h;
@@ -267,7 +278,7 @@ void mouseCallback(int button, int state, int x, int y) {
 
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
 
-		glutPostRedisplay(); // ë‹¤ì‹œ ê·¸ë¦¬ê¸° ìš”ì²­
+		glutPostRedisplay(); // ´Ù½Ã ±×¸®±â ¿äÃ»
 		player.mouses[0] = true;
 		
 	}
@@ -277,7 +288,7 @@ void mouseCallback(int button, int state, int x, int y) {
 	}
 	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
 	{
-		//ì¤Œëª¨ë“œ
+		//ÁÜ¸ğµå
 		player.zoom_mode = true;
 	}
 	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_UP)
@@ -361,7 +372,7 @@ void MouseMove(int x, int y) {
 
 void TimerFunction(int value)
 {
-	//ë¸íƒ€íƒ€ì„ ê³„ì‚°
+	//µ¨Å¸Å¸ÀÓ °è»ê
 	auto currentTime = std::chrono::high_resolution_clock::now();
 	deltaTime = std::chrono::duration<float>(currentTime - lastTime).count();
 	lastTime = currentTime;
@@ -375,6 +386,23 @@ void TimerFunction(int value)
 		if (rifle==(player.weapons[player.currentWeapon])) {
 			camera.pitch += (rand() % 100/100.0f) * 40.0f*deltaTime; //ÁÂ¿ì¾à°£Èçµé¸²
 		}
+		//Àû°ú ÇÃ·¹ÀÌ¾î °Å¸®°¡ °¡±î¿ì¸é Àû Á¦°Å
+		if (club == (player.weapons[player.currentWeapon])) {
+			//for (int i = 0; i < enemies->size(); i++)
+			//{
+			//	ENEMY* e = (*enemies)[i];
+
+			//	if (e->hit(player.position))
+			//	{
+			//		delete e;  // ¸Ş¸ğ¸® ÇØÁ¦
+			//		enemies->erase(enemies->begin() + i); // Æ÷ÀÎÅÍ Á¦°Å
+			//		i--;
+			//	}
+			//}
+
+
+		}
+		
 		
 	}
 	for (auto& e : *enemies) {

@@ -2,8 +2,10 @@
 #include <algorithm>
 #include <vector>
 #include <array>
-#include <GL/glut.h>
 #include <GL/glm/gtc/type_ptr.hpp>
+
+
+
 
 namespace Debug_Draw {
 	std::vector<glm::vec3> lines;
@@ -13,7 +15,9 @@ namespace Debug_Draw {
 		lines.push_back(end);
 		lines.push_back(color);
 	}
-	void Render() {
+	void Render( ) {
+
+		
 		glDisable(GL_TEXTURE_2D);
 		glLineWidth(2.0f);
 		glBegin(GL_LINES);
@@ -29,32 +33,38 @@ namespace Debug_Draw {
 	}
 }
 
-Collision::Collision(const glm::vec3 half) : halfsize(half){}
+Collision::Collision(const glm::vec3 half) : halfsize(half) {}
 
 glm::vec3 Collision::Min() const {
-	return center - halfsize;
-} // ìµœì†Œ ì¢Œí‘œ ë°˜í™˜
+    return center - halfsize;
+}
+
 glm::vec3 Collision::Max() const {
-	return center + halfsize;
-}// ìµœëŒ€ ì¢Œí‘œ ë°˜í™˜
+    return center + halfsize;
+}
+
 
 bool Collision::check_collision(const Collision& other) const {
 	return (Max().x >= other.Min().x && Min().x <= other.Max().x) &&
 		(Max().y >= other.Min().y && Min().y <= other.Max().y) &&
 		(Max().z >= other.Min().z && Min().z <= other.Max().z);
-} // ì¶©ëŒ ê²€ì‚¬
+} // Ãæµ¹ °Ë»ç
 
 void Collision::updateBox(const glm::vec3& localHalfsize, const glm::vec3& position, const glm::vec3& scale)
 {
 	glm::vec3 scaledHalf = localHalfsize * scale;
 	center = position;
-	halfsize = scaledHalf;
+	halfsize = glm::vec3(1.0,2.0,2.0);
 
 }
 
 void Collision::Debug_Draw(const glm::vec3& color) const {
-	glm::vec3 min = Min();
-	glm::vec3 max = Max();
+
+	// Ç×»ó °°Àº Å©±âÀÇ ¹Ú½º¸¦ »ç¿ë (¿øÇÏ¸é °ª ¹Ù²ãµµ µÊ)
+	glm::vec3 fixedHalf = glm::vec3(0.5f);  // ¡æ ¹Ú½º Å©±â 1x1x1
+
+	glm::vec3 min = center - fixedHalf;
+	glm::vec3 max = center + fixedHalf;
 
 	glm::vec3 v[8] = {
 		glm::vec3(min.x, min.y, min.z),
@@ -68,11 +78,16 @@ void Collision::Debug_Draw(const glm::vec3& color) const {
 	};
 
 	const int edges[24] = {
-		0, 1, 1, 2, 2, 3, 3, 0,//ì•„ëž˜
-		4, 5, 5, 6, 6, 7, 7, 4,//ìœ„
-		0, 4, 1, 5, 2, 6, 3, 7//ì˜†
+		0,1, 1,2, 2,3, 3,0,
+		4,5, 5,6, 6,7, 7,4,
+		0,4, 1,5, 2,6, 3,7
 	};
+
 	for (int i = 0; i < 24; i += 2) {
 		Debug_Draw::AddLine(v[edges[i]], v[edges[i + 1]], color);
 	}
-} // ë¹¨ê°„ ë°•ìŠ¤ ê·¸ë¦¬ê¸°
+	//std::cout <<"Cpos"<< center.x << "," << center.y << "," << center.z << std::endl;
+	//std::cout <<"Bpos" << v[0].x << "," << v[0].y << "," << v[0].z << std::endl;
+	//std::cout<<"---------------" << std::endl;
+}
+// »¡°£ ¹Ú½º ±×¸®±â

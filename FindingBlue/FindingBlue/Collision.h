@@ -1,26 +1,28 @@
 #pragma once
 #include <GL/glm/glm.hpp>
 #include <Gl/glm/gtc/quaternion.hpp>
+#include <GL/glut.h>
+
 
 namespace Debug_Draw {
 	void AddLine(const glm::vec3& start, const glm::vec3& end, const glm::vec3& color = glm::vec3(1.0f, 0.0f, 0.0f));
-	void Render();
+	void Render(  );
 }
-class Collision 
+class Collision
 {
 public:
-	glm::vec3 center = glm::vec3(0.0f); // ì¤‘ì‹¬ì  ì¢Œí‘œ
-	glm::vec3 halfsize = glm::vec3(1.0f); // ì ˆë°˜ ì‚¬ì´ì¦ˆ
+	glm::vec3 center = glm::vec3(0.0f); // Áß½ÉÁ¡ ÁÂÇ¥
+	glm::vec3 halfsize = glm::vec3(1.0f); // Àı¹İ »çÀÌÁî
 
 	Collision() = default;
-	explicit Collision(const glm::vec3 half); 
+	explicit Collision(const glm::vec3 half);
 
-	glm::vec3 Min() const; // ìµœì†Œ ì¢Œí‘œ ë°˜í™˜
-	glm::vec3 Max() const; // ìµœëŒ€ ì¢Œí‘œ ë°˜í™˜
+	glm::vec3 Min() const; // ÃÖ¼Ò ÁÂÇ¥ ¹İÈ¯
+	glm::vec3 Max() const; // ÃÖ´ë ÁÂÇ¥ ¹İÈ¯
 
-	bool check_collision(const Collision& other) const; // ì¶©ëŒ ê²€ì‚¬
+	bool check_collision(const Collision& other) const; // Ãæµ¹ °Ë»ç
 
 	void updateBox(const glm::vec3& localHalfsize, const glm::vec3& position, const glm::vec3& scale);
 
-	void Debug_Draw(const glm::vec3& color = glm::vec3(1.0f, 0.0f, 0.0f)) const; // ë¹¨ê°„ ë°•ìŠ¤ ê·¸ë¦¬ê¸°
+	void Debug_Draw(const glm::vec3& color = glm::vec3(1.0f, 0.0f, 0.0f)) const; // »¡°£ ¹Ú½º ±×¸®±â
 };
