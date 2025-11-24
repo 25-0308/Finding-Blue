@@ -134,16 +134,34 @@
     <None Include="vertex.glsl" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ak47.cpp" />
+    <ClCompile Include="bullet.cpp" />
+    <ClCompile Include="camera\camera.cpp" />
+    <ClCompile Include="Collision.cpp" />
+    <ClCompile Include="enemy\Enemy.cpp" />
+    <ClCompile Include="field\field.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="ModelLoader.cpp" />
-    <ClCompile Include="object.cpp" />
+    <ClCompile Include="object\ModelLoader.cpp" />
+    <ClCompile Include="object\object.cpp" />
+    <ClCompile Include="object\TextManager.cpp" />
+    <ClCompile Include="player\player.cpp" />
+    <ClCompile Include="weapon\ak47.cpp" />
+    <ClCompile Include="weapon\club.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ak_47.h" />
+    <ClInclude Include="bullet.h" />
+    <ClInclude Include="camera.h" />
+    <ClInclude Include="club.h" />
+    <ClInclude Include="Collision.h" />
+    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="field.h" />
+    <ClInclude Include="light.h" />
     <ClInclude Include="ModelLoader.h" />
     <ClInclude Include="object.h" />
+    <ClInclude Include="player.h" />
     <ClInclude Include="stb_image.h" />
+    <ClInclude Include="TextManager.h" />
+    <ClInclude Include="weapon.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

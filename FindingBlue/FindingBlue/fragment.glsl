@@ -6,40 +6,43 @@ in vec2 TexCoord;
 
 out vec4 FragColor;
 
-uniform sampler2D tex;        // ★ 텍스처
+uniform sampler2D tex;
 uniform vec3 lightPos;
 uniform vec3 lightColor;
 uniform vec3 viewPos;
 uniform float lightIntensity;
 uniform bool useLight;
 
+struct Material {
+    float shininess;
+    float specularStrength;
+    float metallic; // 원하면 스펙 반영할 때 사용
+};
+
+uniform Material material;
+
 void main()
 {
-    // 텍스처 색 읽기
     vec3 baseColor = texture(tex, TexCoord).rgb;
 
-    // ───── Ambient ─────
+    // Ambient
     float ambientStrength = 0.3;
-    vec3 ambient = ambientStrength * lightColor * baseColor;
+    vec3 ambient = ambientStrength * lightColor;
 
-    // ───── Diffuse ─────
+    // Diffuse
     vec3 norm = normalize(Normal);
     vec3 lightDir = normalize(lightPos - FragPos);
     float diff = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = diff * lightColor * baseColor;
+    vec3 diffuse = diff * lightColor;
 
-    // ───── Specular ─────
-    float shininess = 128.0;
+    // Specular
     vec3 viewDir = normalize(viewPos - FragPos);
     vec3 reflectDir = reflect(-lightDir, norm);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
-    vec3 specular = spec * lightColor;
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 
-    vec3 result;
-    if (useLight)
-        result = (ambient + diffuse + specular) * lightIntensity;
-    else
-        result = baseColor;
+    vec3 specular = spec * material.specularStrength * lightColor;
 
-    FragColor = vec4(result, 1.0);
+    vec3 lighting = (ambient + diffuse + specular) * baseColor * lightIntensity;
+
+    FragColor = vec4(useLight ? lighting : baseColor, 1.0);
 }

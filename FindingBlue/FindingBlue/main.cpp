@@ -2,10 +2,15 @@
 #define _CRT_SECURE_NO_WARNINGS 
 #include "ModelLoader.h"
 #include"ak_47.h"
+#include"club.h"
+#include"field.h"
+#include"Enemy.h"
 #include<iostream>
 #include<chrono>
-
-
+#include"player.h"
+#include"camera.h"
+#include"light.h"
+#include"bullet.h"
 //--- 아래 5개 함수는 사용자 정의 함수 임
 void make_vertexShaders();
 void make_fragmentShaders();
@@ -20,15 +25,40 @@ void initBuffer();
 void TimerFunction(int value);
 GLvoid KeyboardDown(unsigned char key, int x, int y);
 GLvoid KeyboardUp(unsigned char key, int x, int y);
+void mouseWheel(int button, int dir, int x, int y);
 void MouseMove(int x, int y);
 
 //내가 추가한 변수임
+bool map_loaded = true;
 AK_47* rifle;
-//임시로 플레이어 대충 vec3사용 그리고 카메라로 대충할거
-glm::vec3 playerPos = glm::vec3(0.0f, 0.0f, 5.0f);
-glm::vec3 playerFront = glm::vec3(0.0f, 0.0f, -1.0f);
-bool keys[256] = { false, };
-float sensitivity = 50.0f;
+FIELD* field;
+CLUB* club;
+
+//총알 저장할 벡터
+std::vector<BULLET>* bullets = new std::vector<BULLET>();
+
+//플레이어
+Player player;
+Camera camera(player);
+//적
+std::vector<ENEMY>* enemies = new std::vector<ENEMY>();
+glm::vec3 E_pos_list[10] = {
+	{20.0,-0.7f,20.0f},
+	{50.0,-0.7,20.f},
+		{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{}
+
+};
+//조명 일단 하나만
+Lighting light1;
+
+
 //델타타임을 위한것들
 auto lastTime = std::chrono::high_resolution_clock::now();
 float deltaTime = 0.0f;
@@ -83,11 +113,25 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	glEnable(GL_DEPTH_TEST);
 	rifle = new AK_47();
 	rifle->init();
+	club = new CLUB();
+	club->init();
+	field = new FIELD();
+	field->init();
+	//적생성인데
+	for (int i = 0;i < 2;++i) {
+		enemies->emplace_back();                  // 벡터 안에 직접 생성
+		enemies->back().init(E_pos_list[i]);      // 바로 초기화
+	}
+	
+	//조명초기화
+	light1.lightPos = glm::vec3(47.5f, 20.0f, 47.5f);
+	//light1.lightPos = glm::vec3(10.0, 1.0f, 10.0);
 	glutMouseFunc(mouseCallback);
 	glutKeyboardFunc(KeyboardDown);
 	glutKeyboardUpFunc(KeyboardUp);
 	glutMotionFunc(MouseMove);
 	glutPassiveMotionFunc(MouseMove);
+	glutMouseWheelFunc(mouseWheel);
 
 	//--- 세이더 프로그램 만들기
 	glutDisplayFunc(drawScene); //--- 출력 콜백 함수
@@ -172,24 +216,47 @@ GLvoid drawScene() {
 
 
 	glEnable(GL_DEPTH_TEST);
-	
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 
 	//플레이어==카메라
-	glm::mat4 view = glm::lookAt(
-		playerPos,
-		playerPos + playerFront,
-		glm::vec3(0.0f, 1.0f, 0.0f)
-	);
+	glm::mat4 view = camera.getView();
+	
+
 	GLuint viewLoc = glGetUniformLocation(shaderProgramID, "view");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 	//투영행렬
-	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
+	glm::mat4 projection = glm::perspective(glm::radians(player.FOV), (float)width / (float)height, 0.1f, 150.0f);
 	GLuint projLoc = glGetUniformLocation(shaderProgramID, "projection");
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 	
 
-	rifle->draw(shaderProgramID);
+	//조명적용
+	light1.apply(shaderProgramID);
 
+	if(!rifle->get_is_get())
+		rifle->draw(shaderProgramID);
+	if (!club->get_is_get())
+		club->draw(shaderProgramID);
+
+	//플레이어 무기 그리기
+	player.draw_weapon(shaderProgramID);
+	if(map_loaded)
+	field->draw(shaderProgramID);
+	
+
+	//적
+	for (auto& e : *enemies) {
+		e.draw(shaderProgramID);
+	}
+
+	glm::mat4 MVP = glm::mat4(1.0);
+	glUniformMatrix4fv(
+		glGetUniformLocation(shaderProgramID, "modelTransform"),
+		1, GL_FALSE,
+		glm::value_ptr(MVP)
+	);
+	Debug_Draw::Render();
 
 	glutSwapBuffers();
 }
@@ -212,35 +279,61 @@ void mouseCallback(int button, int state, int x, int y) {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
 
 		glutPostRedisplay(); // 다시 그리기 요청
+		player.mouses[0] = true;
+		
+	}
+	else if (button == GLUT_LEFT_BUTTON && state == GLUT_UP)
+	{
+		player.mouses[0] = false;
 	}
 	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
 	{
-
+		//줌모드
+		player.zoom_mode = true;
+	}
+	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_UP)
+	{
+		player.zoom_mode = false;
 	}
 }
 GLvoid KeyboardDown(unsigned char key, int x, int y) {
 	switch (key) {
 
 	case'w':
-		keys['w'] = true;
+		player.keys[key] = true;
 		break;
 	case'a':
-		keys['a'] = true;
+		player.keys[key] = true;
 		break;
 	case's':
-		keys['s'] = true;
+		player.keys[key] = true;
 		break;
 	case'd':
-		keys['d'] = true;
+		player.keys[key] = true;
 		break;
 	case'+':
-		sensitivity += 5.0f;
+		camera.sensitivity += 5.0f;
+		break;
+	case'f':
+		if (rifle->get_weapon(player.position)) {
+			player.weapons.push_back(rifle);
+			player.change_weapon(player.weapons.size() - 1);
+		}
+		if (club->get_weapon(player.position)) {
+			player.weapons.push_back(club);
+			player.change_weapon(player.weapons.size() - 1);
+		}
+		
 		break;
 	case'-':
-		sensitivity -= 5.0f;
-		if (sensitivity < 5.0f)
-			sensitivity = 5.0f;
+		camera.sensitivity -= 5.0f;
+		if (camera.sensitivity < 5.0f)
+			camera.sensitivity = 5.0f;
 		break;
+	case'm':
+		map_loaded = !map_loaded;
+		break;
+
 	case 'q':
 		exit(0);
 		break;
@@ -250,51 +343,30 @@ GLvoid KeyboardDown(unsigned char key, int x, int y) {
 GLvoid KeyboardUp(unsigned char key, int x, int y) {
 	switch (key) {
 	case'w':
-		keys['w'] = false;
+		player.keys[key] = false;
 		break;
 	case'a':
-		keys['a'] = false;
+		player.keys[key] = false;
 		break;
 	case's':
-		keys['s'] = false;
+		player.keys[key] = false;
 		break;
 	case'd':
-		keys['d'] = false;
+		player.keys[key] = false;
 		break;
 
 	}
 	glutPostRedisplay();
 }
 void MouseMove(int x, int y) {
-
-	float glX = (2.0f * x) / width - 1.0f;
-	float glY = 1.0f - (2.0f * y) / height;
 	int dx = x - centerX;
 	int dy = y - centerY;
-	//화면이동
-	float sensitive = deltaTime*sensitivity;
-	static float yaw = -90.0f; // 초기 yaw 값을 -90도로 설정
-	static float pitch = 0.0f;
-	yaw += dx * sensitive;
-	pitch -= dy * sensitive;
-	//피치값 제한
-	if (pitch > 89.0f)
-		pitch = 89.0f;
-	if (pitch < -89.0f)
-		pitch = -89.0f;
-	//방향벡터 계산
-	glm::vec3 front;
-	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-	front.y = sin(glm::radians(pitch));
-	front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-	playerFront = glm::normalize(front);
 
+	camera.updateDirection(dx, dy, deltaTime);
 
-	// 다시 마우스를 중앙으로 이동
 	glutWarpPointer(centerX, centerY);
-
-
 }
+
 
 
 
@@ -304,17 +376,38 @@ void TimerFunction(int value)
 	auto currentTime = std::chrono::high_resolution_clock::now();
 	deltaTime = std::chrono::duration<float>(currentTime - lastTime).count();
 	lastTime = currentTime;
-	//플레이어 이동
-	float speed = 5.0f; // 이동 속도
-	glm::vec3 forward = glm::normalize(glm::vec3(playerFront.x, 0.0f, playerFront.z));
-	glm::vec3 right = glm::normalize(glm::cross(forward, glm::vec3(0.0f, 1.0f, 0.0f)));
+	player.move(deltaTime);
+	rifle->update(deltaTime, player.position,camera.yaw,camera.pitch);
+	club->update(deltaTime, player.position, camera.yaw, camera.pitch);
+	player.zoom_in(deltaTime);
+	if (player.mouses[0] && !player.weapons.empty()) {
+		player.weapons[player.currentWeapon]->attack(deltaTime);
+		//만약 총기류면 반동
+		if (rifle==(player.weapons[player.currentWeapon])) {
+			camera.pitch += (rand() % 100/100.0f) * 40.0f*deltaTime; //좌우약간흔들림
+		}
+		//적과 플레이어 거리가 가까우면 적 제거
+		if (club == (player.weapons[player.currentWeapon])) {
+			//for (int i = 0; i < enemies->size(); i++)
+			//{
+			//	ENEMY* e = (*enemies)[i];
 
-	if (keys['w']) playerPos += forward * speed * deltaTime;
-	if (keys['s']) playerPos -= forward * speed * deltaTime;
-	if (keys['a']) playerPos -= right * speed * deltaTime;
-	if (keys['d']) playerPos += right * speed * deltaTime;
+			//	if (e->hit(player.position))
+			//	{
+			//		delete e;  // 메모리 해제
+			//		enemies->erase(enemies->begin() + i); // 포인터 제거
+			//		i--;
+			//	}
+			//}
 
 
+		}
+		
+		
+	}
+	for (auto& e : *enemies) {
+		e.update(deltaTime,player.position);
+	}
 	drawScene();
 
 	glutTimerFunc(value, TimerFunction, value);
@@ -323,3 +416,16 @@ void TimerFunction(int value)
 
 
 
+void mouseWheel(int button, int dir, int x, int y) {
+	if (dir > 0) {
+		//휠올림
+		player.change_weapon((player.currentWeapon + 1) % player.weapons.size());
+	}
+	else {
+		//휠내림
+		int new_index = player.currentWeapon - 1;
+		if (new_index < 0)
+			new_index = player.weapons.size() - 1;
+		player.change_weapon(new_index);
+	}
+}
