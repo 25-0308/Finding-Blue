@@ -367,8 +367,14 @@ void TimerFunction(int value)
 	rifle->update(deltaTime, player.position,camera.yaw,camera.pitch);
 	club->update(deltaTime, player.position, camera.yaw, camera.pitch);
 	player.zoom_in(deltaTime);
-	if (player.mouses[0]&&!player.weapons.empty())
+	if (player.mouses[0] && !player.weapons.empty()) {
 		player.weapons[player.currentWeapon]->attack(deltaTime);
+		//만약 총기류면 반동
+		if (rifle==(player.weapons[player.currentWeapon])) {
+			camera.pitch += (rand() % 100/100.0f) * 40.0f*deltaTime; //좌우약간흔들림
+		}
+		
+	}
 	for (auto& e : *enemies) {
 		e.update(deltaTime,player.position);
 	}
