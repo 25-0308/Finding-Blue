@@ -8,8 +8,8 @@ private:
     glm::vec3 position;
     glm::vec3 front;
 	bool is_get = false;
-
-
+	bool recoil_mode = false;
+	glm::vec3 attack_offsets = glm::vec3(0.0f);
 public:
     Object hand;
     Object metal;
@@ -49,9 +49,9 @@ public:
     bool get_is_get() {
         return is_get;
     }
-	void attack(float deltaTime) override {
-		//빠따 휘두르기 구현
-	}
+    void attack(float deltaTime) override;
+    bool get_recoil_mode() { return this->recoil_mode; };
+    void set_recoil_mode(bool mode) { this->recoil_mode = mode; };
     void zoom_in(bool mode, float deltaTime)override;
 
 };

@@ -62,6 +62,7 @@ void AK_47::attack(float deltaTime) {
 		if (this->offsets.z > 0.1f) {
 			this->recoil_mode = true;
             this->offsets.z = 0.1f;
+            //이 부분에 총알 생성 넣으면 될거같다
 		}
 	}
     else if (this->recoil_mode) {
