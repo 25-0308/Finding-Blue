@@ -1,6 +1,7 @@
 #pragma once
 #include "ModelLoader.h"
 #include "TextManager.h"
+#include "Collision.h"
 
 class Object {
 public:
@@ -8,6 +9,7 @@ public:
     const char* objPath = nullptr;
     const char* texPath = nullptr;
     GLuint textureID = 0;
+
     glm::vec3 position = glm::vec3(0);
     glm::vec3 rotation = glm::vec3(0);
     glm::vec3 scale = glm::vec3(1.0);
@@ -23,14 +25,26 @@ public:
         texPath = t;
     }
 
+    void updateBox() {
+		glm::vec3 rot = glm::radians(rotation); // ë¼ë””ì•ˆìœ¼ë¡œ ê°ë„ ë³€í™˜
+		glm::quat quat = glm::quat(rot); // ë³€í•œ ê°ë„ì— ë”°ë¼ íšŒì „í–‰ë ¬ ìƒì„±
+
+		glm::vec3 scaledHalfsize = localHalfsize * scale; // ìŠ¤ì¼€ì¼ ì ìš©
+
+		collision.updateBox(scaledHalfsize, quat, position);
+    }; // ì´ë™ì— ë”°ë¥¸ ì—…ë°ì´íŠ¸
+
+
+
     void init() {
 
         if (objPath)
-            CreateRenderableObject(objPath, obj); // ÅØ½ºÃ³ Æ÷ÇÔ½ÃÅ°Áö ¾ÊÀ½
+            CreateRenderableObject(objPath, obj); // í…ìŠ¤ì²˜ í¬í•¨ì‹œí‚¤ì§€ ì•ŠìŒ
 
         if (texPath)
             textureID = TextureManager::GetTexture(texPath);
-	
+
+		updateBox();
     }
 
     virtual void draw(GLuint shader) {
@@ -44,19 +58,23 @@ public:
 
         m = glm::rotate(m, rotation.y, glm::vec3(0, 1, 0));
         m = glm::rotate(m, rotation.x, glm::vec3(1, 0, 0));
-        m = glm::translate(m, pivot);   // 1. pivotÀ¸·Î ÀÌµ¿
-        m = glm::rotate(m, rotation.z, glm::vec3(0, 0, 1)); // ÆÈ È¸Àü
-        m = glm::translate(m, -pivot);  // 3. pivot º¹±Í
+        m = glm::translate(m, pivot);   // 1. pivotìœ¼ë¡œ ì´ë™
+        m = glm::rotate(m, rotation.z, glm::vec3(0, 0, 1)); // íŒ” íšŒì „
+        m = glm::translate(m, -pivot);  // 3. pivot ë³µê·€
         m = glm::scale(m, scale);
 
         obj.modelMatrix = m;
 
         drawObject(shader, obj);
+
+		updateBox();
+
+    	collision.Debug_Draw(glm::vec3(1, 0, 0)); // ë¹¨ê°„ ì„  ì¶”ê°€ ê·¸ë¦¬ê¸°
     }
 
 
     virtual ~Object() {
         deleteObject(obj);
-        // ÅØ½ºÃ³´Â »èÁ¦ÇÏÁö ¾ÊÀ½ (°øÀ¯ Áß)
+        // í…ìŠ¤ì²˜ëŠ” ì‚­ì œí•˜ì§€ ì•ŠìŒ (ê³µìœ  ì¤‘)
     }
 };

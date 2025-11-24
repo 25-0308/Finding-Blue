@@ -17,16 +17,16 @@ Collision::Collision(const glm::vec3 half) : halfsize(half){}
 
 glm::vec3 Collision::Min() const {
 	return center - halfsize;
-} // ÃÖ¼Ò ÁÂÇ¥ ¹ÝÈ¯
+} // ìµœì†Œ ì¢Œí‘œ ë°˜í™˜
 glm::vec3 Collision::Max() const {
 	return center + halfsize;
-}// ÃÖ´ë ÁÂÇ¥ ¹ÝÈ¯
+}// ìµœëŒ€ ì¢Œí‘œ ë°˜í™˜
 
 bool Collision::check_collision(const Collision& other) const {
 	return (Max().x >= other.Min().x && Min().x <= other.Max().x) &&
 		(Max().y >= other.Min().y && Min().y <= other.Max().y) &&
 		(Max().z >= other.Min().z && Min().z <= other.Max().z);
-} // Ãæµ¹ °Ë»ç
+} // ì¶©ëŒ ê²€ì‚¬
 
 void Collision::updateBox(const glm::vec3& localHalfsize,
 	const glm::quat& rotation, const glm::vec3& position) {
@@ -55,7 +55,7 @@ void Collision::updateBox(const glm::vec3& localHalfsize,
 
 	center = (minPoint + maxPoint) * 0.5f;
 	halfsize = (maxPoint - minPoint) * 0.5f;
-} // ÀÌµ¿¿¡ µû¸¥ ¾÷µ¥ÀÌÆ®
+} // ì´ë™ì— ë”°ë¥¸ ì—…ë°ì´íŠ¸
 
 void Collision::Debug_Draw(const glm::vec3& color) const {
 	glm::vec3 min = Min();
@@ -73,11 +73,11 @@ void Collision::Debug_Draw(const glm::vec3& color) const {
 	};
 
 	const int edges[24] = {
-		0, 1, 1, 2, 2, 3, 3, 0,//¾Æ·¡
-		4, 5, 5, 6, 6, 7, 7, 4,//À§
-		0, 4, 1, 5, 2, 6, 3, 7//¿·
+		0, 1, 1, 2, 2, 3, 3, 0,//ì•„ëž˜
+		4, 5, 5, 6, 6, 7, 7, 4,//ìœ„
+		0, 4, 1, 5, 2, 6, 3, 7//ì˜†
 	};
 	for (int i = 0; i < 24; i += 2) {
 		Debug_Draw::AddLine(v[edges[i]], v[edges[i + 1]], color);
 	}
-} // »¡°£ ¹Ú½º ±×¸®±â
+} // ë¹¨ê°„ ë°•ìŠ¤ ê·¸ë¦¬ê¸°

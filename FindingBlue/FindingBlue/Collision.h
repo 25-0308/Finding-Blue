@@ -8,20 +8,20 @@ namespace Debug_Draw {
 class Collision 
 {
 public:
-	glm::vec3 center = glm::vec3(0.0f); // Áß½ÉÁ¡ ÁÂÇ¥
-	glm::vec3 halfsize = glm::vec3(1.0f); // Àı¹İ »çÀÌÁî
+	glm::vec3 center = glm::vec3(0.0f); // ì¤‘ì‹¬ì  ì¢Œí‘œ
+	glm::vec3 halfsize = glm::vec3(1.0f); // ì ˆë°˜ ì‚¬ì´ì¦ˆ
 
 	Collision() = default;
 	explicit Collision(const glm::vec3 half); 
 
-	glm::vec3 Min() const; // ÃÖ¼Ò ÁÂÇ¥ ¹İÈ¯
-	glm::vec3 Max() const; // ÃÖ´ë ÁÂÇ¥ ¹İÈ¯
+	glm::vec3 Min() const; // ìµœì†Œ ì¢Œí‘œ ë°˜í™˜
+	glm::vec3 Max() const; // ìµœëŒ€ ì¢Œí‘œ ë°˜í™˜
 
-	bool check_collision(const Collision& other) const; // Ãæµ¹ °Ë»ç
+	bool check_collision(const Collision& other) const; // ì¶©ëŒ ê²€ì‚¬
 
 	void updateBox(const glm::vec3& localHalfsize, 
 		const glm::quat& rotation, 
-		const glm::vec3& position = glm::vec3(0)); // ÀÌµ¿¿¡ µû¸¥ ¾÷µ¥ÀÌÆ®
+		const glm::vec3& position = glm::vec3(0)); // ì´ë™ì— ë”°ë¥¸ ì—…ë°ì´íŠ¸
 
-	void Debug_Draw(const glm::vec3& color = glm::vec3(1.0f, 0.0f, 0.0f)) const; // »¡°£ ¹Ú½º ±×¸®±â
+	void Debug_Draw(const glm::vec3& color = glm::vec3(1.0f, 0.0f, 0.0f)) const; // ë¹¨ê°„ ë°•ìŠ¤ ê·¸ë¦¬ê¸°
 };
