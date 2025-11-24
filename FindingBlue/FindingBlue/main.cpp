@@ -24,6 +24,7 @@ void initBuffer();
 void TimerFunction(int value);
 GLvoid KeyboardDown(unsigned char key, int x, int y);
 GLvoid KeyboardUp(unsigned char key, int x, int y);
+void mouseWheel(int button, int dir, int x, int y);
 void MouseMove(int x, int y);
 
 //내가 추가한 변수임
@@ -125,6 +126,7 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설�
 	glutKeyboardUpFunc(KeyboardUp);
 	glutMotionFunc(MouseMove);
 	glutPassiveMotionFunc(MouseMove);
+	glutMouseWheelFunc(mouseWheel);
 
 	//--- 세이더 프로그램 만들기
 	glutDisplayFunc(drawScene); //--- 출력 콜백 함수
@@ -365,8 +367,14 @@ void TimerFunction(int value)
 	rifle->update(deltaTime, player.position,camera.yaw,camera.pitch);
 	club->update(deltaTime, player.position, camera.yaw, camera.pitch);
 	player.zoom_in(deltaTime);
-	if (player.mouses[0])
+	if (player.mouses[0] && !player.weapons.empty()) {
 		player.weapons[player.currentWeapon]->attack(deltaTime);
+		//���� �ѱ���� �ݵ�
+		if (rifle==(player.weapons[player.currentWeapon])) {
+			camera.pitch += (rand() % 100/100.0f) * 40.0f*deltaTime; //�¿�ణ��鸲
+		}
+		
+	}
 	for (auto& e : *enemies) {
 		e.update(deltaTime,player.position);
 	}
@@ -378,3 +386,16 @@ void TimerFunction(int value)
 
 
 
+void mouseWheel(int button, int dir, int x, int y) {
+	if (dir > 0) {
+		//�ٿø�
+		player.change_weapon((player.currentWeapon + 1) % player.weapons.size());
+	}
+	else {
+		//�ٳ���
+		int new_index = player.currentWeapon - 1;
+		if (new_index < 0)
+			new_index = player.weapons.size() - 1;
+		player.change_weapon(new_index);
+	}
+}
