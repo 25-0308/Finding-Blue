@@ -25,6 +25,7 @@ public:
         metal.init();
         hand.scale = metal.scale = glm::vec3(0.1f);
 		metal.position = glm::vec3(15.0f, -0.2f, 10.0f);
+        attack_offsets.y = glm::radians(270.0f);
     }
 
     void draw(GLuint shader) {

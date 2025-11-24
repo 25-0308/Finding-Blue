@@ -23,8 +23,8 @@ void CLUB::update(float deltaTime, glm::vec3 position, float yaw, float pitch)
         glm::vec3 up = glm::normalize(glm::cross(right, front));
 
 
-        glm::vec3 offset = right * 0.5f   // 화면 오른쪽으로
-            + up * -0.3f    // 화면 아래로
+        glm::vec3 offset = right * 0.2f   // 화면 오른쪽으로
+            + up * -0.7f    // 화면 아래로
             + front * 0.8f; // 화면 안쪽으로
   
 
@@ -38,6 +38,11 @@ void CLUB::update(float deltaTime, glm::vec3 position, float yaw, float pitch)
         metal.rotation.y = -glm::radians(yaw);
         hand.rotation.z = glm::radians(pitch);
         metal.rotation.z = glm::radians(pitch);
+
+        //오프셋더함
+		hand.rotation.y += this->attack_offsets.y;
+		metal.rotation.y += this->attack_offsets.y;
+
 		hand.rotation.z += this->attack_offsets.z; 
 		metal.rotation.z += this->attack_offsets.z;
     }
@@ -58,27 +63,27 @@ void CLUB::attack(float deltaTime) {
     if (!this->recoil_mode) {
         //총 오프셋 뒤로
         //총 오프셋 앞으로
-        this->attack_offsets.x -= glm::radians(400.0f * deltaTime);
-		this->attack_offsets.z -= glm::radians(400.0f * deltaTime);
+        this->attack_offsets.x -= glm::radians(800.0f * deltaTime);
+	
         if (this->attack_offsets.x < glm::radians(-90.0f)) {
             this->recoil_mode = true;
             this->attack_offsets.x = glm::radians(-90.0f);
-            this->attack_offsets.z = glm::radians(-90.0f);
+   
 
         }
     }
     else if (this->recoil_mode) {
        
-        this->attack_offsets.x += glm::radians(400.0f * deltaTime);
-        this->attack_offsets.z += glm::radians(400.0f * deltaTime);
+        this->attack_offsets.x += glm::radians(200.0f * deltaTime);
+    
         if (this->attack_offsets.x > glm::radians(0.0f)) {
             this->recoil_mode = false;
             this->attack_offsets.x = glm::radians(0.0f);
-            this->attack_offsets.z = glm::radians(0.0f);
+   
     
         }
     }
-    metal.rotation.x=hand.rotation.x = this->attack_offsets.x;
+   metal.rotation.x=hand.rotation.x = this->attack_offsets.x;
 }
 void CLUB::zoom_in(bool mode, float deltaTime) {
 	//빠따는 줌인모드 없음

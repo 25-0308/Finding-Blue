@@ -365,7 +365,7 @@ void TimerFunction(int value)
 	rifle->update(deltaTime, player.position,camera.yaw,camera.pitch);
 	club->update(deltaTime, player.position, camera.yaw, camera.pitch);
 	player.zoom_in(deltaTime);
-	if (player.mouses[0])
+	if (player.mouses[0]&&!player.weapons.empty())
 		player.weapons[player.currentWeapon]->attack(deltaTime);
 	for (auto& e : *enemies) {
 		e.update(deltaTime,player.position);
