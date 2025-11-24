@@ -264,6 +264,12 @@ void mouseCallback(int button, int state, int x, int y) {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
 
 		glutPostRedisplay(); // 다시 그리기 요청
+		player.mouses[0] = true;
+		
+	}
+	else if (button == GLUT_LEFT_BUTTON && state == GLUT_UP)
+	{
+		player.mouses[0] = false;
 	}
 	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
 	{
@@ -359,6 +365,8 @@ void TimerFunction(int value)
 	rifle->update(deltaTime, player.position,camera.yaw,camera.pitch);
 	club->update(deltaTime, player.position, camera.yaw, camera.pitch);
 	player.zoom_in(deltaTime);
+	if (player.mouses[0])
+		player.weapons[player.currentWeapon]->attack(deltaTime);
 	for (auto& e : *enemies) {
 		e.update(deltaTime,player.position);
 	}

@@ -49,7 +49,7 @@ public:
     bool get_is_get() {
         return is_get;
     }
-	void attack() override {
+	void attack(float deltaTime) override {
 		//빠따 휘두르기 구현
 	}
     void zoom_in(bool mode, float deltaTime)override;

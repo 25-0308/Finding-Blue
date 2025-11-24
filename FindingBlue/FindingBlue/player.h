@@ -15,7 +15,7 @@ public:
     int currentWeapon = 0;
 
     bool keys[256] = { false };
-
+	bool mouses[4] = { false }; //ÁÂÅ¬ ¿ìÅ¬ ÈÙÀ§ ÈÙ¾Æ·¡
     float speed = 5.0f;
 
     Player() :

@@ -8,7 +8,8 @@ private:
 	glm::vec3 front;    
 
     bool is_get = false;
-    
+	bool recoil_mode = false;
+
 
 public:
     Object wood;
@@ -48,27 +49,10 @@ public:
     bool get_is_get() {
         return is_get;
     }
-	void attack() override {
-		//총알발사 이런거 구현
-	}
-	void zoom_in(bool mode,float deltaTime)override  {
-		//조준모드 구현
-        if (mode) {
-            //오프셋 y값 줄이기
-			offsets.x -= 0.1f * deltaTime;
-            if (offsets.x) {
-                offsets.x < -0.2f;
-                offsets.x = -0.2f;
-            }
-        }
-        else if (!mode) {
-            //오프셋 y값 늘리기
-            offsets.x += 1.0f * deltaTime;
-            if (offsets.x > 0.0f) {
-                offsets.x = 0.0f;
-            }
-        }
-	}
+    void attack(float deltaTime) override; //총 반동도 여기 넣을ㄹ거
+    bool get_recoil_mode() { return this->recoil_mode; };
+	void set_recoil_mode(bool mode) { this->recoil_mode = mode; };
+    void zoom_in(bool mode, float deltaTime)override;
 
 };
 

@@ -53,3 +53,43 @@ bool AK_47::get_weapon(glm::vec3 playerPos) {
     return false;
 
 }
+
+void AK_47::attack(float deltaTime) {
+	//총 반동 구현
+    if (!this->recoil_mode) {
+        //총 오프셋 뒤로
+		this->offsets.z += 3.0f*deltaTime;
+		if (this->offsets.z > 0.1f) {
+			this->recoil_mode = true;
+            this->offsets.z = 0.1f;
+		}
+	}
+    else if (this->recoil_mode) {
+        //총 오프셋 앞으로
+        this->offsets.z -= 3.0f * deltaTime;
+        if (this->offsets.z < 0.0f) {
+            this->recoil_mode = false;
+            this->offsets.z = 0.0f;
+
+        }
+    }
+}
+
+void AK_47::zoom_in(bool mode, float deltaTime) {
+    //조준모드 구현
+    if (mode) {
+        //오프셋 y값 줄이기
+        offsets.x -= 0.1f * deltaTime;
+        if (offsets.x) {
+            offsets.x < -0.2f;
+            offsets.x = -0.2f;
+        }
+    }
+    else if (!mode) {
+        //오프셋 y값 늘리기
+        offsets.x += 1.0f * deltaTime;
+        if (offsets.x > 0.0f) {
+            offsets.x = 0.0f;
+        }
+    }
+}
