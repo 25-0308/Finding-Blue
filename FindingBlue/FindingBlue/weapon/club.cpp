@@ -79,7 +79,7 @@ void CLUB::attack(float deltaTime) {
         if (this->attack_offsets.x > glm::radians(0.0f)) {
             this->recoil_mode = false;
             this->attack_offsets.x = glm::radians(0.0f);
-   
+            this->on_attak = false;
     
         }
     }

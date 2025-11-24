@@ -381,29 +381,26 @@ void TimerFunction(int value)
 	club->update(deltaTime, player.position, camera.yaw, camera.pitch);
 	player.zoom_in(deltaTime);
 	if (player.mouses[0] && !player.weapons.empty()) {
-		player.weapons[player.currentWeapon]->attack(deltaTime);
+		
 		//만약 총기류면 반동
 		if (rifle==(player.weapons[player.currentWeapon])) {
+			player.weapons[player.currentWeapon]->attack(deltaTime);
 			camera.pitch += (rand() % 100/100.0f) * 40.0f*deltaTime; //좌우약간흔들림
 		}
-		//적과 플레이어 거리가 가까우면 적 제거
+		//곤봉 근접류면 다시 돌아와야하니까
 		if (club == (player.weapons[player.currentWeapon])) {
-			//for (int i = 0; i < enemies->size(); i++)
-			//{
-			//	ENEMY* e = (*enemies)[i];
-
-			//	if (e->hit(player.position))
-			//	{
-			//		delete e;  // 메모리 해제
-			//		enemies->erase(enemies->begin() + i); // 포인터 제거
-			//		i--;
-			//	}
-			//}
+			player.weapons[player.currentWeapon]->on_attak = true;
 
 
 		}
 		
 		
+	}
+	if (!player.weapons.empty()&&club == (player.weapons[player.currentWeapon]))
+	{
+		if (player.weapons[player.currentWeapon]->on_attak)
+			player.weapons[player.currentWeapon]->attack(deltaTime);
+
 	}
 	for (auto& e : *enemies) {
 		e.update(deltaTime,player.position);
