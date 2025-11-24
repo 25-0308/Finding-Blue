@@ -99,7 +99,7 @@ public:
 
     void draw(GLuint shader) {
 		head.draw(shader);
-		//body.draw(shader);
+		body.draw(shader);
 		Rarm1.draw(shader);
 		Rarm2.draw(shader);
 		Larm1.draw(shader);

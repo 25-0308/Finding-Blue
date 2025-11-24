@@ -1,6 +1,6 @@
 #include"../ak_47.h"
 
-
+#include<iostream>
 void AK_47::update(float deltaTime, glm::vec3 position, float yaw, float pitch)
 {
     if (!this->is_get) {
@@ -19,7 +19,7 @@ void AK_47::update(float deltaTime, glm::vec3 position, float yaw, float pitch)
         front.y = sin(glm::radians(pitch));
         front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
         front = glm::normalize(front);
-
+        this->front = front;
         glm::vec3 right = glm::normalize(glm::cross(front, glm::vec3(0, 1, 0)));
         glm::vec3 up = glm::normalize(glm::cross(right, front));
 
@@ -29,7 +29,8 @@ void AK_47::update(float deltaTime, glm::vec3 position, float yaw, float pitch)
             + front * (0.3f+this->offsets.z); // 화면 안쪽으로
 
         glm::vec3 gunPos = position + offset;
-
+        this->for_bullet_offset = gunPos;
+        this->for_bullet_offset.y += 0.1f;
         // 총 위치 설정
         this->wood.position = gunPos;
         this->metal.position = gunPos;
@@ -40,7 +41,12 @@ void AK_47::update(float deltaTime, glm::vec3 position, float yaw, float pitch)
         metal.rotation.z = glm::radians(pitch);
     }
 
-    
+    if (!bullets.empty()) {
+        for (auto& b : bullets) {
+            b->update(deltaTime,yaw,pitch);
+        }
+
+    }
 
 }
 
@@ -63,7 +69,8 @@ void AK_47::attack(float deltaTime) {
 			this->recoil_mode = true;
             this->offsets.z = 0.1f;
             //이 부분에 총알 생성 넣으면 될거같다
-			bullets.push_back(shoot_bullet(this->position, this->front));
+			bullets.push_back(shoot_bullet(this->for_bullet_offset, this->front));
+			std::cout << this->front.x << " " << this->front.y << " " << this->front.z << std::endl;
 		}
 	}
     else if (this->recoil_mode) {
@@ -96,10 +103,11 @@ void AK_47::zoom_in(bool mode, float deltaTime) {
     }
 }
 
-BULLET shoot_bullet(glm::vec3 postion, glm::vec3 direction) {
-	BULLET new_bullet;
-	new_bullet.init();
-	new_bullet.set_position(postion);
-	new_bullet.set_front(direction);
+BULLET* shoot_bullet(glm::vec3 postion, glm::vec3 direction) {
+	BULLET* new_bullet;
+	new_bullet = new BULLET();
+	new_bullet->init();
+	new_bullet->set_position(postion);
+	new_bullet->set_front(direction);
 	return new_bullet;
 }

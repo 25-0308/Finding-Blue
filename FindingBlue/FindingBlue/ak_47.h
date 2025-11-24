@@ -12,12 +12,13 @@ private:
 	bool recoil_mode = false;
 
     //총알 목록들
-	std::vector<BULLET> bullets;
+	std::vector<BULLET*> bullets;
 
 public:
     Object wood;
     Object metal;
     glm::vec3 offsets = glm::vec3(0.0f);
+	glm::vec3 for_bullet_offset = glm::vec3(0.0f);
     AK_47()
         : wood("asset/ak_47/ak_47_wood.obj", "asset/ak_47/ak_v2.png"),
         metal("asset/ak_47/ak_47_metal.obj", "asset/ak_47/ak_v2.png")
@@ -48,7 +49,7 @@ public:
             //총알이 안비어있다면 드로우
             if (!bullets.empty()) {
 				for (auto& b : bullets) {
-					b.draw(shader);
+					b->draw(shader);
 				}
               
             }
@@ -67,4 +68,4 @@ public:
     void zoom_in(bool mode, float deltaTime)override;
 
 };
-BULLET shoot_bullet(glm::vec3 postion, glm::vec3 direction);
+BULLET* shoot_bullet(glm::vec3 postion, glm::vec3 direction);

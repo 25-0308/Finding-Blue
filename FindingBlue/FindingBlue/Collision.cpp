@@ -2,6 +2,10 @@
 #include <algorithm>
 #include <vector>
 #include <array>
+#include <GL/glm/gtc/type_ptr.hpp>
+
+
+
 
 namespace Debug_Draw {
 	std::vector<glm::vec3> lines;
@@ -11,16 +15,34 @@ namespace Debug_Draw {
 		lines.push_back(end);
 		lines.push_back(color);
 	}
+	void Render( ) {
+
+		
+		glDisable(GL_TEXTURE_2D);
+		glLineWidth(2.0f);
+		glBegin(GL_LINES);
+		for (size_t i = 0; i + 2 < lines.size(); i += 3) {
+			glColor3fv(glm::value_ptr(lines[i + 2]));
+			glVertex3fv(glm::value_ptr(lines[i]));
+			glVertex3fv(glm::value_ptr(lines[i + 1]));
+		}
+		glEnd();
+		glLineWidth(1.0f);
+		glEnable(GL_TEXTURE_2D);
+		lines.clear();
+	}
 }
 
-Collision::Collision(const glm::vec3 half) : halfsize(half){}
+Collision::Collision(const glm::vec3 half) : halfsize(half) {}
 
 glm::vec3 Collision::Min() const {
-	return center - halfsize;
-} // 최소 좌표 반환
+    return center - halfsize;
+}
+
 glm::vec3 Collision::Max() const {
-	return center + halfsize;
-}// 최대 좌표 반환
+    return center + halfsize;
+}
+
 
 bool Collision::check_collision(const Collision& other) const {
 	return (Max().x >= other.Min().x && Min().x <= other.Max().x) &&
@@ -28,38 +50,21 @@ bool Collision::check_collision(const Collision& other) const {
 		(Max().z >= other.Min().z && Min().z <= other.Max().z);
 } // 충돌 검사
 
-void Collision::updateBox(const glm::vec3& localHalfsize,
-	const glm::quat& rotation, const glm::vec3& position) {
-	
-	glm::mat3 rot = glm::mat3_cast(rotation);
+void Collision::updateBox(const glm::vec3& localHalfsize, const glm::vec3& position, const glm::vec3& scale)
+{
+	glm::vec3 scaledHalf = localHalfsize * scale;
+	center = position;
+	halfsize = glm::vec3(1.0,2.0,2.0);
 
-	glm::vec3 corners[8] = {
-		rot * glm::vec3(-localHalfsize.x, -localHalfsize.y, -localHalfsize.z),
-		rot * glm::vec3(localHalfsize.x, -localHalfsize.y, -localHalfsize.z),
-		rot * glm::vec3(localHalfsize.x,  localHalfsize.y, -localHalfsize.z),
-		rot * glm::vec3(-localHalfsize.x,  localHalfsize.y, -localHalfsize.z),
-		rot * glm::vec3(-localHalfsize.x, -localHalfsize.y,  localHalfsize.z),
-		rot * glm::vec3(localHalfsize.x, -localHalfsize.y,  localHalfsize.z),
-		rot * glm::vec3(localHalfsize.x,  localHalfsize.y,  localHalfsize.z),
-		rot * glm::vec3(-localHalfsize.x,  localHalfsize.y,  localHalfsize.z)
-	};
-
-	glm::vec3 minPoint = corners[0] + position;
-	glm::vec3 maxPoint = corners[0] + position;
-
-	for (int i = 1; i < 8; ++i) {
-		glm::vec3 point = corners[i] + position;
-		minPoint = glm::min(minPoint, point);
-		maxPoint = glm::max(maxPoint, point);
-	}
-
-	center = (minPoint + maxPoint) * 0.5f;
-	halfsize = (maxPoint - minPoint) * 0.5f;
-} // 이동에 따른 업데이트
+}
 
 void Collision::Debug_Draw(const glm::vec3& color) const {
-	glm::vec3 min = Min();
-	glm::vec3 max = Max();
+
+	// 항상 같은 크기의 박스를 사용 (원하면 값 바꿔도 됨)
+	glm::vec3 fixedHalf = glm::vec3(0.5f);  // → 박스 크기 1x1x1
+
+	glm::vec3 min = center - fixedHalf;
+	glm::vec3 max = center + fixedHalf;
 
 	glm::vec3 v[8] = {
 		glm::vec3(min.x, min.y, min.z),
@@ -73,11 +78,16 @@ void Collision::Debug_Draw(const glm::vec3& color) const {
 	};
 
 	const int edges[24] = {
-		0, 1, 1, 2, 2, 3, 3, 0,//아래
-		4, 5, 5, 6, 6, 7, 7, 4,//위
-		0, 4, 1, 5, 2, 6, 3, 7//옆
+		0,1, 1,2, 2,3, 3,0,
+		4,5, 5,6, 6,7, 7,4,
+		0,4, 1,5, 2,6, 3,7
 	};
+
 	for (int i = 0; i < 24; i += 2) {
 		Debug_Draw::AddLine(v[edges[i]], v[edges[i + 1]], color);
 	}
-} // 빨간 박스 그리기
+	//std::cout <<"Cpos"<< center.x << "," << center.y << "," << center.z << std::endl;
+	//std::cout <<"Bpos" << v[0].x << "," << v[0].y << "," << v[0].z << std::endl;
+	//std::cout<<"---------------" << std::endl;
+}
+// 빨간 박스 그리기

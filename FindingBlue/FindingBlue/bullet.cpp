@@ -1,16 +1,18 @@
 #include"bullet.h"
 
 
-void BULLET::update(float deltaTime) {
+void BULLET::update(float deltaTime, float yaw, float pitch) {
 	//ÃÑ¾Ë ÀÌµ¿
-	float speed = 50.0f; // ÃÑ¾Ë ¼Óµµ
+	float speed = 100.0f; // ÃÑ¾Ë ¼Óµµ
 	this->position += this->front * speed * deltaTime;
 	bullet_obj.position = this->position;
 	//ÃÑ¾Ë À§Ä¡ ¾÷µ¥ÀÌÆ®
 	this->bullet_obj.position = this->position;
 	//ÃÑ¾Ë ¹æÇâ ¼³Á¤
-	float yaw = glm::degrees(atan2(this->front.x, this->front.z));
-	float pitch = glm::degrees(asin(this->front.y));
-	this->bullet_obj.rotation.y = -glm::radians(yaw);
-	this->bullet_obj.rotation.z = glm::radians(pitch);
+	if (this->initialized == false) {
+		this->bullet_obj.rotation.y = -glm::radians(yaw);
+		this->bullet_obj.rotation.z = glm::radians(pitch);
+		this->initialized = true;
+	}
+
 }

@@ -7,8 +7,9 @@ private:
     //총이 가지고 있어야하는 그런것들임
     glm::vec3 position;
     glm::vec3 front;
-
-
+    float yaw=0.0;
+	float pitch=0.0;
+	bool initialized = false;
 
 public:
   
@@ -41,7 +42,7 @@ public:
 
     }
     //여기 아래로는 cpp 파일에 작성할 것들
-    void update(float deltaTime);
+    void update(float deltaTime,float yaw,float pitch);
     void set_position(glm::vec3 pos) {
         this->position = bullet_obj.position =pos;
     }
