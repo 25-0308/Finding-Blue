@@ -27,3 +27,27 @@ void Player::move(float deltaTime)
 	}
 	position = nextposition;
 }
+void Player::change_weapon(int index)
+{
+	if (index >= 0 && index < weapons.size()) {
+		currentWeapon = index;
+	}
+}
+
+void Player::zoom_in(float deltaTime) {
+	if (this->zoom_mode) {
+		FOV -= 30.0f * deltaTime;
+		if (FOV < 35.0f) FOV = 35.0f;
+
+		//일단 총부터 위치변경
+		if (!this->weapons.empty())
+		this->weapons[currentWeapon]->zoom_in(true, deltaTime);
+
+	}
+	else if (!this->zoom_mode) {
+		FOV += 30.0f * deltaTime;
+		if (FOV > 45.0f) FOV = 45.0f;
+		if(!this->weapons.empty())
+		this->weapons[currentWeapon]->zoom_in(false, deltaTime);
+	}
+}

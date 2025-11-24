@@ -26,6 +26,7 @@ void CLUB::update(float deltaTime, glm::vec3 position, float yaw, float pitch)
         glm::vec3 offset = right * 0.5f   // 화면 오른쪽으로
             + up * -0.3f    // 화면 아래로
             + front * 0.8f; // 화면 안쪽으로
+  
 
         glm::vec3 gunPos = position + offset;
 
@@ -42,9 +43,14 @@ void CLUB::update(float deltaTime, glm::vec3 position, float yaw, float pitch)
 
 }
 
-void CLUB::get_weapon(glm::vec3 playerPos) {
+bool CLUB::get_weapon(glm::vec3 playerPos) {
 	float distance = glm::length(playerPos - this->metal.position);
-	if (distance < 1.5f) {
+	if (distance < 1.5f&&!this->is_get) {
 		this->is_get = true;
+        return true;
 	}
+    return false;
+}
+void CLUB::zoom_in(bool mode, float deltaTime) {
+	//빠따는 줌인모드 없음
 }

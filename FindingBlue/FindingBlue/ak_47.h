@@ -1,6 +1,6 @@
 #pragma once
 #include "Object.h"
-
+#include"weapon.h"
 class AK_47 : public Weapon {
 private:
     //총이 가지고 있어야하는 그런것들임
@@ -8,45 +8,67 @@ private:
 	glm::vec3 front;    
 
     bool is_get = false;
-
+    
 
 public:
     Object wood;
     Object metal;
-
+    glm::vec3 offsets = glm::vec3(0.0f);
     AK_47()
         : wood("asset/ak_47/ak_47_wood.obj", "asset/ak_47/ak_v2.png"),
         metal("asset/ak_47/ak_47_metal.obj", "asset/ak_47/ak_v2.png")
     {
     }
 
-    void init() {
+    void init() override {
         wood.init();
         metal.init();
 		wood.scale = metal.scale = glm::vec3(0.3f);
 		wood.position = metal.position = glm::vec3(5.0f, -0.2f, 10.0f);
     }
 
-    void draw(GLuint shader) {
+    void draw(GLuint shader)override {
 
-      
-        glUniform1f(glGetUniformLocation(shader, "material.shininess"), 256.0f);
-        glUniform1f(glGetUniformLocation(shader, "material.specularStrength"), 10.0f);
-        glUniform1f(glGetUniformLocation(shader, "material.metallic"), 1.0f);
-        glUniform1f(glGetUniformLocation(shader, "lightIntensity"), 2.5f);
-        metal.draw(shader);
-        glUniform1f(glGetUniformLocation(shader, "material.shininess"), 8.0f);
-        glUniform1f(glGetUniformLocation(shader, "material.specularStrength"), 0.2f);
-        glUniform1f(glGetUniformLocation(shader, "material.metallic"), 0.0f);
-        glUniform1f(glGetUniformLocation(shader, "lightIntensity"), 1.0f);
+            glUniform1f(glGetUniformLocation(shader, "material.shininess"), 256.0f);
+            glUniform1f(glGetUniformLocation(shader, "material.specularStrength"), 10.0f);
+            glUniform1f(glGetUniformLocation(shader, "material.metallic"), 1.0f);
+            glUniform1f(glGetUniformLocation(shader, "lightIntensity"), 2.5f);
+            metal.draw(shader);
+            glUniform1f(glGetUniformLocation(shader, "material.shininess"), 8.0f);
+            glUniform1f(glGetUniformLocation(shader, "material.specularStrength"), 0.2f);
+            glUniform1f(glGetUniformLocation(shader, "material.metallic"), 0.0f);
+            glUniform1f(glGetUniformLocation(shader, "lightIntensity"), 1.0f);
 
-        wood.draw(shader);
+            wood.draw(shader);
+        
     }
 	//여기 아래로는 cpp 파일에 작성할 것들
-    void update(float deltaTime, glm::vec3 position, float yaw, float pitch);
-    void get_weapon(glm::vec3 playerPos);
-
-
+    void update(float deltaTime, glm::vec3 position, float yaw, float pitch)override;
+    bool get_weapon(glm::vec3 playerPos);
+    bool get_is_get() {
+        return is_get;
+    }
+	void attack() override {
+		//총알발사 이런거 구현
+	}
+	void zoom_in(bool mode,float deltaTime)override  {
+		//조준모드 구현
+        if (mode) {
+            //오프셋 y값 줄이기
+			offsets.x -= 0.1f * deltaTime;
+            if (offsets.x) {
+                offsets.x < -0.2f;
+                offsets.x = -0.2f;
+            }
+        }
+        else if (!mode) {
+            //오프셋 y값 늘리기
+            offsets.x += 1.0f * deltaTime;
+            if (offsets.x > 0.0f) {
+                offsets.x = 0.0f;
+            }
+        }
+	}
 
 };
 

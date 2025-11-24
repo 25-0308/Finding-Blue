@@ -118,5 +118,8 @@
     <ClInclude Include="Collision.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="weapon.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -219,7 +219,7 @@ GLvoid drawScene() {
 	GLuint viewLoc = glGetUniformLocation(shaderProgramID, "view");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 	//투영행렬
-	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 150.0f);
+	glm::mat4 projection = glm::perspective(glm::radians(player.FOV), (float)width / (float)height, 0.1f, 150.0f);
 	GLuint projLoc = glGetUniformLocation(shaderProgramID, "projection");
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 	
@@ -227,8 +227,13 @@ GLvoid drawScene() {
 	//조명적용
 	light1.apply(shaderProgramID);
 
-	rifle->draw(shaderProgramID);
-	club->draw(shaderProgramID);
+	if(!rifle->get_is_get())
+		rifle->draw(shaderProgramID);
+	if (!club->get_is_get())
+		club->draw(shaderProgramID);
+
+	//플레이어 무기 그리기
+	player.draw_weapon(shaderProgramID);
 	if(map_loaded)
 	field->draw(shaderProgramID);
 
@@ -262,7 +267,12 @@ void mouseCallback(int button, int state, int x, int y) {
 	}
 	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
 	{
-
+		//줌모드
+		player.zoom_mode = true;
+	}
+	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_UP)
+	{
+		player.zoom_mode = false;
 	}
 }
 GLvoid KeyboardDown(unsigned char key, int x, int y) {
@@ -284,8 +294,15 @@ GLvoid KeyboardDown(unsigned char key, int x, int y) {
 		camera.sensitivity += 5.0f;
 		break;
 	case'f':
-		rifle->get_weapon(player.position);
-		club->get_weapon(player.position);
+		if (rifle->get_weapon(player.position)) {
+			player.weapons.push_back(rifle);
+			player.change_weapon(player.weapons.size() - 1);
+		}
+		if (club->get_weapon(player.position)) {
+			player.weapons.push_back(club);
+			player.change_weapon(player.weapons.size() - 1);
+		}
+		
 		break;
 	case'-':
 		camera.sensitivity -= 5.0f;
@@ -341,6 +358,7 @@ void TimerFunction(int value)
 	player.move(deltaTime);
 	rifle->update(deltaTime, player.position,camera.yaw,camera.pitch);
 	club->update(deltaTime, player.position, camera.yaw, camera.pitch);
+	player.zoom_in(deltaTime);
 	for (auto& e : *enemies) {
 		e.update(deltaTime,player.position);
 	}

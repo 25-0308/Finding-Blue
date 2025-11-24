@@ -24,9 +24,9 @@ void AK_47::update(float deltaTime, glm::vec3 position, float yaw, float pitch)
         glm::vec3 up = glm::normalize(glm::cross(right, front));
 
 
-        glm::vec3 offset = right * 0.2f   // 화면 오른쪽으로
-            + up * -0.2f    // 화면 아래로
-            + front * 0.3f; // 화면 안쪽으로
+        glm::vec3 offset = right * (0.2f+this->offsets.x)   // 화면 오른쪽으로
+            + up * ( - 0.2f+this->offsets.y)    // 화면 아래로
+            + front * (0.3f+this->offsets.z); // 화면 안쪽으로
 
         glm::vec3 gunPos = position + offset;
 
@@ -44,9 +44,12 @@ void AK_47::update(float deltaTime, glm::vec3 position, float yaw, float pitch)
 
 }
 
-void AK_47::get_weapon(glm::vec3 playerPos) {
+bool AK_47::get_weapon(glm::vec3 playerPos) {
 	float distance = glm::length(playerPos - this->wood.position);
-	if (distance < 1.5f) {
+	if (distance < 1.5f && !this->is_get) {
 		this->is_get = true;
+		return true;
 	}
+    return false;
+
 }
