@@ -16,7 +16,8 @@ public:
 
     glm::vec3 pivot = glm::vec3(0.0f);
     
-
+	Collision collision;
+	glm::vec3 localHalfsize = glm::vec3(0.5f);
 
     Object() {}
 
@@ -26,12 +27,7 @@ public:
     }
 
     void updateBox() {
-		glm::vec3 rot = glm::radians(rotation); // 라디안으로 각도 변환
-		glm::quat quat = glm::quat(rot); // 변한 각도에 따라 회전행렬 생성
-
-		glm::vec3 scaledHalfsize = localHalfsize * scale; // 스케일 적용
-
-		collision.updateBox(scaledHalfsize, quat, position);
+		collision.updateBox(localHalfsize, position, scale);
     }; // 이동에 따른 업데이트
 
 

@@ -2,6 +2,8 @@
 #include <algorithm>
 #include <vector>
 #include <array>
+#include <GL/glut.h>
+#include <GL/glm/gtc/type_ptr.hpp>
 
 namespace Debug_Draw {
 	std::vector<glm::vec3> lines;
@@ -10,6 +12,20 @@ namespace Debug_Draw {
 		lines.push_back(start);
 		lines.push_back(end);
 		lines.push_back(color);
+	}
+	void Render() {
+		glDisable(GL_TEXTURE_2D);
+		glLineWidth(2.0f);
+		glBegin(GL_LINES);
+		for (size_t i = 0; i + 2 < lines.size(); i += 3) {
+			glColor3fv(glm::value_ptr(lines[i + 2]));
+			glVertex3fv(glm::value_ptr(lines[i]));
+			glVertex3fv(glm::value_ptr(lines[i + 1]));
+		}
+		glEnd();
+		glLineWidth(1.0f);
+		glEnable(GL_TEXTURE_2D);
+		lines.clear();
 	}
 }
 
@@ -28,34 +44,13 @@ bool Collision::check_collision(const Collision& other) const {
 		(Max().z >= other.Min().z && Min().z <= other.Max().z);
 } // 충돌 검사
 
-void Collision::updateBox(const glm::vec3& localHalfsize,
-	const glm::quat& rotation, const glm::vec3& position) {
-	
-	glm::mat3 rot = glm::mat3_cast(rotation);
+void Collision::updateBox(const glm::vec3& localHalfsize, const glm::vec3& position, const glm::vec3& scale)
+{
+	glm::vec3 scaledHalf = localHalfsize * scale;
+	center = position;
+	halfsize = scaledHalf;
 
-	glm::vec3 corners[8] = {
-		rot * glm::vec3(-localHalfsize.x, -localHalfsize.y, -localHalfsize.z),
-		rot * glm::vec3(localHalfsize.x, -localHalfsize.y, -localHalfsize.z),
-		rot * glm::vec3(localHalfsize.x,  localHalfsize.y, -localHalfsize.z),
-		rot * glm::vec3(-localHalfsize.x,  localHalfsize.y, -localHalfsize.z),
-		rot * glm::vec3(-localHalfsize.x, -localHalfsize.y,  localHalfsize.z),
-		rot * glm::vec3(localHalfsize.x, -localHalfsize.y,  localHalfsize.z),
-		rot * glm::vec3(localHalfsize.x,  localHalfsize.y,  localHalfsize.z),
-		rot * glm::vec3(-localHalfsize.x,  localHalfsize.y,  localHalfsize.z)
-	};
-
-	glm::vec3 minPoint = corners[0] + position;
-	glm::vec3 maxPoint = corners[0] + position;
-
-	for (int i = 1; i < 8; ++i) {
-		glm::vec3 point = corners[i] + position;
-		minPoint = glm::min(minPoint, point);
-		maxPoint = glm::max(maxPoint, point);
-	}
-
-	center = (minPoint + maxPoint) * 0.5f;
-	halfsize = (maxPoint - minPoint) * 0.5f;
-} // 이동에 따른 업데이트
+}
 
 void Collision::Debug_Draw(const glm::vec3& color) const {
 	glm::vec3 min = Min();

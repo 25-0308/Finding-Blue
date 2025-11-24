@@ -243,6 +243,8 @@ GLvoid drawScene() {
 		e.draw(shaderProgramID);
 	}
 
+	Debug_Draw::Render();
+
 	glutSwapBuffers();
 }
 //--- 다시그리기 콜백 함수
