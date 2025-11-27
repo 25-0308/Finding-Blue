@@ -375,9 +375,9 @@ float frand(float a, float b) {
 
 void ENEMY::spawn_blood() {
 
-	glm::vec3 headPos = this->position + glm::vec3(0, 1.8f, 0);
+	glm::vec3 headPos = this->position + glm::vec3(0, 0.5f, 0);
 
-	const int count = 20;
+	const int count = 50;
 	for (int i = 0; i < count; i++) {
 
 		BLOOD* b = new BLOOD();
