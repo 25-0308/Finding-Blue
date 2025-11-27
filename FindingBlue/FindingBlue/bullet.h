@@ -1,6 +1,6 @@
 #pragma once
 #include"object.h"
-
+#include"Collision.h"
 
 class BULLET {
 private:
@@ -13,6 +13,7 @@ private:
 
 public:
   
+    Collision collision;
     Object bullet_obj;
     glm::vec3 offsets = glm::vec3(0.0f);
     BULLET()
@@ -39,7 +40,9 @@ public:
         glUniform1f(glGetUniformLocation(shader, "material.metallic"), 0.0f);
         glUniform1f(glGetUniformLocation(shader, "lightIntensity"), 1.0f);
 
-
+		collision.center = bullet_obj.position;
+        collision.halfsize = collision.halfsize * bullet_obj.scale * 2.0f;
+		collision.Debug_Draw(glm::vec3(1.0, 0.0, 0.0));
     }
     //여기 아래로는 cpp 파일에 작성할 것들
     bool update(float deltaTime,float yaw,float pitch);
