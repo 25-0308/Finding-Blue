@@ -26,6 +26,8 @@ public:
         bullet_obj.init();
         bullet_obj.scale = glm::vec3(0.1f);
         bullet_obj.position = glm::vec3(5.0f, -0.2f, 10.0f);
+        collision.center = bullet_obj.position;
+        collision.halfsize = collision.halfsize * bullet_obj.scale;
     }
 
     void draw(GLuint shader) {
@@ -40,8 +42,6 @@ public:
         glUniform1f(glGetUniformLocation(shader, "material.metallic"), 0.0f);
         glUniform1f(glGetUniformLocation(shader, "lightIntensity"), 1.0f);
 
-        collision.center = bullet_obj.position;
-        collision.halfsize = collision.halfsize * bullet_obj.scale * 2.0f;
 		collision.Debug_Draw(glm::vec3(1.0, 0.0, 0.0));
     }
     //여기 아래로는 cpp 파일에 작성할 것들

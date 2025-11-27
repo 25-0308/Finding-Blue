@@ -478,6 +478,18 @@ void TimerFunction(int value)
 				}
 			}
 		}
+		//minigun 총알 검사
+		if (minigun && minigun->get_is_get()) {
+			for (size_t i = 0; i < minigun->bullets.size(); ++i) {
+				BULLET* bullet = minigun->bullets[i];
+				if (enemy.collision.check_collision(bullet->collision)) {
+					std::cout << "ENEMY와 MINIGUN BULLET 충돌!" << std::endl;
+					delete bullet;
+					minigun->bullets.erase(minigun->bullets.begin() + i);
+					break;
+				}
+			}
+		}
 	}
 	drawScene();
 

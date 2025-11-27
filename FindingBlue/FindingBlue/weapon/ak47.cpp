@@ -49,7 +49,6 @@ void AK_47::update(float deltaTime, glm::vec3 position, float yaw, float pitch)
         {
             delete b;            // 메모리 해제
             bullets.erase(bullets.begin() + i);  // 벡터에서 제거
-			std::cout << "총알삭제" << std::endl;
         }
     }
 

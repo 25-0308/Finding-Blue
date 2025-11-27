@@ -12,10 +12,10 @@ private:
     bool recoil_mode = false;
 	float head_rotate_angle_offset = 0.0f;
 	float rotate_speed = 0.0f;
-    //ÃÑ¾Ë ¸ñ·Ïµé
-    std::vector<BULLET*> bullets;
 
 public:
+    //ÃÑ¾Ë ¸ñ·Ïµé
+    std::vector<BULLET*> bullets;
     Object head;
     Object body;
     glm::vec3 offsets = glm::vec3(0.0f);
