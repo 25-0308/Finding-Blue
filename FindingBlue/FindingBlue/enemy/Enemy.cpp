@@ -9,13 +9,18 @@ void ENEMY::update(float deltaTime, glm::vec3 target) {
 	//콜라이더 위치 업데이트
 	collision.center = this->position;
 	collision.center.y += 0.5f;
-	
-	if (distance < 3.0f) {
-		//달려옴
-		this->run(deltaTime, target);
+	if (!this->is_dead) {
+		if (distance < 10.0f) {
+			//달려옴
+			this->run(deltaTime, target);
+		}
+		else if (distance >= 10.0f) {
+			this->idle(deltaTime);
+		}
 	}
-	else if (distance >= 3.0f) {
-		this->idle(deltaTime);
+	else if (this->is_dead) {
+		//사망모션
+		this->head.position.y += 15.5f * deltaTime;
 	}
 	
 }
