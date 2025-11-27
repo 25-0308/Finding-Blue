@@ -28,14 +28,14 @@ public:
 
     void updateBox() {
 		collision.updateBox(localHalfsize, position, scale);
-    }; // 이동에 따른 업데이트
+    }; // ?�동???�른 ?�데?�트
 
 
 
     void init() {
 
         if (objPath)
-            CreateRenderableObject(objPath, obj); // 텍스처 포함시키지 않음
+            CreateRenderableObject(objPath, obj); // ?�스�??�함?�키지 ?�음
 
         if (texPath)
             textureID = TextureManager::GetTexture(texPath);
@@ -53,24 +53,23 @@ public:
      
 
         m = glm::rotate(m, rotation.y, glm::vec3(0, 1, 0));
-        m = glm::rotate(m, rotation.x, glm::vec3(1, 0, 0));
-        m = glm::translate(m, pivot);   // 1. pivot으로 이동
-        m = glm::rotate(m, rotation.z, glm::vec3(0, 0, 1)); // 팔 회전
-        m = glm::translate(m, -pivot);  // 3. pivot 복귀
+        m = glm::translate(m, pivot);  //1. pivot���� �̵�
+        m = glm::rotate(m, rotation.z, glm::vec3(0, 0, 1)); // ��ȸ��
+        m = glm::translate(m, -pivot);  // 3. pivot ����
         m = glm::scale(m, scale);
-
+        m = glm::rotate(m, rotation.x, glm::vec3(1, 0, 0));
         obj.modelMatrix = m;
 
         drawObject(shader, obj);
 
 		updateBox();
 
-    	collision.Debug_Draw(glm::vec3(1, 0, 0)); // 빨간 선 추가 그리기
+    	collision.Debug_Draw(glm::vec3(1, 0, 0)); // 빨간 ??추�? 그리�?
     }
 
 
     virtual ~Object() {
         deleteObject(obj);
-        // 텍스처는 삭제하지 않음 (공유 중)
+        // ?�스처는 ??��?��? ?�음 (공유 �?
     }
 };

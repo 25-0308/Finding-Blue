@@ -42,7 +42,7 @@ public:
 
     }
     //여기 아래로는 cpp 파일에 작성할 것들
-    void update(float deltaTime,float yaw,float pitch);
+    bool update(float deltaTime,float yaw,float pitch);
     void set_position(glm::vec3 pos) {
         this->position = bullet_obj.position =pos;
     }

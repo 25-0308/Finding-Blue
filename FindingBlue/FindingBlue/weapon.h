@@ -4,6 +4,7 @@ class Weapon {
 public:
     glm::vec3 position = glm::vec3(0);
     glm::vec3 rotation = glm::vec3(0);
+	bool on_attak = false; //근접무기때문에 넣음
 
     virtual void init() {}
     virtual void update(float dt, glm::vec3 playerPos, float yaw, float pitch) {}

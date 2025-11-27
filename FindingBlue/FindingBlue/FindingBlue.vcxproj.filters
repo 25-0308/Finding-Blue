@@ -83,6 +83,15 @@
     <ClCompile Include="bullet.cpp">
       <Filter>소스 파일\weapon</Filter>
     </ClCompile>
+    <ClCompile Include="weapon\claymore.cpp">
+      <Filter>소스 파일\weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="weapon\pistol.cpp">
+      <Filter>소스 파일\weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="weapon\minigun.cpp">
+      <Filter>소스 파일\weapon</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stb_image.h">
@@ -125,6 +134,15 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="bullet.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="claymore.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="pistol.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="minigun.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

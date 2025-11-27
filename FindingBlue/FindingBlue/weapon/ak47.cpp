@@ -41,11 +41,16 @@ void AK_47::update(float deltaTime, glm::vec3 position, float yaw, float pitch)
         metal.rotation.z = glm::radians(pitch);
     }
 
-    if (!bullets.empty()) {
-        for (auto& b : bullets) {
-            b->update(deltaTime,yaw,pitch);
-        }
+    for (int i = bullets.size() - 1; i >= 0; --i)
+    {
+        BULLET* b = bullets[i];
 
+        if (b->update(deltaTime,yaw,pitch)) // 삭제 조건 만족?
+        {
+            delete b;            // 메모리 해제
+            bullets.erase(bullets.begin() + i);  // 벡터에서 제거
+			std::cout << "총알삭제" << std::endl;
+        }
     }
 
 }
@@ -70,7 +75,7 @@ void AK_47::attack(float deltaTime) {
             this->offsets.z = 0.1f;
             //이 부분에 총알 생성 넣으면 될거같다
 			bullets.push_back(shoot_bullet(this->for_bullet_offset, this->front));
-			std::cout << this->front.x << " " << this->front.y << " " << this->front.z << std::endl;
+            //std::cout << this->front.x << " " << this->front.y << " " << this->front.z << std::endl;
 		}
 	}
     else if (this->recoil_mode) {

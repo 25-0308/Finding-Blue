@@ -11,6 +11,9 @@
 #include"camera.h"
 #include"light.h"
 #include"bullet.h"
+#include"claymore.h"
+#include"pistol.h"
+#include"minigun.h"
 //--- 아래 5개 함수는 사용자 정의 함수 임
 void make_vertexShaders();
 void make_fragmentShaders();
@@ -33,7 +36,9 @@ bool map_loaded = true;
 AK_47* rifle;
 FIELD* field;
 CLUB* club;
-
+CLAYMORE* claymore;
+PISTOL* pistol;
+MINIGUN* minigun;
 //총알 저장할 벡터
 std::vector<BULLET>* bullets = new std::vector<BULLET>();
 
@@ -115,6 +120,12 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	rifle->init();
 	club = new CLUB();
 	club->init();
+	claymore = new CLAYMORE();
+	claymore->init();
+	pistol = new PISTOL();
+	pistol->init();
+	minigun = new MINIGUN();
+	minigun->init();
 	field = new FIELD();
 	field->init();
 	//적생성인데
@@ -238,7 +249,12 @@ GLvoid drawScene() {
 		rifle->draw(shaderProgramID);
 	if (!club->get_is_get())
 		club->draw(shaderProgramID);
-
+	if (!claymore->get_is_get())
+		claymore->draw(shaderProgramID);
+	if (!pistol->get_is_get())
+		pistol->draw(shaderProgramID);
+	if (!minigun->get_is_get())
+		minigun->draw(shaderProgramID);
 	//플레이어 무기 그리기
 	player.draw_weapon(shaderProgramID);
 	if(map_loaded)
@@ -323,7 +339,18 @@ GLvoid KeyboardDown(unsigned char key, int x, int y) {
 			player.weapons.push_back(club);
 			player.change_weapon(player.weapons.size() - 1);
 		}
-		
+		if (claymore->get_weapon(player.position)) {
+			player.weapons.push_back(claymore);
+			player.change_weapon(player.weapons.size() - 1);
+		}
+		if (pistol->get_weapon(player.position)) {
+			player.weapons.push_back(pistol);
+			player.change_weapon(player.weapons.size() - 1);
+		}
+		if (minigun->get_weapon(player.position)) {
+			player.weapons.push_back(minigun);
+			player.change_weapon(player.weapons.size() - 1);
+		}
 		break;
 	case'-':
 		camera.sensitivity -= 5.0f;
@@ -379,31 +406,49 @@ void TimerFunction(int value)
 	player.move(deltaTime);
 	rifle->update(deltaTime, player.position,camera.yaw,camera.pitch);
 	club->update(deltaTime, player.position, camera.yaw, camera.pitch);
+	claymore->update(deltaTime, player.position, camera.yaw, camera.pitch);
+	pistol->update(deltaTime, player.position, camera.yaw, camera.pitch);
+	minigun->update(deltaTime, player.position, camera.yaw, camera.pitch);
 	player.zoom_in(deltaTime);
 	if (player.mouses[0] && !player.weapons.empty()) {
-		player.weapons[player.currentWeapon]->attack(deltaTime);
+		
 		//만약 총기류면 반동
 		if (rifle==(player.weapons[player.currentWeapon])) {
+			player.weapons[player.currentWeapon]->attack(deltaTime);
 			camera.pitch += (rand() % 100/100.0f) * 40.0f*deltaTime; //좌우약간흔들림
 		}
-		//적과 플레이어 거리가 가까우면 적 제거
+		//곤봉 근접류면 다시 돌아와야하니까
 		if (club == (player.weapons[player.currentWeapon])) {
-			//for (int i = 0; i < enemies->size(); i++)
-			//{
-			//	ENEMY* e = (*enemies)[i];
-
-			//	if (e->hit(player.position))
-			//	{
-			//		delete e;  // 메모리 해제
-			//		enemies->erase(enemies->begin() + i); // 포인터 제거
-			//		i--;
-			//	}
-			//}
-
-
+			player.weapons[player.currentWeapon]->on_attak = true;
+		}
+		if (claymore == (player.weapons[player.currentWeapon])) {
+			player.weapons[player.currentWeapon]->on_attak = true;
+		}
+		if (minigun == (player.weapons[player.currentWeapon]))
+		{
+			player.weapons[player.currentWeapon]->attack(deltaTime);
+			camera.pitch += ((rand() % 100 / 100.0f)-0.5f) * 80.0f * deltaTime; //상하
+			camera.yaw += ((rand() % 100 / 100.0f)-0.5f) * 80.0f * deltaTime; //좌우
+		}
+		//권총도 단발식으로 만들거
+		if (pistol == (player.weapons[player.currentWeapon]))
+		{
+			if (pistol->get_shoot_cooldown() <= 0.0f) {
+				player.weapons[player.currentWeapon]->on_attak = true;
+				camera.pitch += (rand() % 100 / 100.0f) * 200.0f * deltaTime; //좌우약간흔들림
+				//pistol->set_shoot_cooldown(1.0f);
+			}
 		}
 		
 		
+	}
+	if (!player.weapons.empty()&&(club == (player.weapons[player.currentWeapon])||claymore==(player.weapons[player.currentWeapon])||pistol == (player.weapons[player.currentWeapon])))
+	{
+		if (player.weapons[player.currentWeapon]->on_attak)
+			player.weapons[player.currentWeapon]->attack(deltaTime);
+		if (pistol == (player.weapons[player.currentWeapon]))
+			pistol->set_shoot_cooldown(pistol->get_shoot_cooldown() - deltaTime);
+
 	}
 	for (auto& e : *enemies) {
 		e.update(deltaTime,player.position);

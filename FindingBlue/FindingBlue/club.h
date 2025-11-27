@@ -10,6 +10,7 @@ private:
 	bool is_get = false;
 	bool recoil_mode = false;
 	glm::vec3 attack_offsets = glm::vec3(0.0f);
+	
 public:
     Object hand;
     Object metal;
