@@ -15,8 +15,7 @@ public:
     glm::vec3 scale = glm::vec3(1.0);
 
     glm::vec3 pivot = glm::vec3(0.0f);
-    
-	Collision collision;
+   
 	glm::vec3 localHalfsize = glm::vec3(0.5f);
 
     Object() {}
@@ -25,10 +24,6 @@ public:
         objPath = o;
         texPath = t;
     }
-
-    void updateBox() {
-		collision.updateBox(localHalfsize, position, scale);
-    }; // ?¥Îèô???∞Î•∏ ?ÖÎç∞?¥Ìä∏
 
 
 
@@ -40,7 +35,6 @@ public:
         if (texPath)
             textureID = TextureManager::GetTexture(texPath);
 
-		updateBox();
     }
 
     virtual void draw(GLuint shader) {
@@ -61,10 +55,6 @@ public:
         obj.modelMatrix = m;
 
         drawObject(shader, obj);
-
-		updateBox();
-
-    	collision.Debug_Draw(glm::vec3(1, 0, 0)); // Îπ®Í∞Ñ ??Ï∂îÍ? Í∑∏Î¶¨Í∏?
     }
 
 
