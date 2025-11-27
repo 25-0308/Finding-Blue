@@ -12,7 +12,7 @@ class Collision
 {
 public:
 	glm::vec3 center = glm::vec3(0.0f); // 중심점 좌표
-	glm::vec3 halfsize = glm::vec3(1.0f); // 절반 사이즈
+	glm::vec3 halfsize = glm::vec3(1.0f, 1.0f, 1.0f); // 절반 사이즈
 
 	Collision() = default;
 	explicit Collision(const glm::vec3 half);

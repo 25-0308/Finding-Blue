@@ -40,7 +40,7 @@ public:
         glUniform1f(glGetUniformLocation(shader, "material.metallic"), 0.0f);
         glUniform1f(glGetUniformLocation(shader, "lightIntensity"), 1.0f);
 
-		collision.center = bullet_obj.position;
+        collision.center = bullet_obj.position;
         collision.halfsize = collision.halfsize * bullet_obj.scale * 2.0f;
 		collision.Debug_Draw(glm::vec3(1.0, 0.0, 0.0));
     }

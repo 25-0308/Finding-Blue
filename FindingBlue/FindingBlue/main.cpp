@@ -453,6 +453,32 @@ void TimerFunction(int value)
 	for (auto& e : *enemies) {
 		e.update(deltaTime,player.position);
 	}
+	for (auto& enemy : *enemies) {
+		// AK-47 총알 검사
+		if (rifle && rifle->get_is_get()) {
+			for (size_t i = 0; i < rifle->bullets.size(); ++i) {
+				BULLET* bullet = rifle->bullets[i];
+				if (enemy.collision.check_collision(bullet->collision)) {
+					std::cout << "ENEMY와 AK-47 BULLET 충돌!" << std::endl;
+					delete bullet;
+					rifle->bullets.erase(rifle->bullets.begin() + i);
+					break;
+				}
+			}
+		}
+		//pistol 총알 검사
+		if (pistol && pistol->get_is_get()) {
+			for (size_t i = 0; i < pistol->bullets.size(); ++i) {
+				BULLET* bullet = pistol->bullets[i];
+				if (enemy.collision.check_collision(bullet->collision)) {
+					std::cout << "ENEMY와 Pistol BULLET 충돌!" << std::endl;
+					delete bullet;
+					pistol->bullets.erase(pistol->bullets.begin() + i);
+					break;
+				}
+			}
+		}
+	}
 	drawScene();
 
 	glutTimerFunc(value, TimerFunction, value);

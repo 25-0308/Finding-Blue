@@ -19,7 +19,6 @@ private:
 
 	bool body_bobbing_dir = true;
 	float body_bobbing_angle = 0.0f;
-	Collision collision;
 
 	//다리부분
 	bool Rleg1_rotate_dir = true;
@@ -44,6 +43,7 @@ public:
 	Object Lleg1;
 	Object Lleg2;
 
+	Collision collision;
 	
     ENEMY()
 		: head("asset/enemy/blue/head.obj", "asset/enemy/blue/blue_enemy.png"),
@@ -75,7 +75,12 @@ public:
 		this->scale = glm::vec3(0.3f);
 		head.scale = body.scale = Rarm1.scale = Rarm2.scale = Larm1.scale = Larm2.scale = Rleg1.scale = Rleg2.scale = Lleg1.scale = Lleg2.scale = this->scale;
 		head.position = body.position = Rarm1.position = Rarm2.position = Larm1.position = Larm2.position = Rleg1.position = Rleg2.position = Lleg1.position = Lleg2.position = this->position;
+		
+		//콜라이더 크기 설정
 		collision.center = this->position;
+		collision.center.y += 0.5f;
+		collision.halfsize = collision.halfsize * 0.25f;
+		collision.halfsize.y += 0.3f;
 
 		//나머지 파츠들도	위치 맞춰주기(피봇조절)
 		Rarm1.pivot = glm::vec3(0.0f, 0.6f, 0.0f);
@@ -108,6 +113,7 @@ public:
 		Rleg2.draw(shader);
 		Lleg1.draw(shader);
 		Lleg2.draw(shader);
+		
 		collision.Debug_Draw();
     }
     //여기 아래로는 cpp 파일에 작성할 것들

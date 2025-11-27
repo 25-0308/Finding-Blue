@@ -11,10 +11,10 @@ private:
     bool is_get = false;
 	bool recoil_mode = false;
 
-    //ÃÑ¾Ë ¸ñ·Ïµé
-	std::vector<BULLET*> bullets;
 
 public:
+    //ÃÑ¾Ë ¸ñ·Ïµé
+	std::vector<BULLET*> bullets;
     Object wood;
     Object metal;
     glm::vec3 offsets = glm::vec3(0.0f);

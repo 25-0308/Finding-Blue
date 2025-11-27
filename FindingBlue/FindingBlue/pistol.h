@@ -12,10 +12,10 @@ private:
     bool is_get = false;
     bool recoil_mode = false;
 	float shoot_cooldown = 0.0;
-    //ÃÑ¾Ë ¸ñ·Ïµé
-    std::vector<BULLET*> bullets;
 
 public:
+    //ÃÑ¾Ë ¸ñ·Ïµé
+    std::vector<BULLET*> bullets;
     Object head;
     Object metal;
     glm::vec3 offsets = glm::vec3(0.0f);
