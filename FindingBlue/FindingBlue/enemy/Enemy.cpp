@@ -1,5 +1,6 @@
 #include"../Enemy.h"
 #include<iostream>
+#include <random>
 
 
 void ENEMY::update(float deltaTime, glm::vec3 target) {
@@ -21,6 +22,15 @@ void ENEMY::update(float deltaTime, glm::vec3 target) {
 	else if (this->is_dead) {
 		//사망모션
 		this->head.position.y += 15.5f * deltaTime;
+		for (int i = 0; i < bloods.size(); i++) {
+			bloods[i]->update(deltaTime);
+
+			if (bloods[i]->is_dead()) {
+				delete bloods[i];
+				bloods.erase(bloods.begin() + i);
+				i--;
+			}
+		}
 	}
 	
 }
@@ -347,4 +357,52 @@ glm::vec3 rotateAroundPivot(glm::vec3 point, glm::vec3 pivot, float angleZ)
 
 	// 다시 pivot 기준으로 되돌림
 	return pivot + rotatedLocal;
+}
+void ENEMY::take_damage(int damage) {
+	this->health -= damage;
+	std::cout << "ENEMY 체력: " << this->health << std::endl;
+	if (this->health <= 0&&!this->is_dead) {
+		is_dead = true;
+		this->spawn_blood();
+		std::cout << "ENEMY 사망!" << std::endl;
+	}
+}
+float frand(float a, float b) {
+	static std::mt19937 rng(std::random_device{}()); // 한 번만 초기화
+	std::uniform_real_distribution<float> dist(a, b);
+	return dist(rng);
+}
+
+void ENEMY::spawn_blood() {
+
+	glm::vec3 headPos = this->position + glm::vec3(0, 1.8f, 0);
+
+	const int count = 20;
+	for (int i = 0; i < count; i++) {
+
+		BLOOD* b = new BLOOD();
+
+		// 각 파티클이 퍼질 방향
+		glm::vec3 dir;
+
+		// i에 따라 사분면 분배
+		if (i < count/4*1) {             // 1사분면 (+x, +z)
+			dir = glm::vec3(frand(0.5f, 1.0f), frand(0.2f, 1.0f), frand(0.5f, 1.0f));
+		}
+		else if (i < count / 4 * 2) {       // 2사분면 (-x, +z)
+			dir = glm::vec3(frand(-1.0f, -0.5f), frand(0.2f, 1.0f), frand(0.5f, 1.0f));
+		}
+		else if (i < count / 4 * 3) {       // 3사분면 (-x, -z)
+			dir = glm::vec3(frand(-1.0f, -0.5f), frand(0.2f, 1.0f), frand(-1.0f, -0.5f));
+		}
+		else {                  // 4사분면 (+x, -z)
+			dir = glm::vec3(frand(0.5f, 1.0f), frand(0.2f, 1.0f), frand(-1.0f, -0.5f));
+		}
+
+		// 속도 조절
+		dir = glm::normalize(dir) * frand(3.0f, 7.0f);
+
+		b->init(headPos, dir);
+		bloods.push_back(b);
+	}
 }

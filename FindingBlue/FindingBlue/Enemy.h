@@ -2,6 +2,49 @@
 #include "Object.h"
 #include"Collision.h"
 #include<iostream>
+#include<vector>
+class BLOOD {
+private:
+	glm::vec3 position;
+	glm::vec3 velocity;  // 파티클의 움직임 (dx,dy,dz)
+	float lifetime = 1.0f;   // 1초 뒤 사라지게 예시
+	bool active = true;
+
+public:
+	Object blood;
+	
+	BLOOD()
+		: blood("asset/blood/blood.obj", "asset/blood/blood.png") {
+	}
+
+	void init(glm::vec3 startPos, glm::vec3 vel) {
+		blood.init();
+		position = startPos;
+		blood.scale = glm::vec3(0.2f);
+		velocity = vel;
+		lifetime = 1.0f;
+		active = true;
+	}
+
+	void update(float dt) {
+		if (!active) return;
+
+		position += velocity * dt;
+		blood.position = position;
+
+		lifetime -= dt;
+		if (lifetime <= 0.0f) {
+			active = false;
+		}
+	}
+
+	void draw(GLuint shader) {
+		if (active)
+			blood.draw(shader);
+	}
+
+	bool is_dead() const { return !active; }
+};
 class ENEMY {
 private:
     //총이 가지고 있어야하는 그런것들임
@@ -35,6 +78,8 @@ private:
 	//체력과 사망관련
 	int health = 100;
 	bool is_dead = false;
+	
+
 
 public:
     Object head;
@@ -47,7 +92,7 @@ public:
 	Object Rleg2;
 	Object Lleg1;
 	Object Lleg2;
-
+	std::vector<BLOOD*> bloods;
 	Collision collision;
 	
     ENEMY()
@@ -118,7 +163,11 @@ public:
 		Rleg2.draw(shader);
 		Lleg1.draw(shader);
 		Lleg2.draw(shader);
-		
+		if (this->is_dead) {
+			for (auto& b : bloods)
+				b->draw(shader);
+
+		}
 		collision.Debug_Draw();
     }
     //여기 아래로는 cpp 파일에 작성할 것들
@@ -129,17 +178,17 @@ public:
 		float distance = glm::length(pos - this->position);
 		return distance < 2.0f;
 	}
-	void take_damage(int damage) {
-		health -= damage;
-		std::cout << "ENEMY 체력: " << health << std::endl;
-		if (health <= 0) {
-			is_dead = true;
-			std::cout << "ENEMY 사망!" << std::endl;
-		}
-	}
+	void take_damage(int damage);
+	void spawn_blood();
+	//void death_motion(float deltaTime);
 
 
 
 };
 
 glm::vec3 rotateAroundPivot(glm::vec3 point, glm::vec3 pivot, float angleZ);
+
+
+
+
+
