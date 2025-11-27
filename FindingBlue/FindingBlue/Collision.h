@@ -22,7 +22,5 @@ public:
 
 	bool check_collision(const Collision& other) const; // 충돌 검사
 
-	void updateBox(const glm::vec3& localHalfsize, const glm::vec3& position, const glm::vec3& scale);
-
 	void Debug_Draw(const glm::vec3& color = glm::vec3(1.0f, 0.0f, 0.0f)) const; // 빨간 박스 그리기
 };

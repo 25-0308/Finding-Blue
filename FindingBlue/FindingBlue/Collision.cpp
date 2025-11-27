@@ -50,18 +50,9 @@ bool Collision::check_collision(const Collision& other) const {
 		(Max().z >= other.Min().z && Min().z <= other.Max().z);
 } // 충돌 검사
 
-void Collision::updateBox(const glm::vec3& localHalfsize, const glm::vec3& position, const glm::vec3& scale)
-{
-	glm::vec3 scaledHalf = localHalfsize * scale;
-	center = position;
-	halfsize = glm::vec3(1.0,2.0,2.0);
-
-}
-
 void Collision::Debug_Draw(const glm::vec3& color) const {
 
-	// 항상 같은 크기의 박스를 사용 (원하면 값 바꿔도 됨)
-	glm::vec3 fixedHalf = glm::vec3(0.5f);  // → 박스 크기 1x1x1
+	glm::vec3 fixedHalf = halfsize;  
 
 	glm::vec3 min = center - fixedHalf;
 	glm::vec3 max = center + fixedHalf;
@@ -86,8 +77,4 @@ void Collision::Debug_Draw(const glm::vec3& color) const {
 	for (int i = 0; i < 24; i += 2) {
 		Debug_Draw::AddLine(v[edges[i]], v[edges[i + 1]], color);
 	}
-	//std::cout <<"Cpos"<< center.x << "," << center.y << "," << center.z << std::endl;
-	//std::cout <<"Bpos" << v[0].x << "," << v[0].y << "," << v[0].z << std::endl;
-	//std::cout<<"---------------" << std::endl;
 }
-// 빨간 박스 그리기
