@@ -31,6 +31,11 @@ private:
 	float Lleg2_rotate_angle = 0.0f;
 	bool initialized = false;
 
+
+	//체력과 사망관련
+	int health = 100;
+	bool is_dead = false;
+
 public:
     Object head;
     Object body;
@@ -123,6 +128,14 @@ public:
 	bool hit(glm::vec3 pos) {
 		float distance = glm::length(pos - this->position);
 		return distance < 2.0f;
+	}
+	void take_damage(int damage) {
+		health -= damage;
+		std::cout << "ENEMY 체력: " << health << std::endl;
+		if (health <= 0) {
+			is_dead = true;
+			std::cout << "ENEMY 사망!" << std::endl;
+		}
 	}
 
 

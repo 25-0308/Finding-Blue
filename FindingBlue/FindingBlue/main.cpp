@@ -460,6 +460,7 @@ void TimerFunction(int value)
 				BULLET* bullet = rifle->bullets[i];
 				if (enemy.collision.check_collision(bullet->collision)) {
 					std::cout << "ENEMY客 AK-47 BULLET 面倒!" << std::endl;
+					enemy.take_damage(10);
 					delete bullet;
 					rifle->bullets.erase(rifle->bullets.begin() + i);
 					break;
@@ -472,6 +473,7 @@ void TimerFunction(int value)
 				BULLET* bullet = pistol->bullets[i];
 				if (enemy.collision.check_collision(bullet->collision)) {
 					std::cout << "ENEMY客 Pistol BULLET 面倒!" << std::endl;
+					enemy.take_damage(40);
 					delete bullet;
 					pistol->bullets.erase(pistol->bullets.begin() + i);
 					break;
@@ -484,6 +486,7 @@ void TimerFunction(int value)
 				BULLET* bullet = minigun->bullets[i];
 				if (enemy.collision.check_collision(bullet->collision)) {
 					std::cout << "ENEMY客 MINIGUN BULLET 面倒!" << std::endl;
+					enemy.take_damage(10);
 					delete bullet;
 					minigun->bullets.erase(minigun->bullets.begin() + i);
 					break;
