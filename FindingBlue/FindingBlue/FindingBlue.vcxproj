@@ -145,19 +145,25 @@
     <ClCompile Include="object\TextManager.cpp" />
     <ClCompile Include="player\player.cpp" />
     <ClCompile Include="weapon\ak47.cpp" />
+    <ClCompile Include="weapon\claymore.cpp" />
     <ClCompile Include="weapon\club.cpp" />
+    <ClCompile Include="weapon\minigun.cpp" />
+    <ClCompile Include="weapon\pistol.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ak_47.h" />
     <ClInclude Include="bullet.h" />
     <ClInclude Include="camera.h" />
+    <ClInclude Include="claymore.h" />
     <ClInclude Include="club.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="field.h" />
     <ClInclude Include="light.h" />
+    <ClInclude Include="minigun.h" />
     <ClInclude Include="ModelLoader.h" />
     <ClInclude Include="object.h" />
+    <ClInclude Include="pistol.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="TextManager.h" />
