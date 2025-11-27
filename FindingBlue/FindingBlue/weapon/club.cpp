@@ -23,7 +23,7 @@ void CLUB::update(float deltaTime, glm::vec3 position, float yaw, float pitch)
         glm::vec3 up = glm::normalize(glm::cross(right, front));
 
 
-        glm::vec3 offset = right * 0.2f   // 화면 오른쪽으로
+        glm::vec3 offset = right * 0.4f   // 화면 오른쪽으로
             + up * -0.7f    // 화면 아래로
             + front * 0.8f; // 화면 안쪽으로
   
@@ -34,8 +34,8 @@ void CLUB::update(float deltaTime, glm::vec3 position, float yaw, float pitch)
         this->hand.position = gunPos;
         this->metal.position = gunPos;
         //방향설정
-        hand.rotation.y = -glm::radians(yaw);
-        metal.rotation.y = -glm::radians(yaw);
+        hand.rotation.y = -glm::radians(yaw) + glm::radians(90.0f);
+        metal.rotation.y = -glm::radians(yaw) + glm::radians(90.0f);
         hand.rotation.z = glm::radians(pitch);
         metal.rotation.z = glm::radians(pitch);
 
@@ -59,31 +59,30 @@ bool CLUB::get_weapon(glm::vec3 playerPos) {
 }
 
 void CLUB::attack(float deltaTime) {
-    //이건 x축에대해 회전적용할거임
     if (!this->recoil_mode) {
         //총 오프셋 뒤로
         //총 오프셋 앞으로
-        this->attack_offsets.x -= glm::radians(800.0f * deltaTime);
-	
-        if (this->attack_offsets.x < glm::radians(-90.0f)) {
+        this->attack_offsets.z -= glm::radians(800.0f * deltaTime);
+
+        if (this->attack_offsets.z < glm::radians(-90.0f)) {
             this->recoil_mode = true;
-            this->attack_offsets.x = glm::radians(-90.0f);
-   
+            this->attack_offsets.z = glm::radians(-90.0f);
+
 
         }
     }
     else if (this->recoil_mode) {
-       
-        this->attack_offsets.x += glm::radians(200.0f * deltaTime);
-    
-        if (this->attack_offsets.x > glm::radians(0.0f)) {
+
+        this->attack_offsets.z += glm::radians(200.0f * deltaTime);
+
+        if (this->attack_offsets.z > glm::radians(0.0f)) {
             this->recoil_mode = false;
-            this->attack_offsets.x = glm::radians(0.0f);
+            this->attack_offsets.z = glm::radians(0.0f);
             this->on_attak = false;
-    
+
         }
     }
-   metal.rotation.x=hand.rotation.x = this->attack_offsets.x;
+    metal.rotation.z = hand.rotation.z = this->attack_offsets.z;
 }
 void CLUB::zoom_in(bool mode, float deltaTime) {
 	//빠따는 줌인모드 없음
