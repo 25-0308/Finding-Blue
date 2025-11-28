@@ -143,9 +143,9 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	item = new ITEM(ItemType(1));
 	item->init(glm::vec3(4.0, 0.1, 4.0));
 
-
+	enemies->reserve(20);
 	//적생성인데
-	for (int i = 0;i < 9;++i) {
+	for (int i = 0;i < 10;++i) {
 		enemies->emplace_back();                  // 벡터 안에 직접 생성
 		enemies->back().init(E_pos_list[i]);      // 바로 초기화
 	}
