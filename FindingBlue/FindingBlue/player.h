@@ -19,7 +19,7 @@ public:
     float speed = 5.0f;
 
     Player() :
-        position(3.0f, 0.0f, 5.0f),
+        position(0.8f, 0.0f, 5.0f),
         front(0.0f, 0.0f, -1.0f),
         up(0.0f, 1.0f, 0.0f)
     {

@@ -139,6 +139,7 @@
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="enemy\Enemy.cpp" />
     <ClCompile Include="field\field.cpp" />
+    <ClCompile Include="intro\intro.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="object\ModelLoader.cpp" />
     <ClCompile Include="object\object.cpp" />
@@ -159,6 +160,8 @@
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="field.h" />
+    <ClInclude Include="intro.h" />
+    <ClInclude Include="item.h" />
     <ClInclude Include="light.h" />
     <ClInclude Include="minigun.h" />
     <ClInclude Include="ModelLoader.h" />

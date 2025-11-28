@@ -25,7 +25,7 @@ public:
         hand.init();
         metal.init();
         hand.scale = metal.scale = glm::vec3(0.1f);
-		metal.position = glm::vec3(15.0f, -0.2f, 10.0f);
+		metal.position = glm::vec3(0.1, -0.2f, 0.3f);
         attack_offsets.y = glm::radians(270.0f);
     }
 

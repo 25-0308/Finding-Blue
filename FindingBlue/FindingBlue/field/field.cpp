@@ -81,6 +81,100 @@ FIELD::FIELD() {
 
         }
     }
+    //여기서부터는 맵을 구성하는 벽들임충돌처리 적용해야함
+	//오프셋
+	glm::vec3 offset = glm::vec3(-2.5f, 0.0f, -2.5f);
+	Object wall1("asset/tile/wall.obj", "asset/tile/wall.png");
+    wall1.scale = glm::vec3(0.5f);
+	wall1.position = glm::vec3(tileSize*1.0,- 0.75f, 0.0)+ offset;
+    wall1.rotation.y = glm::radians(90.0f);
+	walls.push_back(wall1);
+	//벽2
+    wall1.position = glm::vec3(tileSize * 1.0, -0.75f,tileSize* 1.0)+ offset;
+	walls.push_back(wall1);
+	//벽3
+	wall1.position = glm::vec3(tileSize * 1.0, -0.75f, tileSize * 2.0)+ offset;
+	walls.push_back(wall1);
+    //버튼과 상호작용 하는 벽(맨처음부분)
+	wall1.position = glm::vec3(tileSize * 0.05, -0.75f,2.0*tileSize);
+	wall1.rotation.y = glm::radians(0.0f);
+	walls.push_back(wall1);
+    //중앙에 작게 네모난벽 3x3크기 
+// 중앙 3x3 작은 방 생성
+    int minX = 6, maxX = 11;
+    int minY = 6, maxY = 11;
+
+    for (int x = minX; x <= maxX; x++) {
+        for (int y = minY; y <= maxY; y++) {
+
+            // 테두리가 아니면 패스 (즉, 안쪽 빈 공간은 벽을 만들지 X)
+            if (!(x == minX || x == maxX || y == minY || y == maxY))
+                continue;
+
+            // 기본 벽 생성
+            Object w("asset/tile/wall.obj", "asset/tile/wall.png");
+            w.scale = glm::vec3(0.5f);
+            w.position = glm::vec3(x * tileSize, -0.75f, y * tileSize) + offset;
+
+            // ──────────────────────────────
+            //      방향별 회전 적용
+            // ──────────────────────────────
+            if (x == minX) {                 // 왼쪽 벽
+                w.rotation.y = glm::radians(90.0f);
+                w.position.x -= 2.5f;
+            }
+            else if (x == maxX) {            // 오른쪽 벽
+                w.rotation.y = glm::radians(-90.0f);
+                w.position.x += 2.5f;
+            }
+            else if (y == minY) {            // 아래쪽 벽
+                w.rotation.y = glm::radians(180.0f);
+                w.position.z -= 2.5f;
+            }
+            else {                           // 위쪽 벽 (y == maxY)
+                w.rotation.y = glm::radians(0.0f);
+                w.position.z += 2.5f;
+            }
+
+            walls.push_back(w);
+
+            // ──────────────────────────────
+            //       모서리 → 벽 하나 더
+            // ──────────────────────────────
+            bool isCorner =
+                (x == minX || x == maxX) &&
+                (y == minY || y == maxY);
+
+            if (isCorner) {
+                Object w2("asset/tile/wall.obj", "asset/tile/wall.png");
+                w2.scale = glm::vec3(0.5f);
+                w2.position = glm::vec3(x * tileSize, -0.75f, y * tileSize) + offset;
+
+                // corner orientation
+                if (x == minX && y == minY) {              // 좌하
+                    w2.rotation.y = glm::radians(180.0f);
+                    w2.position.z -= 2.5f;
+                }
+                else if (x == minX && y == maxY) {         // 좌상
+                    w2.rotation.y = glm::radians(0.0f);
+                    w2.position.z += 2.5f;
+                }
+                else if (x == maxX && y == minY) {         // 우하
+                    w2.rotation.y = glm::radians(180.0f);
+                    w2.position.z -= 2.5f;
+                }
+                else if (x == maxX && y == maxY) {         // 우상
+                    w2.rotation.y = glm::radians(0.0f);
+                    w2.position.z += 2.5f;
+                }
+
+                walls.push_back(w2);
+            }
+        }
+    }
+
+
+
     //하늘 임시로 해봄
 	sky = Object("asset/sky/sky_smooth.obj", "asset/sky/sky.png");
 	sky.obj.modelMatrix = glm::mat4(1.0f);

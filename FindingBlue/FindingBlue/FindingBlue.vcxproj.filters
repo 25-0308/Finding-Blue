@@ -37,6 +37,9 @@
     <Filter Include="소스 파일\field">
       <UniqueIdentifier>{f34c1b6c-a900-48dd-8270-97a4a6d3a049}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\intro">
+      <UniqueIdentifier>{f6ec566b-c59f-4dad-a0aa-6cb8cc5818ef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="fragment.glsl">
@@ -92,6 +95,9 @@
     <ClCompile Include="weapon\minigun.cpp">
       <Filter>소스 파일\weapon</Filter>
     </ClCompile>
+    <ClCompile Include="intro\intro.cpp">
+      <Filter>소스 파일\intro</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stb_image.h">
@@ -143,6 +149,12 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="minigun.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="intro.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="item.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

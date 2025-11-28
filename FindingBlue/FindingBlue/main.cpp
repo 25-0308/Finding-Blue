@@ -14,6 +14,8 @@
 #include"claymore.h"
 #include"pistol.h"
 #include"minigun.h"
+#include"intro.h"
+#include"item.h"
 //--- 아래 5개 함수는 사용자 정의 함수 임
 void make_vertexShaders();
 void make_fragmentShaders();
@@ -39,6 +41,12 @@ CLUB* club;
 CLAYMORE* claymore;
 PISTOL* pistol;
 MINIGUN* minigun;
+INTRO* intro;
+int current_step = 0;
+//아이템관련
+ITEM* item;
+
+
 //총알 저장할 벡터
 std::vector<BULLET>* bullets = new std::vector<BULLET>();
 
@@ -47,17 +55,18 @@ Player player;
 Camera camera(player);
 //적
 std::vector<ENEMY>* enemies = new std::vector<ENEMY>();
-glm::vec3 E_pos_list[10] = {
+glm::vec3 E_pos_list[11] = {
 	{20.0,-0.7f,20.0f},
 	{50.0,-0.7,20.f},
-		{},
+	{10.0f,-0.7f,40.0f},
+	{10.0f,-0.7f,60.0f},
+	{80.0f,-0.7f,30.0f},
+	{80.0f,-0.7f,50.0f},
+	{80.0f,-0.7f,80.0f},
+	{40.0f,-0.7f,50.0f},
+	{45.0f,-0.7f,45.0f},
+	{45.0f,-0.7f,40.0f},
 	{},
-	{},
-	{},
-	{},
-	{},
-	{},
-	{}
 
 };
 //조명 일단 하나만
@@ -128,8 +137,15 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	minigun->init();
 	field = new FIELD();
 	field->init();
+	intro = new INTRO();
+	intro->init();
+	//아이템 초기화
+	item = new ITEM(ItemType(1));
+	item->init(glm::vec3(4.0, 0.1, 4.0));
+
+
 	//적생성인데
-	for (int i = 0;i < 2;++i) {
+	for (int i = 0;i < 9;++i) {
 		enemies->emplace_back();                  // 벡터 안에 직접 생성
 		enemies->back().init(E_pos_list[i]);      // 바로 초기화
 	}
@@ -232,7 +248,14 @@ GLvoid drawScene() {
 
 	//플레이어==카메라
 	glm::mat4 view = camera.getView();
-	
+	if (current_step == 0) {
+		
+		view = glm::lookAt(
+			glm::vec3(0.0f, 1.0f, 5.0f), //카메라 위치
+			glm::vec3(0.0f, 1.0f, 0.0f), //카메라가 바라보는 위치
+			glm::vec3(0.0f, 1.0f, 0.0f)  //카메라의 업벡터
+		);
+	}
 
 	GLuint viewLoc = glGetUniformLocation(shaderProgramID, "view");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
@@ -244,22 +267,27 @@ GLvoid drawScene() {
 
 	//조명적용
 	light1.apply(shaderProgramID);
+	if (current_step != 0) {
+		if (!rifle->get_is_get())
+			rifle->draw(shaderProgramID);
+		if (!club->get_is_get())
+			club->draw(shaderProgramID);
+		if (!claymore->get_is_get())
+			claymore->draw(shaderProgramID);
+		if (!pistol->get_is_get())
+			pistol->draw(shaderProgramID);
+		if (!minigun->get_is_get())
+			minigun->draw(shaderProgramID);
+		//플레이어 무기 그리기
+		player.draw_weapon(shaderProgramID);
 
-	if(!rifle->get_is_get())
-		rifle->draw(shaderProgramID);
-	if (!club->get_is_get())
-		club->draw(shaderProgramID);
-	if (!claymore->get_is_get())
-		claymore->draw(shaderProgramID);
-	if (!pistol->get_is_get())
-		pistol->draw(shaderProgramID);
-	if (!minigun->get_is_get())
-		minigun->draw(shaderProgramID);
-	//플레이어 무기 그리기
-	player.draw_weapon(shaderProgramID);
-	if(map_loaded)
-	field->draw(shaderProgramID);
-	
+
+		//아이템 그리기
+		item->draw(shaderProgramID);
+	}
+
+	if (map_loaded)
+		field->draw(shaderProgramID);
 
 	//적
 	for (auto& e : *enemies) {
@@ -272,6 +300,9 @@ GLvoid drawScene() {
 		1, GL_FALSE,
 		glm::value_ptr(MVP)
 	);
+	if (current_step == 0)
+	intro->draw(shaderProgramID);
+
 	Debug_Draw::Render();
 
 	glutSwapBuffers();
@@ -360,7 +391,12 @@ GLvoid KeyboardDown(unsigned char key, int x, int y) {
 	case'm':
 		map_loaded = !map_loaded;
 		break;
-
+	case'x':
+		if (current_step == 0) {
+			current_step = 1;
+			glutWarpPointer(centerX, centerY);
+		}
+		break;
 	case 'q':
 		exit(0);
 		break;
@@ -388,7 +424,8 @@ GLvoid KeyboardUp(unsigned char key, int x, int y) {
 void MouseMove(int x, int y) {
 	int dx = x - centerX;
 	int dy = y - centerY;
-
+	if (current_step == 0)
+		return;
 	camera.updateDirection(dx, dy, deltaTime);
 
 	glutWarpPointer(centerX, centerY);
@@ -399,97 +436,103 @@ void MouseMove(int x, int y) {
 
 void TimerFunction(int value)
 {
-	//델타타임 계산
 	auto currentTime = std::chrono::high_resolution_clock::now();
 	deltaTime = std::chrono::duration<float>(currentTime - lastTime).count();
 	lastTime = currentTime;
-	player.move(deltaTime);
-	rifle->update(deltaTime, player.position,camera.yaw,camera.pitch);
-	club->update(deltaTime, player.position, camera.yaw, camera.pitch);
-	claymore->update(deltaTime, player.position, camera.yaw, camera.pitch);
-	pistol->update(deltaTime, player.position, camera.yaw, camera.pitch);
-	minigun->update(deltaTime, player.position, camera.yaw, camera.pitch);
-	player.zoom_in(deltaTime);
-	if (player.mouses[0] && !player.weapons.empty()) {
-		
-		//만약 총기류면 반동
-		if (rifle==(player.weapons[player.currentWeapon])) {
-			player.weapons[player.currentWeapon]->attack(deltaTime);
-			camera.pitch += (rand() % 100/100.0f) * 40.0f*deltaTime; //좌우약간흔들림
-		}
-		//곤봉 근접류면 다시 돌아와야하니까
-		if (club == (player.weapons[player.currentWeapon])) {
-			player.weapons[player.currentWeapon]->on_attak = true;
-		}
-		if (claymore == (player.weapons[player.currentWeapon])) {
-			player.weapons[player.currentWeapon]->on_attak = true;
-		}
-		if (minigun == (player.weapons[player.currentWeapon]))
-		{
-			player.weapons[player.currentWeapon]->attack(deltaTime);
-			camera.pitch += ((rand() % 100 / 100.0f)-0.5f) * 80.0f * deltaTime; //상하
-			camera.yaw += ((rand() % 100 / 100.0f)-0.5f) * 80.0f * deltaTime; //좌우
-		}
-		//권총도 단발식으로 만들거
-		if (pistol == (player.weapons[player.currentWeapon]))
-		{
-			if (pistol->get_shoot_cooldown() <= 0.0f) {
-				player.weapons[player.currentWeapon]->on_attak = true;
-				camera.pitch += (rand() % 100 / 100.0f) * 200.0f * deltaTime; //좌우약간흔들림
-				//pistol->set_shoot_cooldown(1.0f);
-			}
-		}
-		
-		
+	if (current_step == 0) {
+		intro->update(deltaTime);
 	}
-	if (!player.weapons.empty()&&(club == (player.weapons[player.currentWeapon])||claymore==(player.weapons[player.currentWeapon])||pistol == (player.weapons[player.currentWeapon])))
-	{
-		if (player.weapons[player.currentWeapon]->on_attak)
-			player.weapons[player.currentWeapon]->attack(deltaTime);
-		if (pistol == (player.weapons[player.currentWeapon]))
-			pistol->set_shoot_cooldown(pistol->get_shoot_cooldown() - deltaTime);
+	else if (current_step != 0) {
+		//델타타임 계산
+		
+		player.move(deltaTime);
+		rifle->update(deltaTime, player.position, camera.yaw, camera.pitch);
+		club->update(deltaTime, player.position, camera.yaw, camera.pitch);
+		claymore->update(deltaTime, player.position, camera.yaw, camera.pitch);
+		pistol->update(deltaTime, player.position, camera.yaw, camera.pitch);
+		minigun->update(deltaTime, player.position, camera.yaw, camera.pitch);
+		player.zoom_in(deltaTime);
+		if (player.mouses[0] && !player.weapons.empty()) {
 
-	}
-	for (auto& e : *enemies) {
-		e.update(deltaTime,player.position);
-	}
-	for (auto& enemy : *enemies) {
-		// AK-47 총알 검사
-		if (rifle && rifle->get_is_get()) {
-			for (size_t i = 0; i < rifle->bullets.size(); ++i) {
-				BULLET* bullet = rifle->bullets[i];
-				if (enemy.collision.check_collision(bullet->collision)) {
-					std::cout << "ENEMY와 AK-47 BULLET 충돌!" << std::endl;
-					enemy.take_damage(10);
-					delete bullet;
-					rifle->bullets.erase(rifle->bullets.begin() + i);
-					break;
+			//만약 총기류면 반동
+			if (rifle == (player.weapons[player.currentWeapon])) {
+				player.weapons[player.currentWeapon]->attack(deltaTime);
+				camera.pitch += (rand() % 100 / 100.0f) * 40.0f * deltaTime; //좌우약간흔들림
+			}
+			//곤봉 근접류면 다시 돌아와야하니까
+			if (club == (player.weapons[player.currentWeapon])) {
+				player.weapons[player.currentWeapon]->on_attak = true;
+			}
+			if (claymore == (player.weapons[player.currentWeapon])) {
+				player.weapons[player.currentWeapon]->on_attak = true;
+			}
+			if (minigun == (player.weapons[player.currentWeapon]))
+			{
+				player.weapons[player.currentWeapon]->attack(deltaTime);
+				camera.pitch += ((rand() % 100 / 100.0f) - 0.5f) * 80.0f * deltaTime; //상하
+				camera.yaw += ((rand() % 100 / 100.0f) - 0.5f) * 80.0f * deltaTime; //좌우
+			}
+			//권총도 단발식으로 만들거
+			if (pistol == (player.weapons[player.currentWeapon]))
+			{
+				if (pistol->get_shoot_cooldown() <= 0.0f) {
+					player.weapons[player.currentWeapon]->on_attak = true;
+					camera.pitch += (rand() % 100 / 100.0f) * 200.0f * deltaTime; //좌우약간흔들림
+					//pistol->set_shoot_cooldown(1.0f);
 				}
 			}
+
+
 		}
-		//pistol 총알 검사
-		if (pistol && pistol->get_is_get()) {
-			for (size_t i = 0; i < pistol->bullets.size(); ++i) {
-				BULLET* bullet = pistol->bullets[i];
-				if (enemy.collision.check_collision(bullet->collision)) {
-					std::cout << "ENEMY와 Pistol BULLET 충돌!" << std::endl;
-					enemy.take_damage(40);
-					delete bullet;
-					pistol->bullets.erase(pistol->bullets.begin() + i);
-					break;
+		if (!player.weapons.empty() && (club == (player.weapons[player.currentWeapon]) || claymore == (player.weapons[player.currentWeapon]) || pistol == (player.weapons[player.currentWeapon])))
+		{
+			if (player.weapons[player.currentWeapon]->on_attak)
+				player.weapons[player.currentWeapon]->attack(deltaTime);
+			if (pistol == (player.weapons[player.currentWeapon]))
+				pistol->set_shoot_cooldown(pistol->get_shoot_cooldown() - deltaTime);
+
+		}
+		for (auto& e : *enemies) {
+			e.update(deltaTime, player.position);
+		}
+		for (auto& enemy : *enemies) {
+			// AK-47 총알 검사
+			if (rifle && rifle->get_is_get()) {
+				for (size_t i = 0; i < rifle->bullets.size(); ++i) {
+					BULLET* bullet = rifle->bullets[i];
+					if (enemy.collision.check_collision(bullet->collision)) {
+						std::cout << "ENEMY와 AK-47 BULLET 충돌!" << std::endl;
+						enemy.take_damage(10);
+						delete bullet;
+						rifle->bullets.erase(rifle->bullets.begin() + i);
+						break;
+					}
 				}
 			}
-		}
-		//minigun 총알 검사
-		if (minigun && minigun->get_is_get()) {
-			for (size_t i = 0; i < minigun->bullets.size(); ++i) {
-				BULLET* bullet = minigun->bullets[i];
-				if (enemy.collision.check_collision(bullet->collision)) {
-					std::cout << "ENEMY와 MINIGUN BULLET 충돌!" << std::endl;
-					enemy.take_damage(10);
-					delete bullet;
-					minigun->bullets.erase(minigun->bullets.begin() + i);
-					break;
+			//pistol 총알 검사
+			if (pistol && pistol->get_is_get()) {
+				for (size_t i = 0; i < pistol->bullets.size(); ++i) {
+					BULLET* bullet = pistol->bullets[i];
+					if (enemy.collision.check_collision(bullet->collision)) {
+						std::cout << "ENEMY와 Pistol BULLET 충돌!" << std::endl;
+						enemy.take_damage(40);
+						delete bullet;
+						pistol->bullets.erase(pistol->bullets.begin() + i);
+						break;
+					}
+				}
+			}
+			//minigun 총알 검사
+			if (minigun && minigun->get_is_get()) {
+				for (size_t i = 0; i < minigun->bullets.size(); ++i) {
+					BULLET* bullet = minigun->bullets[i];
+					if (enemy.collision.check_collision(bullet->collision)) {
+						std::cout << "ENEMY와 MINIGUN BULLET 충돌!" << std::endl;
+						enemy.take_damage(10);
+						delete bullet;
+						minigun->bullets.erase(minigun->bullets.begin() + i);
+						break;
+					}
 				}
 			}
 		}

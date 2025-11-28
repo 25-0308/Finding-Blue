@@ -14,6 +14,7 @@ public:
     Object sky;
     std::vector<Object> tiles;
 	std::vector<Object> walls;
+
     FIELD();
     void init() {
         for (auto& t : tiles)
