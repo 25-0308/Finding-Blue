@@ -44,8 +44,7 @@ MINIGUN* minigun;
 INTRO* intro;
 int current_step = 0;
 //아이템관련
-ITEM* item;
-
+std::vector<ITEM*> items;
 
 //총알 저장할 벡터
 std::vector<BULLET>* bullets = new std::vector<BULLET>();
@@ -59,15 +58,25 @@ glm::vec3 E_pos_list[11] = {
 	{20.0,-0.7f,20.0f},
 	{50.0,-0.7,20.f},
 	{10.0f,-0.7f,40.0f},
-	{10.0f,-0.7f,60.0f},
-	{80.0f,-0.7f,30.0f},
-	{80.0f,-0.7f,50.0f},
-	{80.0f,-0.7f,80.0f},
+	{10.0f,-0.7f,30.0f},
+	{40.0f,-0.7f,30.0f},
+	{40.0f,-0.7f,50.0f},
+	{40.0f,-0.7f,40.0f},
 	{40.0f,-0.7f,50.0f},
 	{45.0f,-0.7f,45.0f},
 	{45.0f,-0.7f,40.0f},
 	{},
 
+};
+int item_list[] = { 0,0,1,2,2,2,2 }; //1:고기 2:썩은고기 3:탄약
+glm::vec3 item_pos[7] = {
+	{9.0,0.1f,10.0f },
+	{ 10.0,0.1f,48.0f },
+	{ 45.0,0.1f,45.0f },
+	{ 14.0,0.1f,5.0f },
+	{ 42.0,0.1f,42.0f },
+	{ 50.0,0.1f,90.0f },
+	{ 90.0,0.1f,90.0f },
 };
 //조명 일단 하나만
 Lighting light1;
@@ -140,8 +149,11 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	intro = new INTRO();
 	intro->init();
 	//아이템 초기화
-	item = new ITEM(ItemType(1));
-	item->init(glm::vec3(4.0, 0.1, 4.0));
+	for (int i = 0;i < 7;++i) {
+		ITEM* item = new ITEM(ItemType(item_list[i]));
+		item->init(item_pos[i]);
+		items.push_back(item);
+	}
 
 	enemies->reserve(20);
 	//적생성인데
@@ -283,7 +295,10 @@ GLvoid drawScene() {
 
 
 		//아이템 그리기
-		item->draw(shaderProgramID);
+		for (auto& it : items) {
+			if (!it->get_is_get())
+				it->draw(shaderProgramID);
+		}
 	}
 
 	if (map_loaded)
@@ -493,7 +508,10 @@ void TimerFunction(int value)
 
 		}
 		for (auto& e : *enemies) {
-			e.update(deltaTime, player.position);
+			if (e.update(deltaTime, player.position)) {
+				//적 사망완료
+				e.~ENEMY();
+			}
 		}
 		for (auto& enemy : *enemies) {
 			// AK-47 총알 검사

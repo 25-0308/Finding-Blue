@@ -31,8 +31,15 @@ public:
 
     void init(glm::vec3 pos) {
         item.init();
-        item.scale = glm::vec3(0.1f);
+        item.scale = glm::vec3(0.2f);
+	
         item.position = pos;
+        item.position.y -= 0.5f;
+        if (type == ItemType::Ammo) {
+            item.scale = glm::vec3(0.7f);
+			item.position.y -= 0.5f;
+        }
+		std::cout << "아이템 타입" << "" << static_cast<int>(type) << std::endl;
     }
 
     void draw(GLuint shader) {

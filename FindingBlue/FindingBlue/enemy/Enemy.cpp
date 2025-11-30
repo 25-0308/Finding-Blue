@@ -3,7 +3,7 @@
 #include <random>
 
 
-void ENEMY::update(float deltaTime, glm::vec3 target) {
+bool ENEMY::update(float deltaTime, glm::vec3 target) {
 	//거리에 따라 행동 다르게
 	float distance = glm::length(target - this->position);
 	
@@ -30,9 +30,12 @@ void ENEMY::update(float deltaTime, glm::vec3 target) {
 				bloods.erase(bloods.begin() + i);
 				i--;
 			}
+			if (bloods.empty()) {
+				return true;
+			}
 		}
 	}
-	
+	return false;
 }
 
 void ENEMY::run(float deltaTime,glm::vec3 target) {

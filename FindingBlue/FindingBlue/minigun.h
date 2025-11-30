@@ -30,7 +30,7 @@ public:
         head.init();
         body.init();
         head.scale = body.scale = glm::vec3(0.3f);
-        head.position = body.position = glm::vec3(5.0f, -0.2f, 10.0f);
+        head.position = body.position = glm::vec3(45.0f, -0.2f, 45.0f);
     }
 
     void draw(GLuint shader)override {

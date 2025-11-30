@@ -171,7 +171,7 @@ public:
 		collision.Debug_Draw();
     }
     //여기 아래로는 cpp 파일에 작성할 것들
-	void update(float deltaTime,glm::vec3 target);
+	bool update(float deltaTime,glm::vec3 target);
     void run(float deltaTime,glm::vec3 target);
 	void idle(float deltaTime);
 	bool hit(glm::vec3 pos) {
