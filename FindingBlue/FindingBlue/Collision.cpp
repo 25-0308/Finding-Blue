@@ -3,7 +3,7 @@
 #include <vector>
 #include <array>
 #include <GL/glm/gtc/type_ptr.hpp>
-
+#include <GL/glm/gtc/matrix_transform.hpp>
 
 
 
@@ -50,6 +50,46 @@ bool Collision::check_collision(const Collision& other) const {
 		(Max().z >= other.Min().z && Min().z <= other.Max().z);
 } // 충돌 검사
 
+void Collision::Transform(const glm::vec3& position, const glm::vec3& rotation)
+{
+	// 원본 AABB의 8개 꼭짓점 계산
+	glm::vec3 original_vertices[8] = {
+		glm::vec3(-halfsize.x, -halfsize.y, -halfsize.z),
+		glm::vec3(halfsize.x, -halfsize.y, -halfsize.z),
+		glm::vec3(halfsize.x,  halfsize.y, -halfsize.z),
+		glm::vec3(-halfsize.x,  halfsize.y, -halfsize.z),
+		glm::vec3(-halfsize.x, -halfsize.y,  halfsize.z),
+		glm::vec3(halfsize.x, -halfsize.y,  halfsize.z),
+		glm::vec3(halfsize.x,  halfsize.y,  halfsize.z),
+		glm::vec3(-halfsize.x,  halfsize.y,  halfsize.z)
+	};
+
+	// 회전 행렬 생성
+	glm::mat4 rotMatrix = glm::mat4(1.0f);
+	rotMatrix = glm::rotate(rotMatrix, rotation.y, glm::vec3(0, 1, 0)); // Yaw
+	rotMatrix = glm::rotate(rotMatrix, rotation.x, glm::vec3(1, 0, 0)); // Pitch  
+	rotMatrix = glm::rotate(rotMatrix, rotation.z, glm::vec3(0, 0, 1)); // Roll
+
+	// 회전된 꼭짓점들 계산
+	glm::vec3 rotated_vertices[8];
+	for (int i = 0; i < 8; i++) {
+		rotated_vertices[i] = glm::vec3(rotMatrix * glm::vec4(original_vertices[i], 1.0f));
+	}
+
+	// 회전된 꼭짓점들을 포함하는 새로운 AABB 계산
+	glm::vec3 min_bounds = rotated_vertices[0];
+	glm::vec3 max_bounds = rotated_vertices[0];
+
+	for (int i = 1; i < 8; i++) {
+		min_bounds = glm::min(min_bounds, rotated_vertices[i]);
+		max_bounds = glm::max(max_bounds, rotated_vertices[i]);
+	}
+
+	// 새로운 center와 halfsize 설정
+	center = position + (min_bounds + max_bounds);
+	halfsize = (max_bounds - min_bounds);
+}
+
 void Collision::Debug_Draw(const glm::vec3& color) const {
 
 	glm::vec3 fixedHalf = halfsize;  
@@ -78,3 +118,4 @@ void Collision::Debug_Draw(const glm::vec3& color) const {
 		Debug_Draw::AddLine(v[edges[i]], v[edges[i + 1]], color);
 	}
 }
+

@@ -490,6 +490,15 @@ void TimerFunction(int value)
 				}
 			}
 		}
+		// 클럽 히트 콜라이더 검사
+		if (club && club->get_is_get() && club->hit_active) {
+			if (enemy.collision.check_collision(club->collision)) {
+				std::cout << "ENEMY와 CLUB HIT 충돌!" << std::endl;
+				enemy.hit(player.position);
+				club->hit_active = false;  // 때리면 중지
+				break;
+			}
+		}
 	}
 	drawScene();
 
