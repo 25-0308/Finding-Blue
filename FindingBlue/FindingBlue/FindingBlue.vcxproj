@@ -154,6 +154,7 @@
   <ItemGroup>
     <ClInclude Include="ak_47.h" />
     <ClInclude Include="bullet.h" />
+    <ClInclude Include="button.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="claymore.h" />
     <ClInclude Include="club.h" />

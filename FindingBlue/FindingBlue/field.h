@@ -14,6 +14,7 @@ public:
     Object sky;
     std::vector<Object> tiles;
 	std::vector<Object> walls;
+	int opening_walls_idx[2] = { -1,-1 }; //벽 열어줄 타일 인덱스 저장용
 
     FIELD();
     void init() {

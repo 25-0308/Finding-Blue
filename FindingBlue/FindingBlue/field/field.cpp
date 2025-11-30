@@ -1,5 +1,5 @@
 #include"../field.h"
-
+#include<iostream>
 
 FIELD::FIELD() {
     const char* obj = "asset/tile/tile.obj";
@@ -99,6 +99,9 @@ FIELD::FIELD() {
 	wall1.position = glm::vec3(tileSize * 0.05, -0.75f,2.0*tileSize);
 	wall1.rotation.y = glm::radians(0.0f);
 	walls.push_back(wall1);
+
+	std::cout << "벽 pos" << wall1.position.x << " " << wall1.position.y << " " << wall1.position.z << std::endl;
+	this->opening_walls_idx[0] = walls.size() - 1;
     //중앙에 작게 네모난벽 3x3크기 
 // 중앙 3x3 작은 방 생성
     int minX = 6, maxX = 11;

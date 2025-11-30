@@ -16,6 +16,7 @@
 #include"minigun.h"
 #include"intro.h"
 #include"item.h"
+#include"button.h"
 //--- 아래 5개 함수는 사용자 정의 함수 임
 void make_vertexShaders();
 void make_fragmentShaders();
@@ -37,6 +38,8 @@ void MouseMove(int x, int y);
 bool map_loaded = true;
 AK_47* rifle;
 FIELD* field;
+std::vector<BUTTON*>buttons;
+
 CLUB* club;
 CLAYMORE* claymore;
 PISTOL* pistol;
@@ -77,6 +80,14 @@ glm::vec3 item_pos[7] = {
 	{ 42.0,0.1f,42.0f },
 	{ 50.0,0.1f,90.0f },
 	{ 90.0,0.1f,90.0f },
+};
+glm::vec3 button_pos[2] = {
+	{2.1,0.5f,8.0f},
+	{75.0f,0.0f,75.0f}
+};
+float button_rot[2] = {
+	glm::radians(180.0f),
+	glm::radians(0.0f)
 };
 //조명 일단 하나만
 Lighting light1;
@@ -146,6 +157,13 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	minigun->init();
 	field = new FIELD();
 	field->init();
+	//필드 생성했으니까 버튼도 생성
+	for (int i = 0;i < 1;++i) {
+		BUTTON* button = new BUTTON();
+		button->init(button_pos[i], button_rot[i]);
+		buttons.push_back(button);
+	}
+
 	intro = new INTRO();
 	intro->init();
 	//아이템 초기화
@@ -301,9 +319,14 @@ GLvoid drawScene() {
 		}
 	}
 
-	if (map_loaded)
+	if (map_loaded) {
 		field->draw(shaderProgramID);
-
+		//버튼그리기
+		
+	}
+	for (auto& b : buttons) {
+		b->draw(shaderProgramID);
+	}
 	//적
 	for (auto& e : *enemies) {
 		e.draw(shaderProgramID);
