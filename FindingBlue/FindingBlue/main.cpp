@@ -420,6 +420,13 @@ GLvoid KeyboardDown(unsigned char key, int x, int y) {
 			player.weapons.push_back(minigun);
 			player.change_weapon(player.weapons.size() - 1);
 		}
+		//여기서부턴 아이템과 충돌처리
+		for (auto& it : items) {
+			if (it->get_item(player.position)) {
+				//여기서 이제 효과
+
+			}
+		}
 		break;
 	case'-':
 		camera.sensitivity -= 5.0f;
@@ -576,7 +583,26 @@ void TimerFunction(int value)
 					}
 				}
 			}
+			// 클럽 히트 콜라이더 검사
+			if (club && club->get_is_get() && club->hit_active) {
+				if (enemy.collision.check_collision(club->collision)) {
+					std::cout << "ENEMY와 CLUB HIT 충돌!" << std::endl;
+					enemy.hit(player.position);
+					enemy.take_damage(35);
+					club->hit_active = false;  // 때리면 중지
+					break;
+				}
+			}
+			if (club && club->get_is_get() && club->hit_active) {
+				if (buttons[0]->collision.check_collision(club->collision)) {
+					std::cout << "버튼과 CLUB HIT 충돌!" << std::endl;
+					club->hit_active = false;  // 때리면 중지
+					field->walls[field->opening_walls_idx[0]].position.y = -10.0f; //벽 내리기
+					break;
+				}
+			}
 		}
+
 	}
 	drawScene();
 

@@ -60,7 +60,16 @@ public:
     bool get_is_get() {
         return is_get;
     }
-  
+
+    bool get_item(glm::vec3 playerPos) {
+        float distance = glm::length(playerPos - this->item.position);
+        if (distance < 1.5f && !this->is_get) {
+            this->is_get = true;
+            return true;
+        }
+        return false;
+
+    }
 
 };
 static const char* getModelPath(ItemType t) {

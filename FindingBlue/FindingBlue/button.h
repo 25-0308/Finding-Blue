@@ -13,9 +13,8 @@ private:
 
 
 public:
-    //총알 목록들
     Object button;
-    
+    Collision collision;
 
     BUTTON()
         : button("asset/button/button.obj", "asset/button/button.png")
@@ -26,9 +25,10 @@ public:
         button.init();
         button.scale = glm::vec3(1.2f);
         button.rotation.y = rad;
-        button.position = pos;
+        button.position = this->position=pos;
 		std::cout << "버튼 위치" << button.position.x << " " << button.position.y << " " << button.position.z << std::endl;
-      
+        collision.center = button.position;
+        collision.halfsize = glm::vec3(0.5f, 0.5f, 0.5f);
     }
 
     void draw(GLuint shader) {
@@ -40,7 +40,7 @@ public:
         glUniform1f(glGetUniformLocation(shader, "lightIntensity"), 1.0f);
 
         button.draw(shader);
-
+        collision.Debug_Draw();
 
 
     }

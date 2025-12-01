@@ -6,7 +6,7 @@
 
 namespace Debug_Draw {
 	void AddLine(const glm::vec3& start, const glm::vec3& end, const glm::vec3& color = glm::vec3(1.0f, 0.0f, 0.0f));
-	void Render(  );
+	void Render();
 }
 class Collision
 {
@@ -23,4 +23,5 @@ public:
 	bool check_collision(const Collision& other) const; // 충돌 검사
 
 	void Debug_Draw(const glm::vec3& color = glm::vec3(1.0f, 0.0f, 0.0f)) const; // 빨간 박스 그리기
+	void Transform(const glm::vec3& position, const glm::vec3& rotation); // 회전 적용
 };
