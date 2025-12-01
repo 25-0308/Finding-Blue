@@ -184,7 +184,7 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	light1.lightPos = glm::vec3(47.5f, 20.0f, 47.5f);
 	//light1.lightPos = glm::vec3(10.0, 1.0f, 10.0);
 	glutMouseFunc(mouseCallback);
-	glutKeyboardFunc(KeyboardDown);
+	glutKeyboardFunc(KeyboardDown);	
 	glutKeyboardUpFunc(KeyboardUp);
 	glutMotionFunc(MouseMove);
 	glutPassiveMotionFunc(MouseMove);
@@ -590,6 +590,15 @@ void TimerFunction(int value)
 					enemy.hit(player.position);
 					enemy.take_damage(35);
 					club->hit_active = false;  // 때리면 중지
+					break;
+				}
+			}
+			if (claymore && claymore->get_is_get() && claymore->hit_active) {
+				if (enemy.collision.check_collision(claymore->collision)) {
+					std::cout << "ENEMY와 CLUB HIT 충돌!" << std::endl;
+					enemy.hit(player.position);
+					enemy.take_damage(35);
+					claymore->hit_active = false;  // 때리면 중지
 					break;
 				}
 			}
