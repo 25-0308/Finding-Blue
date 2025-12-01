@@ -14,6 +14,7 @@ public:
 	int opening_walls_idx[2] = { -1,-1 }; //벽 열어줄 타일 인덱스 저장용
 
 	std::vector<Collision> collisions;
+    Collision button_wall;
 
     FIELD();
     void init() {

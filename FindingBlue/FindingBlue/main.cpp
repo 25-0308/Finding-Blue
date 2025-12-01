@@ -157,6 +157,7 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	minigun->init();
 	field = new FIELD();
 	field->init();
+	player.set_field(field); //플레이어 필드 참조 설정
 	//필드 생성했으니까 버튼도 생성
 	for (int i = 0;i < 1;++i) {
 		BUTTON* button = new BUTTON();
@@ -608,6 +609,7 @@ void TimerFunction(int value)
 					std::cout << "버튼과 CLUB HIT 충돌!" << std::endl;
 					club->hit_active = false;  // 때리면 중지
 					field->walls[field->opening_walls_idx[0]].position.y = -10.0f; //벽 내리기
+					field->collisions[3].center.y = -10.0f; //벽 충돌처리 내리기
 					break;
 				}
 			}

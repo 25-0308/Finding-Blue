@@ -162,7 +162,8 @@ FIELD::FIELD() {
             }
 			
             walls.push_back(w);
-
+            temp.center = w.position;
+            collisions.push_back(temp);
             // ──────────────────────────────
             //       모서리 → 벽 하나 더
             // ──────────────────────────────
@@ -184,7 +185,7 @@ FIELD::FIELD() {
                 else if (x == minX && y == maxY) {         // 좌상
                     w2.rotation.y = glm::radians(0.0f);
                     w2.position.z += 2.5f;
-                    temp.halfsize = glm::vec3(0.5f, 5.0f, 2.5f);
+                    temp.halfsize = glm::vec3(2.5f, 5.0f, 0.5f);
                 }
                 else if (x == maxX && y == minY) {         // 우하
                     w2.rotation.y = glm::radians(180.0f);
@@ -196,11 +197,11 @@ FIELD::FIELD() {
                     w2.position.z += 2.5f;
                     temp.halfsize = glm::vec3(2.5f, 5.0f, 0.5f);
                 }
-                
+                temp.center = w2.position;
+                collisions.push_back(temp);
                 walls.push_back(w2);
             }
-            temp.center = w.position;
-            collisions.push_back(temp);
+            
         }
     }
 
