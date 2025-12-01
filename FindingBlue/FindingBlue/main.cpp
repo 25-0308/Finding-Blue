@@ -181,7 +181,7 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	}
 	
 	//조명초기화
-	light1.lightPos = glm::vec3(47.5f, 20.0f, 47.5f);
+	light1.lightPos = glm::vec3(45.0f, 25.0f, 45.0f);
 	//light1.lightPos = glm::vec3(10.0, 1.0f, 10.0);
 	glutMouseFunc(mouseCallback);
 	glutKeyboardFunc(KeyboardDown);	
@@ -275,6 +275,7 @@ GLvoid drawScene() {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
+	light1.apply(shaderProgramID);
 
 	//플레이어==카메라
 	glm::mat4 view = camera.getView();
