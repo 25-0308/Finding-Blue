@@ -24,7 +24,8 @@ public:
     float speed = 5.0f;
 
     Player() :
-        position(0.8f, 0.0f, 5.0f),
+       // position(0.8f, 0.0f, 5.0f),<-원본은 이거
+		position(10.0f, 0.0f, 5.0f),    //디버깅용
         front(0.0f, 0.0f, -1.0f),
         up(0.0f, 1.0f, 0.0f)
     {

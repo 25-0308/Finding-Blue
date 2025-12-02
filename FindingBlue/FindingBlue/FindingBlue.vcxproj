@@ -137,6 +137,7 @@
     <ClCompile Include="airplane\airplane.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="airplane\missile.cpp" />
     <ClCompile Include="bullet.cpp" />
     <ClCompile Include="camera\camera.cpp" />
     <ClCompile Include="Collision.cpp" />
@@ -175,6 +176,7 @@
     <ClInclude Include="item.h" />
     <ClInclude Include="light.h" />
     <ClInclude Include="minigun.h" />
+    <ClInclude Include="missile.h" />
     <ClInclude Include="ModelLoader.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="pistol.h" />

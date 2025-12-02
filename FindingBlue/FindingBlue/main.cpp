@@ -19,6 +19,7 @@
 #include"button.h"
 #include"firecannon.h"
 #include"airplane.h"
+#include"missile.h"
 //--- 아래 5개 함수는 사용자 정의 함수 임
 void make_vertexShaders();
 void make_fragmentShaders();
@@ -61,6 +62,8 @@ Camera camera(player);
 
 //비행기
 AIRPLANE* airplane;
+//미사일
+std::vector<MISSILE*> missiles;
 
 //적
 std::vector<ENEMY>* enemies = new std::vector<ENEMY>();
@@ -307,6 +310,29 @@ GLvoid drawScene() {
 			glm::vec3(0.0f, 1.0f, 0.0f)  //카메라의 업벡터
 		);
 	}
+	//여기에 비행기 바라보게하는거 추가
+	if (airplane->get_is_active()) {
+		if (airplane->get_airplane_state() == 0 && current_step != 0) {
+			//시선과 pos 비행기 앞
+			glm::vec3 a_pos_b = airplane->airplane.position;
+			a_pos_b.z = 30.0f;
+			view = glm::lookAt(
+				a_pos_b,//카메라 위치
+				airplane->airplane.position, //카메라가 바라보는 위치
+
+				glm::vec3(0.0f, 1.0f, 0.0f)  //카메라의 업벡터
+			);
+		}
+		else if (airplane->get_airplane_state() == 1 && current_step != 0) {
+			view = glm::lookAt(
+				player.position,//카메라 위치
+				airplane->airplane.position, //카메라가 바라보는 위치
+
+				glm::vec3(0.0f, 1.0f, 0.0f)  //카메라의 업벡터
+			);
+		}
+	}
+
 
 	GLuint viewLoc = glGetUniformLocation(shaderProgramID, "view");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
@@ -361,7 +387,11 @@ GLvoid drawScene() {
 
 	//비행기
 	airplane->draw(shaderProgramID);
-
+	if (!missiles.empty()) {
+		for (auto& m : missiles) {
+			m->draw(shaderProgramID);
+		}
+	}
 
 
 	player.draw_weapon(shaderProgramID);
@@ -581,10 +611,12 @@ void TimerFunction(int value)
 				pistol->set_shoot_cooldown(pistol->get_shoot_cooldown() - deltaTime);
 
 		}
-		for (auto& e : *enemies) {
-			if (e.update(deltaTime, player.position)) {
-				//적 사망완료
-				e.~ENEMY();
+		if (!airplane->get_is_active()) {
+			for (auto& e : *enemies) {
+				if (e.update(deltaTime, player.position)) {
+					//적 사망완료
+					e.~ENEMY();
+				}
 			}
 		}
 		for (auto& enemy : *enemies) {
@@ -660,8 +692,29 @@ void TimerFunction(int value)
 		}
 
 	}
-	if(current_step!=0)
-	airplane->update(deltaTime);
+	//비행기 관련 업데이트
+	if (current_step != 0) {
+		airplane->update(deltaTime);
+		airplane->is_player_in_range(player.position);
+		if (airplane->missile_ready(deltaTime)) {
+			//미사일 생성
+			MISSILE* missile = new MISSILE();
+			missile->init(airplane->get_position());
+			missiles.push_back(missile);
+			std::cout << "미사일 발사!" << std::endl;
+		}
+		//미사일 업데이트
+		if (!missiles.empty()) {
+			for (auto& m : missiles)
+				if(m->update(deltaTime)){
+					//삭제
+					m->~MISSILE();
+					delete m;
+					missiles.erase(missiles.begin());
+
+				}
+		}
+	}
 	drawScene();
 
 	glutTimerFunc(value, TimerFunction, value);

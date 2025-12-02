@@ -8,7 +8,9 @@ private:
 
     glm::vec3 position;
 
-
+	float missile_cooldown = 1.0f;
+	int shoot_count = 0;
+    bool is_active = false;
 
 public:
     Object airplane;
@@ -49,7 +51,7 @@ public:
     }
 
     void draw(GLuint shader) {
-
+        if (!this->is_active) return;
         glUniform1f(glGetUniformLocation(shader, "material.shininess"), 256.0f);
         glUniform1f(glGetUniformLocation(shader, "material.specularStrength"), 2.0f);
         glUniform1f(glGetUniformLocation(shader, "material.metallic"), 1.0f);
@@ -68,6 +70,19 @@ public:
     }
     //여기 아래로는 cpp 파일에 작성할 것들
     void update(float deltaTime);
+	bool missile_ready(float deltaTime);
+    glm::vec3 get_position() {
+        return this->airplane.position;
+    }
+    int get_airplane_state();
+	void set_active(bool active) {
+		this->is_active = active;
+	}
+	bool get_is_active() {
+		return this->is_active;
+	}
+	void is_player_in_range(glm::vec3 playerPos);
+    
 
    
 };

@@ -71,9 +71,9 @@ void FIRECANNON::attack(float deltaTime) {
     if (!this->recoil_mode) {
         //총 오프셋 뒤로
         this->offsets.z += 3.0f * deltaTime;
-        if (this->offsets.z > 0.08f) {
+        if (this->offsets.z > 0.05f) {
             this->recoil_mode = true;
-            this->offsets.z = 0.08f;
+            this->offsets.z = 0.05f;
             //이 부분에 총알 생성 넣으면 될거같다
 			fires.push_back(shoot_fire(this->for_bullet_offset, this->front));
 			//fires.push_back(shoot_fire(this->for_bullet_offset, this->front));
