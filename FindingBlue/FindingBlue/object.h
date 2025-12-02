@@ -41,6 +41,9 @@ public:
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textureID);
 
+    
+
+
         glm::mat4 m = glm::mat4(1.0f);
 
         m = glm::translate(m, position);
@@ -55,11 +58,12 @@ public:
         obj.modelMatrix = m;
 
         drawObject(shader, obj);
+       
     }
 
 
     virtual ~Object() {
         deleteObject(obj);
-        // ?ìŠ¤ì²˜ëŠ” ?? œ?˜ì? ?ŠìŒ (ê³µìœ  ì¤?
+        
     }
 };

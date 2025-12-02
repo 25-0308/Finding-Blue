@@ -26,6 +26,20 @@ void Player::move(float deltaTime)
 		nextposition += right * speed * deltaTime;
 	}
 	position = nextposition;
+
+
+	position.y += verticalVelocity * deltaTime;
+
+	if (!isGrounded) {
+		verticalVelocity += gravity * deltaTime;
+	}
+
+
+	if (position.y <= 0.0f) {
+		position.y = 0.0f;
+		verticalVelocity = 0.0f;
+		isGrounded = true;
+	}
 }
 void Player::change_weapon(int index)
 {
@@ -49,5 +63,11 @@ void Player::zoom_in(float deltaTime) {
 		if (FOV > 45.0f) FOV = 45.0f;
 		if(!this->weapons.empty())
 		this->weapons[currentWeapon]->zoom_in(false, deltaTime);
+	}
+}
+void Player::jump() {
+	if (isGrounded) {
+		verticalVelocity = jumpPower;  // À§·Î Æ¢±â±â
+		isGrounded = false;
 	}
 }

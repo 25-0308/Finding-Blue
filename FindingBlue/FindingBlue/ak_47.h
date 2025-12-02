@@ -2,6 +2,7 @@
 #include "Object.h"
 #include"weapon.h"
 #include"bullet.h"
+#include"fireEFFECT.h"
 class AK_47 : public Weapon {
 private:
     //총이 가지고 있어야하는 그런것들임
@@ -19,6 +20,7 @@ public:
     Object metal;
     glm::vec3 offsets = glm::vec3(0.0f);
 	glm::vec3 for_bullet_offset = glm::vec3(0.0f);
+	
     AK_47()
         : wood("asset/ak_47/ak_47_wood.obj", "asset/ak_47/ak_v2.png"),
         metal("asset/ak_47/ak_47_metal.obj", "asset/ak_47/ak_v2.png")
@@ -53,7 +55,7 @@ public:
 				}
               
             }
-        
+         
     }
 	//여기 아래로는 cpp 파일에 작성할 것들
     void update(float deltaTime, glm::vec3 position, float yaw, float pitch)override;

@@ -1,3 +1,7 @@
 마우스에 따라 이동하는 카메라 자료
 https://ciel45.tistory.com/93
 https://like-grapejuice.tistory.com/553
+
+
+불이펙트
+https://thelittleengineerthatcould.blogspot.com/2021/06/fire-in-opengl.html

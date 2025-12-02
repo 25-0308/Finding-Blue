@@ -17,6 +17,8 @@
 #include"intro.h"
 #include"item.h"
 #include"button.h"
+#include"firecannon.h"
+#include"airplane.h"
 //--- 아래 5개 함수는 사용자 정의 함수 임
 void make_vertexShaders();
 void make_fragmentShaders();
@@ -44,6 +46,7 @@ CLUB* club;
 CLAYMORE* claymore;
 PISTOL* pistol;
 MINIGUN* minigun;
+FIRECANNON* firecannon;
 INTRO* intro;
 int current_step = 0;
 //아이템관련
@@ -55,6 +58,10 @@ std::vector<BULLET>* bullets = new std::vector<BULLET>();
 //플레이어
 Player player;
 Camera camera(player);
+
+//비행기
+AIRPLANE* airplane;
+
 //적
 std::vector<ENEMY>* enemies = new std::vector<ENEMY>();
 glm::vec3 E_pos_list[11] = {
@@ -155,6 +162,8 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	pistol->init();
 	minigun = new MINIGUN();
 	minigun->init();
+	firecannon = new FIRECANNON();
+	firecannon->init();
 	field = new FIELD();
 	field->init();
 	//필드 생성했으니까 버튼도 생성
@@ -173,7 +182,12 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 		items.push_back(item);
 	}
 
-	enemies->reserve(20);
+
+	//비행기
+	airplane = new AIRPLANE();
+	airplane->init();
+
+	enemies->reserve(13);
 	//적생성인데
 	for (int i = 0;i < 10;++i) {
 		enemies->emplace_back();                  // 벡터 안에 직접 생성
@@ -181,7 +195,8 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	}
 	
 	//조명초기화
-	light1.lightPos = glm::vec3(47.5f, 20.0f, 47.5f);
+	light1.lightPos = glm::vec3(45.0, 20.0f, 45.0);
+
 	//light1.lightPos = glm::vec3(10.0, 1.0f, 10.0);
 	glutMouseFunc(mouseCallback);
 	glutKeyboardFunc(KeyboardDown);
@@ -272,10 +287,16 @@ GLvoid drawScene() {
 	glUseProgram(shaderProgramID);
 
 
-	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 
+	//알파적용
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glUniform1f(glGetUniformLocation(shaderProgramID, "alpha"), 1.0f);
+	light1.apply(shaderProgramID);
 	//플레이어==카메라
 	glm::mat4 view = camera.getView();
 	if (current_step == 0) {
@@ -293,11 +314,11 @@ GLvoid drawScene() {
 	glm::mat4 projection = glm::perspective(glm::radians(player.FOV), (float)width / (float)height, 0.1f, 150.0f);
 	GLuint projLoc = glGetUniformLocation(shaderProgramID, "projection");
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-	
 
 	//조명적용
 	light1.apply(shaderProgramID);
 	if (current_step != 0) {
+
 		if (!rifle->get_is_get())
 			rifle->draw(shaderProgramID);
 		if (!club->get_is_get())
@@ -308,8 +329,10 @@ GLvoid drawScene() {
 			pistol->draw(shaderProgramID);
 		if (!minigun->get_is_get())
 			minigun->draw(shaderProgramID);
+		if (!firecannon->get_is_get())
+			firecannon->draw(shaderProgramID);
 		//플레이어 무기 그리기
-		player.draw_weapon(shaderProgramID);
+		
 
 
 		//아이템 그리기
@@ -332,15 +355,23 @@ GLvoid drawScene() {
 		e.draw(shaderProgramID);
 	}
 
+
+	if (current_step == 0)
+	intro->draw(shaderProgramID);
+
+	//비행기
+	airplane->draw(shaderProgramID);
+
+
+
+	player.draw_weapon(shaderProgramID);
 	glm::mat4 MVP = glm::mat4(1.0);
 	glUniformMatrix4fv(
 		glGetUniformLocation(shaderProgramID, "modelTransform"),
 		1, GL_FALSE,
 		glm::value_ptr(MVP)
 	);
-	if (current_step == 0)
-	intro->draw(shaderProgramID);
-
+	
 	Debug_Draw::Render();
 
 	glutSwapBuffers();
@@ -420,6 +451,10 @@ GLvoid KeyboardDown(unsigned char key, int x, int y) {
 			player.weapons.push_back(minigun);
 			player.change_weapon(player.weapons.size() - 1);
 		}
+		if (firecannon->get_weapon(player.position)) {
+			player.weapons.push_back(firecannon);
+			player.change_weapon(player.weapons.size() - 1);
+		}
 		//여기서부턴 아이템과 충돌처리
 		for (auto& it : items) {
 			if (it->get_item(player.position)) {
@@ -441,6 +476,10 @@ GLvoid KeyboardDown(unsigned char key, int x, int y) {
 			current_step = 1;
 			glutWarpPointer(centerX, centerY);
 		}
+		break;
+	case' ':
+
+		player.jump();
 		break;
 	case 'q':
 		exit(0);
@@ -496,6 +535,7 @@ void TimerFunction(int value)
 		claymore->update(deltaTime, player.position, camera.yaw, camera.pitch);
 		pistol->update(deltaTime, player.position, camera.yaw, camera.pitch);
 		minigun->update(deltaTime, player.position, camera.yaw, camera.pitch);
+		firecannon->update(deltaTime, player.position, camera.yaw, camera.pitch);
 		player.zoom_in(deltaTime);
 		if (player.mouses[0] && !player.weapons.empty()) {
 
@@ -503,6 +543,10 @@ void TimerFunction(int value)
 			if (rifle == (player.weapons[player.currentWeapon])) {
 				player.weapons[player.currentWeapon]->attack(deltaTime);
 				camera.pitch += (rand() % 100 / 100.0f) * 40.0f * deltaTime; //좌우약간흔들림
+			}
+			if (firecannon == (player.weapons[player.currentWeapon])) {
+				player.weapons[player.currentWeapon]->attack(deltaTime);
+			
 			}
 			//곤봉 근접류면 다시 돌아와야하니까
 			if (club == (player.weapons[player.currentWeapon])) {
@@ -583,6 +627,18 @@ void TimerFunction(int value)
 					}
 				}
 			}
+			if (firecannon && firecannon->get_is_get()) {
+				for (size_t i = 0; i < firecannon->fires.size(); ++i) {
+					FIRE* fire = firecannon->fires[i];
+					if (enemy.collision.check_collision(fire->collision)) {
+						std::cout << "ENEMY와 FIRECANNON FIRE 충돌!" << std::endl;
+						enemy.take_damage(50);
+						delete fire;
+						firecannon->fires.erase(firecannon->fires.begin() + i);
+						break;
+					}
+				}
+			}
 			// 클럽 히트 콜라이더 검사
 			if (club && club->get_is_get() && club->hit_active) {
 				if (enemy.collision.check_collision(club->collision)) {
@@ -604,6 +660,8 @@ void TimerFunction(int value)
 		}
 
 	}
+	if(current_step!=0)
+	airplane->update(deltaTime);
 	drawScene();
 
 	glutTimerFunc(value, TimerFunction, value);

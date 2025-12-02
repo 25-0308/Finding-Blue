@@ -13,6 +13,11 @@ public:
 
     std::vector<Weapon*> weapons;
     int currentWeapon = 0;
+    // --- 점프 관련 ---
+    bool isGrounded = true;      // 바닥 위인지
+    float verticalVelocity = 0.0f; // y축 속도
+    float gravity = -9.8f;        // 중력
+    float jumpPower = 6.0f;       // 점프 세기
 
     bool keys[256] = { false };
 	bool mouses[4] = { false }; //좌클 우클 휠위 휠아래
@@ -32,5 +37,9 @@ public:
 			weapons[currentWeapon]->draw(shader);
 		}
 	}
+	glm::vec3 get_player_pos() {
+		return position;
+	}
     void zoom_in(float deltaTime);
+    void jump();
 };

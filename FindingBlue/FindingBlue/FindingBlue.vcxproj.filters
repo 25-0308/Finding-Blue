@@ -40,6 +40,9 @@
     <Filter Include="소스 파일\intro">
       <UniqueIdentifier>{f6ec566b-c59f-4dad-a0aa-6cb8cc5818ef}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\airplane">
+      <UniqueIdentifier>{c3c2dc36-cf12-41b6-9b76-b2cff7e698ff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="fragment.glsl">
@@ -97,6 +100,15 @@
     </ClCompile>
     <ClCompile Include="intro\intro.cpp">
       <Filter>소스 파일\intro</Filter>
+    </ClCompile>
+    <ClCompile Include="weapon\fire.cpp">
+      <Filter>소스 파일\weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="weapon\firecannon.cpp">
+      <Filter>소스 파일\weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="airplane\airplane.cpp">
+      <Filter>소스 파일\airplane</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -158,6 +170,15 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="button.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="fireEFFECT.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="firecannon.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="airplane.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

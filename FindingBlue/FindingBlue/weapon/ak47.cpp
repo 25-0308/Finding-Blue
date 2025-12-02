@@ -51,7 +51,7 @@ void AK_47::update(float deltaTime, glm::vec3 position, float yaw, float pitch)
             bullets.erase(bullets.begin() + i);  // 벡터에서 제거
         }
     }
-
+	
 }
 
 bool AK_47::get_weapon(glm::vec3 playerPos) {
@@ -74,6 +74,8 @@ void AK_47::attack(float deltaTime) {
             this->offsets.z = 0.1f;
             //이 부분에 총알 생성 넣으면 될거같다
 			bullets.push_back(shoot_bullet(this->for_bullet_offset, this->front));
+			
+
             //std::cout << this->front.x << " " << this->front.y << " " << this->front.z << std::endl;
 		}
 	}
