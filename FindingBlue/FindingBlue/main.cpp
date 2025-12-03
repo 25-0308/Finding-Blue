@@ -93,7 +93,7 @@ glm::vec3 item_pos[7] = {
 };
 glm::vec3 button_pos[2] = {
 	{2.1,0.5f,8.0f},
-	{75.0f,0.0f,75.0f}
+	{55.3f,0.0f,50.0f}
 };
 float button_rot[2] = {
 	glm::radians(180.0f),
