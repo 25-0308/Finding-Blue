@@ -150,6 +150,7 @@
     <ClCompile Include="object\TextManager.cpp" />
     <ClCompile Include="player\player.cpp" />
     <ClCompile Include="weapon\ak47.cpp" />
+    <ClCompile Include="weapon\ash.cpp" />
     <ClCompile Include="weapon\claymore.cpp" />
     <ClCompile Include="weapon\club.cpp" />
     <ClCompile Include="weapon\fire.cpp" />
@@ -162,6 +163,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="ak_47.h" />
+    <ClInclude Include="ash.h" />
     <ClInclude Include="bullet.h" />
     <ClInclude Include="button.h" />
     <ClInclude Include="camera.h" />

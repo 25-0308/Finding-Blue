@@ -2,7 +2,7 @@
 #include"object.h"
 #include"Collision.h"
 
-class FIRE {
+class ASH {
 private:
     //총이 가지고 있어야하는 그런것들임
     glm::vec3 position;
@@ -10,26 +10,26 @@ private:
     float yaw = 0.0;
     float pitch = 0.0;
     bool initialized = false;
-	float intensity = 15.0f;
+    float intensity = 15.0f;
     float alpha = 1.0f;
 
 public:
 
     Collision collision;
-    Object fire;
+    Object plane;
     glm::vec3 offsets = glm::vec3(0.0f);
-    FIRE()
-        : fire("asset/fire/fireEFFP.obj", "asset/fire/fireEFF.png")
+    ASH()
+        : plane("asset/ash/plane.obj", "asset/ash/ash.png")
     {
     }
 
     void init() {
 
-        fire.init();
-        fire.scale = glm::vec3(0.5f);
-        fire.position = glm::vec3(5.0f, -0.2f, 10.0f);
-        collision.center = fire.position;
-        collision.halfsize = collision.halfsize * fire.scale;
+        plane.init();
+        plane.scale = glm::vec3(0.5f);
+        plane.position = glm::vec3(5.0f, -0.2f, 10.0f);
+        collision.center = plane.position;
+        collision.halfsize = collision.halfsize * plane.scale;
     }
 
     void draw(GLuint shader) {
@@ -39,7 +39,7 @@ public:
         glUniform1f(glGetUniformLocation(shader, "material.metallic"), 1.0f);
         glUniform1f(glGetUniformLocation(shader, "lightIntensity"), this->intensity);
         glUniform1f(glGetUniformLocation(shader, "alpha"), this->alpha);
-        fire.draw(shader);
+        plane.draw(shader);
         glUniform1f(glGetUniformLocation(shader, "material.shininess"), 8.0f);
         glUniform1f(glGetUniformLocation(shader, "material.specularStrength"), 0.2f);
         glUniform1f(glGetUniformLocation(shader, "material.metallic"), 0.0f);
@@ -51,7 +51,7 @@ public:
     //여기 아래로는 cpp 파일에 작성할 것들
     bool update(float deltaTime, float yaw, float pitch);
     void set_position(glm::vec3 pos) {
-        this->position = fire.position = pos;
+        this->position = plane.position = pos;
     }
     glm::vec3 get_position() {
         return this->position;

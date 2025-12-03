@@ -2,6 +2,7 @@
 #include "Object.h"
 #include"weapon.h"
 #include"fireEFFECT.h"
+#include"ash.h"
 class FIRECANNON : public Weapon {
 private:
     //총이 가지고 있어야하는 그런것들임
@@ -19,7 +20,7 @@ public:
     glm::vec3 offsets = glm::vec3(0.0f);
     glm::vec3 for_bullet_offset = glm::vec3(0.0f);
     std::vector<FIRE*> fires;
-
+	std::vector<ASH*> ashes;
     FIRECANNON()
        
        : metal("asset/firecannon/firecannon.obj", "asset/firecannon/firecannon.png")
@@ -54,6 +55,11 @@ public:
                 f->draw(shader);
             }
         }
+        if (!ashes.empty()) {
+            for (auto& a : ashes) {
+                a->draw(shader);
+            }
+        }
 
     }
     //여기 아래로는 cpp 파일에 작성할 것들
@@ -70,3 +76,4 @@ public:
 
 };
 FIRE* shoot_fire(glm::vec3 postion, glm::vec3 direction);
+ASH* shoot_ash(glm::vec3 postion, glm::vec3 direction);

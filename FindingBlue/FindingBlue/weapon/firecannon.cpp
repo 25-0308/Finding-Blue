@@ -55,6 +55,14 @@ void FIRECANNON::update(float deltaTime, glm::vec3 position, float yaw, float pi
             fires.erase(fires.begin() + i);  // 벡터에서 제거
         }
     }
+    for (int i = 0;i < ashes.size();++i) {
+        ASH* a = ashes[i];
+        if (a->update(deltaTime, yaw, pitch)) // 삭제 조건 만족?
+        {
+            delete a;            // 메모리 해제
+            ashes.erase(ashes.begin() + i);  // 벡터에서 제거
+        }
+    }
 }
 
 bool FIRECANNON::get_weapon(glm::vec3 playerPos) {
@@ -79,7 +87,7 @@ void FIRECANNON::attack(float deltaTime) {
 			//fires.push_back(shoot_fire(this->for_bullet_offset, this->front));
             //마지막 불 각도조절
             //fires.back()->fire.rotation.x = 90.0f;
-
+			//ashes.push_back(shoot_ash(this->for_bullet_offset, this->front));
             //std::cout << this->front.x << " " << this->front.y << " " << this->front.z << std::endl;
         }
     }
@@ -121,4 +129,12 @@ FIRE* shoot_fire(glm::vec3 postion, glm::vec3 direction) {
     new_fire->set_position(postion);
     new_fire->set_front(direction);
     return new_fire;
+}
+ASH* shoot_ash(glm::vec3 postion, glm::vec3 direction) {
+	ASH* new_ash;
+	new_ash = new ASH();
+	new_ash->init();
+	new_ash->set_position(postion);
+	new_ash->set_front(direction);
+	return new_ash;
 }
