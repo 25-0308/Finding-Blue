@@ -82,45 +82,50 @@ FIELD::FIELD() {
         }
     }
     //여기서부터는 맵을 구성하는 벽들임충돌처리 적용해야함
-	//오프셋
+    //오프셋
     Collision temp;
-	temp.halfsize = glm::vec3(0.5f, 5.0f, 2.5f);
+    temp.halfsize = glm::vec3(0.5f, 5.0f, 2.5f);
 
-	glm::vec3 offset = glm::vec3(-2.5f, 0.0f, -2.5f);
-	Object wall1("asset/tile/wall.obj", "asset/tile/wall.png");
+    glm::vec3 offset = glm::vec3(-2.5f, 0.0f, -2.5f);
+    Object wall1("asset/tile/wall.obj", "asset/tile/wall.png");
     wall1.scale = glm::vec3(0.5f);
-	wall1.position = glm::vec3(tileSize*1.0,- 0.75f, 0.0)+ offset;
+    wall1.position = glm::vec3(tileSize * 1.0, -0.75f, 0.0) + offset;
     wall1.rotation.y = glm::radians(90.0f);
-	walls.push_back(wall1);
-	//벽1 충돌처리
-	temp.center = wall1.position;
-	collisions.push_back(temp);
-
-	//벽2
-    wall1.position = glm::vec3(tileSize * 1.0, -0.75f,tileSize* 1.0)+ offset;
-	walls.push_back(wall1);
-	//벽2 충돌처리
+    walls.push_back(wall1);
+    //벽1 충돌처리
     temp.center = wall1.position;
     collisions.push_back(temp);
 
-	//벽3
-	wall1.position = glm::vec3(tileSize * 1.0, -0.75f, tileSize * 2.0)+ offset;
-	walls.push_back(wall1);
-	//벽3 충돌처리
+    //벽2
+    wall1.position = glm::vec3(tileSize * 1.0, -0.75f, tileSize * 1.0) + offset;
+    walls.push_back(wall1);
+    //벽2 충돌처리
+    temp.center = wall1.position;
+    collisions.push_back(temp);
+
+    //벽3
+    wall1.position = glm::vec3(tileSize * 1.0, -0.75f, tileSize * 2.0) + offset;
+    walls.push_back(wall1);
+    //벽3 충돌처리
     temp.center = wall1.position;
     collisions.push_back(temp);
 
     //버튼과 상호작용 하는 벽(맨처음부분)
-	wall1.position = glm::vec3(tileSize * 0.05, -0.75f,2.0*tileSize);
-	wall1.rotation.y = glm::radians(0.0f);
-	walls.push_back(wall1);
-	//벽4 충돌처리
-	temp.center = wall1.position;
-	temp.halfsize = glm::vec3(2.5f, 5.0f, 0.5f);
-	collisions.push_back(temp);
+    wall1.position = glm::vec3(tileSize * 0.05, -0.75f, 2.0 * tileSize);
+    wall1.rotation.y = glm::radians(0.0f);
+    walls.push_back(wall1);
+    
+    //벽4 충돌처리
+    temp.center = wall1.position;
+    temp.halfsize = glm::vec3(2.5f, 5.0f, 0.5f);
+    collisions.push_back(temp);
+    collision_wall_idx[0] = collisions.size() - 1;
+    
 
-	std::cout << "벽 pos" << wall1.position.x << " " << wall1.position.y << " " << wall1.position.z << std::endl;
-	this->opening_walls_idx[0] = walls.size() - 1;
+
+
+    std::cout << "벽 pos" << wall1.position.x << " " << wall1.position.y << " " << wall1.position.z << std::endl;
+    this->opening_walls_idx[0] = walls.size() - 1;
     //중앙에 작게 네모난벽 3x3크기 
 // 중앙 3x3 작은 방 생성
     int minX = 6, maxX = 11;
@@ -143,12 +148,13 @@ FIELD::FIELD() {
             if (x == minX) {                 // 왼쪽 벽
                 w.rotation.y = glm::radians(90.0f);
                 w.position.x -= 2.5f;
-			    temp.halfsize = glm::vec3(0.5f, 5.0f, 2.5f);
+                temp.halfsize = glm::vec3(0.5f, 5.0f, 2.5f);
             }
             else if (x == maxX) {            // 오른쪽 벽
                 w.rotation.y = glm::radians(-90.0f);
                 w.position.x += 2.5f;
                 temp.halfsize = glm::vec3(0.5f, 5.0f, 2.5f);
+                
             }
             else if (y == minY) {            // 아래쪽 벽
                 w.rotation.y = glm::radians(180.0f);
@@ -164,6 +170,14 @@ FIELD::FIELD() {
             walls.push_back(w);
             temp.center = w.position;
             collisions.push_back(temp);
+            //이 부분 벽은 버튼열림
+            if (y == minY+2&&x==maxX) {
+                this->opening_walls_idx[1] = walls.size() - 1;
+                collision_wall_idx[1] = collisions.size()-1;
+                //디버깅출력
+                std::cout << "벽 개수" << walls.size() << std::endl;
+                std::cout << "콜라이더" << collisions.size() << std::endl;
+            }
             // ──────────────────────────────
             //       모서리 → 벽 하나 더
             // ──────────────────────────────
@@ -214,4 +228,14 @@ FIELD::FIELD() {
 	sky.scale = glm::vec3(1.1f);
 
 
+}
+
+void FIELD::update(float deltaTime, int idx) {
+   
+	int idx2 = collision_wall_idx[idx];
+	idx = opening_walls_idx[idx];
+    if (walls[idx].position.y > -10.0f) {
+        walls[idx].position.y -= 2.0f * deltaTime;
+        collisions[idx2].center = walls[idx].position;
+    }
 }

@@ -31,8 +31,8 @@ public:
     FIELD* field = nullptr; // ���� �浹���� ����
 
     Player() :
-       // position(0.8f, 0.0f, 5.0f),<-������ �̰�
-		position(10.0f, 0.0f, 5.0f),    //������
+        position(0.8f, 0.0f, 5.0f),//<-������ �̰�
+		//position(10.0f, 0.0f, 5.0f),    //������
         front(0.0f, 0.0f, -1.0f),
         up(0.0f, 1.0f, 0.0f),
         collision(glm::vec3(0.3f,0.8f,0.3f))

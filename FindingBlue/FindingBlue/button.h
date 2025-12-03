@@ -46,9 +46,12 @@ public:
     }
     //여기 아래로는 cpp 파일에 작성할 것들
 
-    bool get_is_get() {
+    bool get_is_hit() {
         return is_hit;
     }
+	void set_is_hit(bool hit) {
+		is_hit = hit;
+	}
 
 
 };

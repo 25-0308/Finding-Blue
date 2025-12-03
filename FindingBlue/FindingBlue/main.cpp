@@ -171,7 +171,7 @@ void main(int argc, char** argv) //--- ������ ����ϰ� ��
 	field->init();
 	player.set_field(field); //�÷��̾� �ʵ� ���� ����
 	//�ʵ� ���������ϱ� ��ư�� ����
-	for (int i = 0;i < 1;++i) {
+	for (int i = 0;i < 2;++i) {
 		BUTTON* button = new BUTTON();
 		button->init(button_pos[i], button_rot[i]);
 		buttons.push_back(button);
@@ -627,7 +627,7 @@ void TimerFunction(int value)
 				for (size_t i = 0; i < rifle->bullets.size(); ++i) {
 					BULLET* bullet = rifle->bullets[i];
 					if (enemy.collision.check_collision(bullet->collision)) {
-						std::cout << "ENEMY�� AK-47 BULLET �浹!" << std::endl;
+						std::cout << "ENEMY과 AK-47 BULLET 충돌!" << std::endl;
 						enemy.take_damage(10);
 						delete bullet;
 						rifle->bullets.erase(rifle->bullets.begin() + i);
@@ -640,7 +640,7 @@ void TimerFunction(int value)
 				for (size_t i = 0; i < pistol->bullets.size(); ++i) {
 					BULLET* bullet = pistol->bullets[i];
 					if (enemy.collision.check_collision(bullet->collision)) {
-						std::cout << "ENEMY�� Pistol BULLET �浹!" << std::endl;
+						std::cout << "ENEMY과 Pistol BULLET 충돌" << std::endl;
 						enemy.take_damage(40);
 						delete bullet;
 						pistol->bullets.erase(pistol->bullets.begin() + i);
@@ -653,7 +653,7 @@ void TimerFunction(int value)
 				for (size_t i = 0; i < minigun->bullets.size(); ++i) {
 					BULLET* bullet = minigun->bullets[i];
 					if (enemy.collision.check_collision(bullet->collision)) {
-						std::cout << "ENEMY�� MINIGUN BULLET �浹!" << std::endl;
+						std::cout << "ENEMY과 MINIGUN BULLET 충돌!" << std::endl;
 						enemy.take_damage(10);
 						delete bullet;
 						minigun->bullets.erase(minigun->bullets.begin() + i);
@@ -665,7 +665,7 @@ void TimerFunction(int value)
 				for (size_t i = 0; i < firecannon->fires.size(); ++i) {
 					FIRE* fire = firecannon->fires[i];
 					if (enemy.collision.check_collision(fire->collision)) {
-						std::cout << "ENEMY�� FIRECANNON FIRE �浹!" << std::endl;
+						std::cout << "ENEMY과 FIRECANNON FIRE 충돌!" << std::endl;
 						enemy.take_damage(50);
 						delete fire;
 						firecannon->fires.erase(firecannon->fires.begin() + i);
@@ -676,7 +676,7 @@ void TimerFunction(int value)
 			// Ŭ�� ��Ʈ �ݶ��̴� �˻�
 			if (club && club->get_is_get() && club->hit_active) {
 				if (enemy.collision.check_collision(club->collision)) {
-					std::cout << "ENEMY�� CLUB HIT �浹!" << std::endl;
+					std::cout << "ENEMY과 CLUB HIT 충돌!" << std::endl;
 					enemy.hit(player.position);
 					enemy.take_damage(35);
 					club->hit_active = false;  // ������ ����
@@ -685,7 +685,7 @@ void TimerFunction(int value)
 			}
 			if (claymore && claymore->get_is_get() && claymore->hit_active) {
 				if (enemy.collision.check_collision(claymore->collision)) {
-					std::cout << "ENEMY�� CLUB HIT �浹!" << std::endl;
+					std::cout << "ENEMY과 CLUB HIT 충돌!" << std::endl;
 					enemy.hit(player.position);
 					enemy.take_damage(35);
 					claymore->hit_active = false;  // ������ ����
@@ -693,12 +693,14 @@ void TimerFunction(int value)
 				}
 			}
 			if (club && club->get_is_get() && club->hit_active) {
-				if (buttons[0]->collision.check_collision(club->collision)) {
-					std::cout << "��ư�� CLUB HIT �浹!" << std::endl;
-					club->hit_active = false;  // ������ ����
-					field->walls[field->opening_walls_idx[0]].position.y = -10.0f; //�� ������
-					field->collisions[3].center.y = -10.0f; //�� �浹ó�� ������
-					break;
+				for (int i = 0;i < buttons.size();++i) {
+					if (buttons[i]->collision.check_collision(club->collision)) {
+						std::cout << "��ư�� CLUB HIT �浹!" << std::endl;
+						club->hit_active = false;  // ������ ����
+						buttons[i]->set_is_hit(true);
+
+						break;
+					}
 				}
 			}
 		}
@@ -727,6 +729,14 @@ void TimerFunction(int value)
 				}
 		}
 	}
+	//button and button walls
+	for (int i = 0;i < buttons.size();++i) {
+		if (buttons[i]->get_is_hit()) {
+			field->update(deltaTime, i);
+		}
+	}
+
+
 	drawScene();
 
 	glutTimerFunc(value, TimerFunction, value);

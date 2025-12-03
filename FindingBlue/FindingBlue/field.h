@@ -12,7 +12,7 @@ public:
     std::vector<Object> tiles;
 	std::vector<Object> walls;
 	int opening_walls_idx[2] = { -1,-1 }; //�� ������ Ÿ�� �ε��� �����
-
+	int collision_wall_idx[2] = { -1,-1 }; 
 
 	std::vector<Collision> collisions;
     Collision button_wall;
@@ -43,4 +43,5 @@ public:
 		for (auto& c : collisions)
 			c.Debug_Draw(glm::vec3(0.0f, 1.0f, 0.0f));
     }
+    void update(float deltaTime,int idx);
 };
