@@ -3,6 +3,8 @@
 
 #include "Object.h"
 #include"weapon.h"
+#include"collision.h"
+
 class CLAYMORE : public Weapon {
 private:
     //클레이모어가 가지고 있어야하는 그런것들임
@@ -12,9 +14,14 @@ private:
     bool recoil_mode = false;
     glm::vec3 attack_offsets = glm::vec3(0.0f);
 
+    bool hit_trigger = false;
+
 public:
     Object wood;
     Object metal;
+
+	Collision collision;
+	bool hit_active = false;
 
     CLAYMORE()
         : wood("asset/claymore/claymore_wood.obj", "asset/claymore/claymore_v1.png"),
@@ -43,7 +50,7 @@ public:
         glUniform1f(glGetUniformLocation(shader, "lightIntensity"), 1.0f);
 		wood.draw(shader);
      
-
+		collision.Debug_Draw(glm::vec3(0.0, 1.0, 0.0));
     }
     //여기 아래로는 cpp 파일에 작성할 것들
     void update(float deltaTime, glm::vec3 position, float yaw, float pitch);
@@ -55,6 +62,10 @@ public:
     bool get_recoil_mode() { return this->recoil_mode; };
     void set_recoil_mode(bool mode) { this->recoil_mode = mode; };
     void zoom_in(bool mode, float deltaTime)override;
+    bool is_in_hit_angle() const;
+    void create_hit_collider();
+    void update_hit_collider();
+    glm::vec3 get_club_tip_position() const;
 
 };
 

@@ -1,4 +1,5 @@
 #include "../Player.h"
+#include "../field.h"
 #include <GL/glm/gtc/matrix_transform.hpp>
 #include<iostream>
 void Player::move(float deltaTime)
@@ -7,28 +8,41 @@ void Player::move(float deltaTime)
     glm::vec3 right = glm::normalize(glm::cross(forward, up));
 	glm::vec3 nextposition = position;
 	
-    //´ÙÀ½ ÀÌµ¿°æ·Î°¡ º®ÀÌ¸é ÀÌµ¿¸øÇÏ°Ô
-	//ÀÏºÎ·¯ Á» Â¥Ä¡°Ô ¸¸µé¾úÀ½ Á¤È®ÇÏ°ÔÇÏ·Á¸é 0.05¾¿ ´Ù ÇÏ¸éµÊ
+    //ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½ï¿½Î°ï¿½ ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ï¿½Ï°ï¿½
+	//ï¿½ÏºÎ·ï¿½ ï¿½ï¿½ Â¥Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È®ï¿½Ï°ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ 0.05ï¿½ï¿½ ï¿½ï¿½ ï¿½Ï¸ï¿½ï¿½
 	if (nextposition.x < -2.2f) nextposition.x = -2.2f;
 	if (nextposition.z < -2.2f) nextposition.z = -2.2f;
 	if (nextposition.x > 97.0f) nextposition.x = 97.0f;
 	if (nextposition.z > 97.0f) nextposition.z = 97.0f;
+	// ï¿½ï¿½ Å° ï¿½Ô·Âºï¿½ï¿½ï¿½ ï¿½æµ¹ Ã¼Å©
 	if (keys['w']) {
-		nextposition += forward * speed * deltaTime;
+		glm::vec3 test_pos = nextposition + forward * speed * deltaTime;
+		if (!check_collision(test_pos)) {
+			nextposition = test_pos;
+		}
 	}
 	if (keys['s']) {
-		nextposition -= forward * speed * deltaTime;
+		glm::vec3 test_pos = nextposition - forward * speed * deltaTime;
+		if (!check_collision(test_pos)) {
+			nextposition = test_pos;
+		}
 	}
 	if (keys['a']) {
-		nextposition -= right * speed * deltaTime;
+		glm::vec3 test_pos = nextposition - right * speed * deltaTime;
+		if (!check_collision(test_pos)) {
+			nextposition = test_pos;
+		}
 	}
 	if (keys['d']) {
-		nextposition += right * speed * deltaTime;
+		glm::vec3 test_pos = nextposition + right * speed * deltaTime;
+		if (!check_collision(test_pos)) {
+			nextposition = test_pos;
+		}
 	}
+
 	position = nextposition;
 
-
-	position.y += verticalVelocity * deltaTime;
+position.y += verticalVelocity * deltaTime;
 
 	if (!isGrounded) {
 		verticalVelocity += gravity * deltaTime;
@@ -40,6 +54,9 @@ void Player::move(float deltaTime)
 		verticalVelocity = 0.0f;
 		isGrounded = true;
 	}
+	collision.center = position;
+	collision.center.y += 0.4f; 
+
 }
 void Player::change_weapon(int index)
 {
@@ -53,7 +70,7 @@ void Player::zoom_in(float deltaTime) {
 		FOV -= 30.0f * deltaTime;
 		if (FOV < 35.0f) FOV = 35.0f;
 
-		//ÀÏ´Ü ÃÑºÎÅÍ À§Ä¡º¯°æ
+		//ï¿½Ï´ï¿½ ï¿½Ñºï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½
 		if (!this->weapons.empty())
 		this->weapons[currentWeapon]->zoom_in(true, deltaTime);
 
@@ -67,7 +84,27 @@ void Player::zoom_in(float deltaTime) {
 }
 void Player::jump() {
 	if (isGrounded) {
-		verticalVelocity = jumpPower;  // À§·Î Æ¢±â±â
+		verticalVelocity = jumpPower;  // ï¿½ï¿½ï¿½ï¿½ Æ¢ï¿½ï¿½ï¿½
 		isGrounded = false;
 	}
 }
+
+bool Player::check_collision(const glm::vec3& next_position) {
+	if (!field) return false; // ï¿½Êµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½æµ¹ ï¿½ï¿½ï¿½ï¿½
+
+	// ï¿½Ý¶ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½
+	Collision test_collision = collision;
+	test_collision.center = next_position;
+	test_collision.center.y += 0.4f;
+
+	// ï¿½æµ¹ ï¿½Ë»ï¿½
+	for (const auto& wall_collision : field->collisions) {
+		if (test_collision.check_collision(wall_collision)) {
+			std::cout << "ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ ï¿½ï¿½ ï¿½æµ¹!" << std::endl;
+			return true; // ï¿½æµ¹ ï¿½ß»ï¿½
+		}
+	}
+
+	return false; // ï¿½æµ¹ ï¿½Ì¹ß»ï¿½
+}
+

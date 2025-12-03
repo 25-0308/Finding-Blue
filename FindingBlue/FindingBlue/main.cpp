@@ -1,4 +1,4 @@
-//--- ÇÊ¿äÇÑ Çì´õÆÄÀÏ ¼±¾ð
+//--- ï¿½Ê¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 #define _CRT_SECURE_NO_WARNINGS 
 #include "ModelLoader.h"
 #include"ak_47.h"
@@ -20,7 +20,7 @@
 #include"firecannon.h"
 #include"airplane.h"
 #include"missile.h"
-//--- ¾Æ·¡ 5°³ ÇÔ¼ö´Â »ç¿ëÀÚ Á¤ÀÇ ÇÔ¼ö ÀÓ
+//--- ï¿½Æ·ï¿½ 5ï¿½ï¿½ ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ ï¿½ï¿½
 void make_vertexShaders();
 void make_fragmentShaders();
 GLuint make_shaderProgram();
@@ -28,7 +28,7 @@ GLvoid drawScene();
 GLvoid Reshape(int w, int h);
 
 
-//³»°¡ Ãß°¡ÇÑ ÇÔ¼öÀÓ
+//ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ï¿½ï¿½
 void mouseCallback(int button, int state, int x, int y);
 void initBuffer();
 void TimerFunction(int value);
@@ -37,7 +37,7 @@ GLvoid KeyboardUp(unsigned char key, int x, int y);
 void mouseWheel(int button, int dir, int x, int y);
 void MouseMove(int x, int y);
 
-//³»°¡ Ãß°¡ÇÑ º¯¼öÀÓ
+//ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 bool map_loaded = true;
 AK_47* rifle;
 FIELD* field;
@@ -50,22 +50,22 @@ MINIGUN* minigun;
 FIRECANNON* firecannon;
 INTRO* intro;
 int current_step = 0;
-//¾ÆÀÌÅÛ°ü·Ã
+//ï¿½ï¿½ï¿½ï¿½ï¿½Û°ï¿½ï¿½ï¿½
 std::vector<ITEM*> items;
 
-//ÃÑ¾Ë ÀúÀåÇÒ º¤ÅÍ
+//ï¿½Ñ¾ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 std::vector<BULLET>* bullets = new std::vector<BULLET>();
 
-//ÇÃ·¹ÀÌ¾î
+//ï¿½Ã·ï¿½ï¿½Ì¾ï¿½
 Player player;
 Camera camera(player);
 
-//ºñÇà±â
+//ï¿½ï¿½ï¿½ï¿½ï¿½
 AIRPLANE* airplane;
-//¹Ì»çÀÏ
+//ï¿½Ì»ï¿½ï¿½ï¿½
 std::vector<MISSILE*> missiles;
 
-//Àû
+//ï¿½ï¿½
 std::vector<ENEMY>* enemies = new std::vector<ENEMY>();
 glm::vec3 E_pos_list[11] = {
 	{20.0,-0.7f,20.0f},
@@ -81,7 +81,7 @@ glm::vec3 E_pos_list[11] = {
 	{},
 
 };
-int item_list[] = { 0,0,1,2,2,2,2 }; //1:°í±â 2:½âÀº°í±â 3:Åº¾à
+int item_list[] = { 0,0,1,2,2,2,2 }; //1:ï¿½ï¿½ï¿½ï¿½ 2:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 3:Åºï¿½ï¿½
 glm::vec3 item_pos[7] = {
 	{9.0,0.1f,10.0f },
 	{ 10.0,0.1f,48.0f },
@@ -99,24 +99,24 @@ float button_rot[2] = {
 	glm::radians(180.0f),
 	glm::radians(0.0f)
 };
-//Á¶¸í ÀÏ´Ü ÇÏ³ª¸¸
+//ï¿½ï¿½ï¿½ï¿½ ï¿½Ï´ï¿½ ï¿½Ï³ï¿½ï¿½ï¿½
 Lighting light1;
 
 
-//µ¨Å¸Å¸ÀÓÀ» À§ÇÑ°Íµé
+//ï¿½ï¿½Å¸Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ñ°Íµï¿½
 auto lastTime = std::chrono::high_resolution_clock::now();
 float deltaTime = 0.0f;
 
 
 
 float obj_angle = 0.0f;
-//--- ÇÊ¿äÇÑ º¯¼ö ¼±¾ð
+//--- ï¿½Ê¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 GLint width = 800, height = 800;
 int centerX = width / 2;
 int centerY = height / 2;
-GLuint shaderProgramID; //--- ¼¼ÀÌ´õ ÇÁ·Î±×·¥ ÀÌ¸§
-GLuint vertexShader; //--- ¹öÅØ½º ¼¼ÀÌ´õ °´Ã¼
-GLuint fragmentShader; //--- ÇÁ·¡±×¸ÕÆ® ¼¼ÀÌ´õ °´Ã¼
+GLuint shaderProgramID; //--- ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½Î±×·ï¿½ ï¿½Ì¸ï¿½
+GLuint vertexShader; //--- ï¿½ï¿½ï¿½Ø½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½Ã¼
+GLuint fragmentShader; //--- ï¿½ï¿½ï¿½ï¿½ï¿½×¸ï¿½Æ® ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½Ã¼
 char* filetobuf(const char* file)
 {
 	FILE* fptr;
@@ -134,24 +134,24 @@ char* filetobuf(const char* file)
 	buf[length] = 0; // Null terminator
 	return buf; // Return the buffer
 }
-//--- ¸ÞÀÎ ÇÔ¼ö
+//--- ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½
 
-void main(int argc, char** argv) //--- À©µµ¿ì Ãâ·ÂÇÏ°í ÄÝ¹éÇÔ¼ö ¼³Á¤
+void main(int argc, char** argv) //--- ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½Ý¹ï¿½ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½ï¿½
 {
 
-	//--- À©µµ¿ì »ý¼ºÇÏ±â
+	//--- ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitWindowPosition(100, 0);
 	glutInitWindowSize(width, height);
 	//glutSetCursor(GLUT_CURSOR_NONE);
 	glutCreateWindow("Example1");
-	//--- GLEW ÃÊ±âÈ­ÇÏ±â
+	//--- GLEW ï¿½Ê±ï¿½È­ï¿½Ï±ï¿½
 	glewExperimental = GL_TRUE;
 	glewInit();
-	//--- ¼¼ÀÌ´õ ÀÐ¾î¿Í¼­ ¼¼ÀÌ´õ ÇÁ·Î±×·¥ ¸¸µé±â: »ç¿ëÀÚ Á¤ÀÇÇÔ¼ö È£Ãâ
-	make_vertexShaders(); //--- ¹öÅØ½º ¼¼ÀÌ´õ ¸¸µé±â
-	make_fragmentShaders(); //--- ÇÁ·¡±×¸ÕÆ® ¼¼ÀÌ´õ ¸¸µé±â
+	//--- ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½Ð¾ï¿½Í¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½Î±×·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ È£ï¿½ï¿½
+	make_vertexShaders(); //--- ï¿½ï¿½ï¿½Ø½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
+	make_fragmentShaders(); //--- ï¿½ï¿½ï¿½ï¿½ï¿½×¸ï¿½Æ® ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
 	shaderProgramID = make_shaderProgram();
 	initBuffer(); 
 	glEnable(GL_DEPTH_TEST);
@@ -169,7 +169,8 @@ void main(int argc, char** argv) //--- À©µµ¿ì Ãâ·ÂÇÏ°í ÄÝ¹éÇÔ¼ö ¼³Á¤
 	firecannon->init();
 	field = new FIELD();
 	field->init();
-	//ÇÊµå »ý¼ºÇßÀ¸´Ï±î ¹öÆ°µµ »ý¼º
+	player.set_field(field); //ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½Êµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	//ï¿½Êµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ ï¿½ï¿½Æ°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	for (int i = 0;i < 1;++i) {
 		BUTTON* button = new BUTTON();
 		button->init(button_pos[i], button_rot[i]);
@@ -178,7 +179,7 @@ void main(int argc, char** argv) //--- À©µµ¿ì Ãâ·ÂÇÏ°í ÄÝ¹éÇÔ¼ö ¼³Á¤
 
 	intro = new INTRO();
 	intro->init();
-	//¾ÆÀÌÅÛ ÃÊ±âÈ­
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­
 	for (int i = 0;i < 7;++i) {
 		ITEM* item = new ITEM(ItemType(item_list[i]));
 		item->init(item_pos[i]);
@@ -186,30 +187,30 @@ void main(int argc, char** argv) //--- À©µµ¿ì Ãâ·ÂÇÏ°í ÄÝ¹éÇÔ¼ö ¼³Á¤
 	}
 
 
-	//ºñÇà±â
+	//ï¿½ï¿½ï¿½ï¿½ï¿½
 	airplane = new AIRPLANE();
 	airplane->init();
 
 	enemies->reserve(13);
-	//Àû»ý¼ºÀÎµ¥
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îµï¿½
 	for (int i = 0;i < 10;++i) {
-		enemies->emplace_back();                  // º¤ÅÍ ¾È¿¡ Á÷Á¢ »ý¼º
-		enemies->back().init(E_pos_list[i]);      // ¹Ù·Î ÃÊ±âÈ­
+		enemies->emplace_back();                  // ï¿½ï¿½ï¿½ï¿½ ï¿½È¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		enemies->back().init(E_pos_list[i]);      // ï¿½Ù·ï¿½ ï¿½Ê±ï¿½È­
 	}
 	
-	//Á¶¸íÃÊ±âÈ­
-	light1.lightPos = glm::vec3(45.0, 20.0f, 45.0);
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½È­
 
+	light1.lightPos = glm::vec3(45.0f, 25.0f, 45.0f);
 	//light1.lightPos = glm::vec3(10.0, 1.0f, 10.0);
 	glutMouseFunc(mouseCallback);
-	glutKeyboardFunc(KeyboardDown);
+	glutKeyboardFunc(KeyboardDown);	
 	glutKeyboardUpFunc(KeyboardUp);
 	glutMotionFunc(MouseMove);
 	glutPassiveMotionFunc(MouseMove);
 	glutMouseWheelFunc(mouseWheel);
 
-	//--- ¼¼ÀÌ´õ ÇÁ·Î±×·¥ ¸¸µé±â
-	glutDisplayFunc(drawScene); //--- Ãâ·Â ÄÝ¹é ÇÔ¼ö
+	//--- ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½Î±×·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
+	glutDisplayFunc(drawScene); //--- ï¿½ï¿½ï¿½ ï¿½Ý¹ï¿½ ï¿½Ô¼ï¿½
 	//glutIdleFunc(drawScene);
 	glutTimerFunc(1, TimerFunction, 1);
 	glutReshapeFunc(Reshape);
@@ -218,12 +219,12 @@ void main(int argc, char** argv) //--- À©µµ¿ì Ãâ·ÂÇÏ°í ÄÝ¹éÇÔ¼ö ¼³Á¤
 
 
 }
-//--- ¹öÅØ½º ¼¼ÀÌ´õ °´Ã¼ ¸¸µé±â
+//--- ï¿½ï¿½ï¿½Ø½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ï¿½
 void make_vertexShaders()
 {
 	GLchar* vertexSource;
-	//--- ¹öÅØ½º ¼¼ÀÌ´õ ÀÐ¾î ÀúÀåÇÏ°í ÄÄÆÄÀÏ ÇÏ±â
-	//--- filetobuf: »ç¿ëÀÚÁ¤ÀÇ ÇÔ¼ö·Î ÅØ½ºÆ®¸¦ ÀÐ¾î¼­ ¹®ÀÚ¿­¿¡ ÀúÀåÇÏ´Â ÇÔ¼ö
+	//--- ï¿½ï¿½ï¿½Ø½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½Ð¾ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ï±ï¿½
+	//--- filetobuf: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½Æ®ï¿½ï¿½ ï¿½Ð¾î¼­ ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½
 	vertexSource = filetobuf("vertex.glsl");
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShader, 1, &vertexSource, NULL);
@@ -234,16 +235,16 @@ void make_vertexShaders()
 	if (!result)
 	{
 		glGetShaderInfoLog(vertexShader, 512, NULL, errorLog);
-		std::cerr << "ERROR: vertex shader ÄÄÆÄÀÏ ½ÇÆÐ\n" << errorLog << std::endl;
+		std::cerr << "ERROR: vertex shader ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½\n" << errorLog << std::endl;
 		return;
 	}
 }
-//--- ÇÁ·¡±×¸ÕÆ® ¼¼ÀÌ´õ °´Ã¼ ¸¸µé±â
+//--- ï¿½ï¿½ï¿½ï¿½ï¿½×¸ï¿½Æ® ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ï¿½
 void make_fragmentShaders()
 {
 	GLchar* fragmentSource;
-	//--- ÇÁ·¡±×¸ÕÆ® ¼¼ÀÌ´õ ÀÐ¾î ÀúÀåÇÏ°í ÄÄÆÄÀÏÇÏ±â
-	fragmentSource = filetobuf("fragment.glsl"); // ÇÁ·¡±×¼¼ÀÌ´õ ÀÐ¾î¿À±â
+	//--- ï¿½ï¿½ï¿½ï¿½ï¿½×¸ï¿½Æ® ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½Ð¾ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½
+	fragmentSource = filetobuf("fragment.glsl"); // ï¿½ï¿½ï¿½ï¿½ï¿½×¼ï¿½ï¿½Ì´ï¿½ ï¿½Ð¾ï¿½ï¿½ï¿½ï¿½
 	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
 	glCompileShader(fragmentShader);
@@ -253,36 +254,36 @@ void make_fragmentShaders()
 	if (!result)
 	{
 		glGetShaderInfoLog(fragmentShader, 512, NULL, errorLog);
-		std::cerr << "ERROR: frag_shader ÄÄÆÄÀÏ ½ÇÆÐ\n" << errorLog << std::endl;
+		std::cerr << "ERROR: frag_shader ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½\n" << errorLog << std::endl;
 		return;
 	}
 }
-//--- ¼¼ÀÌ´õ ÇÁ·Î±×·¥ ¸¸µé°í ¼¼ÀÌ´õ °´Ã¼ ¸µÅ©ÇÏ±â
+//--- ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½Î±×·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½Å©ï¿½Ï±ï¿½
 GLuint make_shaderProgram()
 {
 	GLint result;
 	GLchar* errorLog = NULL;
 	GLuint shaderID;
-	shaderID = glCreateProgram(); //--- ¼¼ÀÌ´õ ÇÁ·Î±×·¥ ¸¸µé±â
-	glAttachShader(shaderID, vertexShader); //--- ¼¼ÀÌ´õ ÇÁ·Î±×·¥¿¡ ¹öÅØ½º ¼¼ÀÌ´õ ºÙÀÌ±â
-	glAttachShader(shaderID, fragmentShader); //--- ¼¼ÀÌ´õ ÇÁ·Î±×·¥¿¡ ÇÁ·¡±×¸ÕÆ® ¼¼ÀÌ´õ ºÙÀÌ±â
-	glLinkProgram(shaderID); //--- ¼¼ÀÌ´õ ÇÁ·Î±×·¥ ¸µÅ©ÇÏ±â
-	glDeleteShader(vertexShader); //--- ¼¼ÀÌ´õ °´Ã¼¸¦ ¼¼ÀÌ´õ ÇÁ·Î±×·¥¿¡ ¸µÅ©ÇßÀ½À¸·Î, ¼¼ÀÌ´õ °´Ã¼ ÀÚÃ¼´Â »èÁ¦ °¡´É
+	shaderID = glCreateProgram(); //--- ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½Î±×·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
+	glAttachShader(shaderID, vertexShader); //--- ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½Î±×·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ø½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½Ì±ï¿½
+	glAttachShader(shaderID, fragmentShader); //--- ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½Î±×·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½×¸ï¿½Æ® ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½Ì±ï¿½
+	glLinkProgram(shaderID); //--- ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½Î±×·ï¿½ ï¿½ï¿½Å©ï¿½Ï±ï¿½
+	glDeleteShader(vertexShader); //--- ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½Î±×·ï¿½ï¿½ï¿½ ï¿½ï¿½Å©ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	glDeleteShader(fragmentShader);
-	glGetProgramiv(shaderID, GL_LINK_STATUS, &result); // ---¼¼ÀÌ´õ°¡ Àß ¿¬°áµÇ¾ú´ÂÁö Ã¼Å©ÇÏ±â
+	glGetProgramiv(shaderID, GL_LINK_STATUS, &result); // ---ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½ï¿½ Ã¼Å©ï¿½Ï±ï¿½
 	if (!result) {
 		glGetProgramInfoLog(shaderID, 512, NULL, errorLog);
-		std::cerr << "ERROR: shader program ¿¬°á ½ÇÆÐ\n" << errorLog << std::endl;
+		std::cerr << "ERROR: shader program ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½\n" << errorLog << std::endl;
 		return false;
 	}
-	glUseProgram(shaderID); //--- ¸¸µé¾îÁø ¼¼ÀÌ´õ ÇÁ·Î±×·¥ »ç¿ëÇÏ±â
-	//--- ¿©·¯ °³ÀÇ ¼¼ÀÌ´õÇÁ·Î±×·¥ ¸¸µé ¼ö ÀÖ°í, ±× Áß ÇÑ°³ÀÇ ÇÁ·Î±×·¥À» »ç¿ëÇÏ·Á¸é
-	//--- glUseProgram ÇÔ¼ö¸¦ È£ÃâÇÏ¿© »ç¿ë ÇÒ Æ¯Á¤ ÇÁ·Î±×·¥À» ÁöÁ¤ÇÑ´Ù.
-	//--- »ç¿ëÇÏ±â Á÷Àü¿¡ È£ÃâÇÒ ¼ö ÀÖ´Ù.
+	glUseProgram(shaderID); //--- ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½Î±×·ï¿½ ï¿½ï¿½ï¿½ï¿½Ï±ï¿½
+	//--- ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ï¿½Î±×·ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö°ï¿½, ï¿½ï¿½ ï¿½ï¿½ ï¿½Ñ°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î±×·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï·ï¿½ï¿½ï¿½
+	//--- glUseProgram ï¿½Ô¼ï¿½ï¿½ï¿½ È£ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ Æ¯ï¿½ï¿½ ï¿½ï¿½ï¿½Î±×·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
+	//--- ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È£ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½.
 	return shaderID;
 }
 
-//--- Ãâ·Â ÄÝ¹é ÇÔ¼ö
+//--- ï¿½ï¿½ï¿½ ï¿½Ý¹ï¿½ ï¿½Ô¼ï¿½
 GLvoid drawScene() {
 	//glClearColor(0.0, 0.0, 0.0, 1.0f);
 	glClearColor(1.0, 1.0, 1.0, 1.0f);
@@ -293,42 +294,43 @@ GLvoid drawScene() {
 	//glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
+	light1.apply(shaderProgramID);
 
-	//¾ËÆÄÀû¿ë
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glUniform1f(glGetUniformLocation(shaderProgramID, "alpha"), 1.0f);
 	light1.apply(shaderProgramID);
-	//ÇÃ·¹ÀÌ¾î==Ä«¸Þ¶ó
+	//ï¿½Ã·ï¿½ï¿½Ì¾ï¿½==Ä«ï¿½Þ¶ï¿½
 	glm::mat4 view = camera.getView();
 	if (current_step == 0) {
 		
 		view = glm::lookAt(
-			glm::vec3(0.0f, 1.0f, 5.0f), //Ä«¸Þ¶ó À§Ä¡
-			glm::vec3(0.0f, 1.0f, 0.0f), //Ä«¸Þ¶ó°¡ ¹Ù¶óº¸´Â À§Ä¡
-			glm::vec3(0.0f, 1.0f, 0.0f)  //Ä«¸Þ¶óÀÇ ¾÷º¤ÅÍ
+			glm::vec3(0.0f, 1.0f, 5.0f), //Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½Ä¡
+			glm::vec3(0.0f, 1.0f, 0.0f), //Ä«ï¿½Þ¶ï¿½ ï¿½Ù¶óº¸´ï¿½ ï¿½ï¿½Ä¡
+			glm::vec3(0.0f, 1.0f, 0.0f)  //Ä«ï¿½Þ¶ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		);
 	}
-	//¿©±â¿¡ ºñÇà±â ¹Ù¶óº¸°ÔÇÏ´Â°Å Ãß°¡
+	//ï¿½ï¿½ï¿½â¿¡ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¶óº¸°ï¿½ï¿½Ï´Â°ï¿½ ï¿½ß°ï¿½
 	if (airplane->get_is_active()) {
 		if (airplane->get_airplane_state() == 0 && current_step != 0) {
-			//½Ã¼±°ú pos ºñÇà±â ¾Õ
+			//ï¿½Ã¼ï¿½ï¿½ï¿½ pos ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 			glm::vec3 a_pos_b = airplane->airplane.position;
 			a_pos_b.z = 30.0f;
 			view = glm::lookAt(
-				a_pos_b,//Ä«¸Þ¶ó À§Ä¡
-				airplane->airplane.position, //Ä«¸Þ¶ó°¡ ¹Ù¶óº¸´Â À§Ä¡
+				a_pos_b,//Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½Ä¡
+				airplane->airplane.position, //Ä«ï¿½Þ¶ï¿½ ï¿½Ù¶óº¸´ï¿½ ï¿½ï¿½Ä¡
 
-				glm::vec3(0.0f, 1.0f, 0.0f)  //Ä«¸Þ¶óÀÇ ¾÷º¤ÅÍ
+				glm::vec3(0.0f, 1.0f, 0.0f)  //Ä«ï¿½Þ¶ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			);
 		}
 		else if (airplane->get_airplane_state() == 1 && current_step != 0) {
 			view = glm::lookAt(
-				player.position,//Ä«¸Þ¶ó À§Ä¡
-				airplane->airplane.position, //Ä«¸Þ¶ó°¡ ¹Ù¶óº¸´Â À§Ä¡
+				player.position,//Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½Ä¡
+				airplane->airplane.position, //Ä«ï¿½Þ¶ï¿½ ï¿½Ù¶óº¸´ï¿½ ï¿½ï¿½Ä¡
 
-				glm::vec3(0.0f, 1.0f, 0.0f)  //Ä«¸Þ¶óÀÇ ¾÷º¤ÅÍ
+				glm::vec3(0.0f, 1.0f, 0.0f)  //Ä«ï¿½Þ¶ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			);
 		}
 	}
@@ -336,12 +338,12 @@ GLvoid drawScene() {
 
 	GLuint viewLoc = glGetUniformLocation(shaderProgramID, "view");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-	//Åõ¿µÇà·Ä
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	glm::mat4 projection = glm::perspective(glm::radians(player.FOV), (float)width / (float)height, 0.1f, 150.0f);
 	GLuint projLoc = glGetUniformLocation(shaderProgramID, "projection");
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-	//Á¶¸íÀû¿ë
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	light1.apply(shaderProgramID);
 	if (current_step != 0) {
 
@@ -357,11 +359,11 @@ GLvoid drawScene() {
 			minigun->draw(shaderProgramID);
 		if (!firecannon->get_is_get())
 			firecannon->draw(shaderProgramID);
-		//ÇÃ·¹ÀÌ¾î ¹«±â ±×¸®±â
+		//ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½×¸ï¿½ï¿½ï¿½
 		
 
 
-		//¾ÆÀÌÅÛ ±×¸®±â
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×¸ï¿½ï¿½ï¿½
 		for (auto& it : items) {
 			if (!it->get_is_get())
 				it->draw(shaderProgramID);
@@ -370,13 +372,13 @@ GLvoid drawScene() {
 
 	if (map_loaded) {
 		field->draw(shaderProgramID);
-		//¹öÆ°±×¸®±â
+		//ï¿½ï¿½Æ°ï¿½×¸ï¿½ï¿½ï¿½
 		
 	}
 	for (auto& b : buttons) {
 		b->draw(shaderProgramID);
 	}
-	//Àû
+	//ï¿½ï¿½
 	for (auto& e : *enemies) {
 		e.draw(shaderProgramID);
 	}
@@ -385,7 +387,7 @@ GLvoid drawScene() {
 	if (current_step == 0)
 	intro->draw(shaderProgramID);
 
-	//ºñÇà±â
+	//ï¿½ï¿½ï¿½ï¿½ï¿½
 	airplane->draw(shaderProgramID);
 	if (!missiles.empty()) {
 		for (auto& m : missiles) {
@@ -406,8 +408,8 @@ GLvoid drawScene() {
 
 	glutSwapBuffers();
 }
-//--- ´Ù½Ã±×¸®±â ÄÝ¹é ÇÔ¼ö
-GLvoid Reshape(int w, int h) //--- ÄÝ¹é ÇÔ¼ö: ´Ù½Ã ±×¸®±â ÄÝ¹é ÇÔ¼ö
+//--- ï¿½Ù½Ã±×¸ï¿½ï¿½ï¿½ ï¿½Ý¹ï¿½ ï¿½Ô¼ï¿½
+GLvoid Reshape(int w, int h) //--- ï¿½Ý¹ï¿½ ï¿½Ô¼ï¿½: ï¿½Ù½ï¿½ ï¿½×¸ï¿½ï¿½ï¿½ ï¿½Ý¹ï¿½ ï¿½Ô¼ï¿½
 {
 	width = w;      
 	height = h;
@@ -424,7 +426,7 @@ void mouseCallback(int button, int state, int x, int y) {
 
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
 
-		glutPostRedisplay(); // ´Ù½Ã ±×¸®±â ¿äÃ»
+		glutPostRedisplay(); // ï¿½Ù½ï¿½ ï¿½×¸ï¿½ï¿½ï¿½ ï¿½ï¿½Ã»
 		player.mouses[0] = true;
 		
 	}
@@ -434,7 +436,7 @@ void mouseCallback(int button, int state, int x, int y) {
 	}
 	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
 	{
-		//ÁÜ¸ðµå
+		//ï¿½Ü¸ï¿½ï¿½
 		player.zoom_mode = true;
 	}
 	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_UP)
@@ -485,10 +487,10 @@ GLvoid KeyboardDown(unsigned char key, int x, int y) {
 			player.weapons.push_back(firecannon);
 			player.change_weapon(player.weapons.size() - 1);
 		}
-		//¿©±â¼­ºÎÅÏ ¾ÆÀÌÅÛ°ú Ãæµ¹Ã³¸®
+		//ï¿½ï¿½ï¿½â¼­ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Û°ï¿½ ï¿½æµ¹Ã³ï¿½ï¿½
 		for (auto& it : items) {
 			if (it->get_item(player.position)) {
-				//¿©±â¼­ ÀÌÁ¦ È¿°ú
+				//ï¿½ï¿½ï¿½â¼­ ï¿½ï¿½ï¿½ï¿½ È¿ï¿½ï¿½
 
 			}
 		}
@@ -557,7 +559,7 @@ void TimerFunction(int value)
 		intro->update(deltaTime);
 	}
 	else if (current_step != 0) {
-		//µ¨Å¸Å¸ÀÓ °è»ê
+		//ï¿½ï¿½Å¸Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½
 		
 		player.move(deltaTime);
 		rifle->update(deltaTime, player.position, camera.yaw, camera.pitch);
@@ -569,16 +571,16 @@ void TimerFunction(int value)
 		player.zoom_in(deltaTime);
 		if (player.mouses[0] && !player.weapons.empty()) {
 
-			//¸¸¾à ÃÑ±â·ù¸é ¹Ýµ¿
+			//ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ±ï¿½ï¿½ï¿½ï¿½ ï¿½Ýµï¿½
 			if (rifle == (player.weapons[player.currentWeapon])) {
 				player.weapons[player.currentWeapon]->attack(deltaTime);
-				camera.pitch += (rand() % 100 / 100.0f) * 40.0f * deltaTime; //ÁÂ¿ì¾à°£Èçµé¸²
+				camera.pitch += (rand() % 100 / 100.0f) * 40.0f * deltaTime; //ï¿½Â¿ï¿½à°£ï¿½ï¿½é¸²
 			}
 			if (firecannon == (player.weapons[player.currentWeapon])) {
 				player.weapons[player.currentWeapon]->attack(deltaTime);
 			
 			}
-			//°ïºÀ ±ÙÁ¢·ù¸é ´Ù½Ã µ¹¾Æ¿Í¾ßÇÏ´Ï±î
+			//ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½Æ¿Í¾ï¿½ï¿½Ï´Ï±ï¿½
 			if (club == (player.weapons[player.currentWeapon])) {
 				player.weapons[player.currentWeapon]->on_attak = true;
 			}
@@ -588,15 +590,15 @@ void TimerFunction(int value)
 			if (minigun == (player.weapons[player.currentWeapon]))
 			{
 				player.weapons[player.currentWeapon]->attack(deltaTime);
-				camera.pitch += ((rand() % 100 / 100.0f) - 0.5f) * 80.0f * deltaTime; //»óÇÏ
-				camera.yaw += ((rand() % 100 / 100.0f) - 0.5f) * 80.0f * deltaTime; //ÁÂ¿ì
+				camera.pitch += ((rand() % 100 / 100.0f) - 0.5f) * 80.0f * deltaTime; //ï¿½ï¿½ï¿½ï¿½
+				camera.yaw += ((rand() % 100 / 100.0f) - 0.5f) * 80.0f * deltaTime; //ï¿½Â¿ï¿½
 			}
-			//±ÇÃÑµµ ´Ü¹ß½ÄÀ¸·Î ¸¸µé°Å
+			//ï¿½ï¿½ï¿½Ñµï¿½ ï¿½Ü¹ß½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
 			if (pistol == (player.weapons[player.currentWeapon]))
 			{
 				if (pistol->get_shoot_cooldown() <= 0.0f) {
 					player.weapons[player.currentWeapon]->on_attak = true;
-					camera.pitch += (rand() % 100 / 100.0f) * 200.0f * deltaTime; //ÁÂ¿ì¾à°£Èçµé¸²
+					camera.pitch += (rand() % 100 / 100.0f) * 200.0f * deltaTime; //ï¿½Â¿ï¿½à°£ï¿½ï¿½é¸²
 					//pistol->set_shoot_cooldown(1.0f);
 				}
 			}
@@ -614,18 +616,18 @@ void TimerFunction(int value)
 		if (!airplane->get_is_active()) {
 			for (auto& e : *enemies) {
 				if (e.update(deltaTime, player.position)) {
-					//Àû »ç¸Á¿Ï·á
+					//ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï·ï¿½
 					e.~ENEMY();
 				}
 			}
 		}
 		for (auto& enemy : *enemies) {
-			// AK-47 ÃÑ¾Ë °Ë»ç
+			// AK-47 ï¿½Ñ¾ï¿½ ï¿½Ë»ï¿½
 			if (rifle && rifle->get_is_get()) {
 				for (size_t i = 0; i < rifle->bullets.size(); ++i) {
 					BULLET* bullet = rifle->bullets[i];
 					if (enemy.collision.check_collision(bullet->collision)) {
-						std::cout << "ENEMY¿Í AK-47 BULLET Ãæµ¹!" << std::endl;
+						std::cout << "ENEMYï¿½ï¿½ AK-47 BULLET ï¿½æµ¹!" << std::endl;
 						enemy.take_damage(10);
 						delete bullet;
 						rifle->bullets.erase(rifle->bullets.begin() + i);
@@ -633,12 +635,12 @@ void TimerFunction(int value)
 					}
 				}
 			}
-			//pistol ÃÑ¾Ë °Ë»ç
+			//pistol ï¿½Ñ¾ï¿½ ï¿½Ë»ï¿½
 			if (pistol && pistol->get_is_get()) {
 				for (size_t i = 0; i < pistol->bullets.size(); ++i) {
 					BULLET* bullet = pistol->bullets[i];
 					if (enemy.collision.check_collision(bullet->collision)) {
-						std::cout << "ENEMY¿Í Pistol BULLET Ãæµ¹!" << std::endl;
+						std::cout << "ENEMYï¿½ï¿½ Pistol BULLET ï¿½æµ¹!" << std::endl;
 						enemy.take_damage(40);
 						delete bullet;
 						pistol->bullets.erase(pistol->bullets.begin() + i);
@@ -646,12 +648,12 @@ void TimerFunction(int value)
 					}
 				}
 			}
-			//minigun ÃÑ¾Ë °Ë»ç
+			//minigun ï¿½Ñ¾ï¿½ ï¿½Ë»ï¿½
 			if (minigun && minigun->get_is_get()) {
 				for (size_t i = 0; i < minigun->bullets.size(); ++i) {
 					BULLET* bullet = minigun->bullets[i];
 					if (enemy.collision.check_collision(bullet->collision)) {
-						std::cout << "ENEMY¿Í MINIGUN BULLET Ãæµ¹!" << std::endl;
+						std::cout << "ENEMYï¿½ï¿½ MINIGUN BULLET ï¿½æµ¹!" << std::endl;
 						enemy.take_damage(10);
 						delete bullet;
 						minigun->bullets.erase(minigun->bullets.begin() + i);
@@ -663,7 +665,7 @@ void TimerFunction(int value)
 				for (size_t i = 0; i < firecannon->fires.size(); ++i) {
 					FIRE* fire = firecannon->fires[i];
 					if (enemy.collision.check_collision(fire->collision)) {
-						std::cout << "ENEMY¿Í FIRECANNON FIRE Ãæµ¹!" << std::endl;
+						std::cout << "ENEMYï¿½ï¿½ FIRECANNON FIRE ï¿½æµ¹!" << std::endl;
 						enemy.take_damage(50);
 						delete fire;
 						firecannon->fires.erase(firecannon->fires.begin() + i);
@@ -671,43 +673,53 @@ void TimerFunction(int value)
 					}
 				}
 			}
-			// Å¬·´ È÷Æ® ÄÝ¶óÀÌ´õ °Ë»ç
+			// Å¬ï¿½ï¿½ ï¿½ï¿½Æ® ï¿½Ý¶ï¿½ï¿½Ì´ï¿½ ï¿½Ë»ï¿½
 			if (club && club->get_is_get() && club->hit_active) {
 				if (enemy.collision.check_collision(club->collision)) {
-					std::cout << "ENEMY¿Í CLUB HIT Ãæµ¹!" << std::endl;
+					std::cout << "ENEMYï¿½ï¿½ CLUB HIT ï¿½æµ¹!" << std::endl;
 					enemy.hit(player.position);
 					enemy.take_damage(35);
-					club->hit_active = false;  // ¶§¸®¸é ÁßÁö
+					club->hit_active = false;  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+					break;
+				}
+			}
+			if (claymore && claymore->get_is_get() && claymore->hit_active) {
+				if (enemy.collision.check_collision(claymore->collision)) {
+					std::cout << "ENEMYï¿½ï¿½ CLUB HIT ï¿½æµ¹!" << std::endl;
+					enemy.hit(player.position);
+					enemy.take_damage(35);
+					claymore->hit_active = false;  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 					break;
 				}
 			}
 			if (club && club->get_is_get() && club->hit_active) {
 				if (buttons[0]->collision.check_collision(club->collision)) {
-					std::cout << "¹öÆ°°ú CLUB HIT Ãæµ¹!" << std::endl;
-					club->hit_active = false;  // ¶§¸®¸é ÁßÁö
-					field->walls[field->opening_walls_idx[0]].position.y = -10.0f; //º® ³»¸®±â
+					std::cout << "ï¿½ï¿½Æ°ï¿½ï¿½ CLUB HIT ï¿½æµ¹!" << std::endl;
+					club->hit_active = false;  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+					field->walls[field->opening_walls_idx[0]].position.y = -10.0f; //ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+					field->collisions[3].center.y = -10.0f; //ï¿½ï¿½ ï¿½æµ¹Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 					break;
 				}
 			}
 		}
 
 	}
-	//ºñÇà±â °ü·Ã ¾÷µ¥ÀÌÆ®
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
 	if (current_step != 0) {
 		airplane->update(deltaTime);
 		airplane->is_player_in_range(player.position);
 		if (airplane->missile_ready(deltaTime)) {
-			//¹Ì»çÀÏ »ý¼º
+			//ï¿½Ì»ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			MISSILE* missile = new MISSILE();
 			missile->init(airplane->get_position());
 			missiles.push_back(missile);
-			std::cout << "¹Ì»çÀÏ ¹ß»ç!" << std::endl;
+			std::cout << "ï¿½Ì»ï¿½ï¿½ï¿½ ï¿½ß»ï¿½!" << std::endl;
 		}
-		//¹Ì»çÀÏ ¾÷µ¥ÀÌÆ®
+		//ï¿½Ì»ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
 		if (!missiles.empty()) {
 			for (auto& m : missiles)
 				if(m->update(deltaTime)){
-					//»èÁ¦
+					//ï¿½ï¿½ï¿½ï¿½
 					m->~MISSILE();
 					delete m;
 					missiles.erase(missiles.begin());
@@ -725,11 +737,11 @@ void TimerFunction(int value)
 
 void mouseWheel(int button, int dir, int x, int y) {
 	if (dir > 0) {
-		//ÈÙ¿Ã¸²
+		//ï¿½Ù¿Ã¸ï¿½
 		player.change_weapon((player.currentWeapon + 1) % player.weapons.size());
 	}
 	else {
-		//ÈÙ³»¸²
+		//ï¿½Ù³ï¿½ï¿½ï¿½
 		int new_index = player.currentWeapon - 1;
 		if (new_index < 0)
 			new_index = player.weapons.size() - 1;

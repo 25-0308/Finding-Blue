@@ -1,12 +1,14 @@
 #include"../claymore.h"
-
+#include <iostream>
 
 void CLAYMORE::update(float deltaTime, glm::vec3 position, float yaw, float pitch)
 {
     if (!this->is_get) {
 		
 		metal.rotation.y += glm::radians(60.0f) * deltaTime;
+		hit_active = false;
     }
+
     else if (this->is_get) {
         this->position = position;
         this->front = front;
@@ -45,8 +47,11 @@ void CLAYMORE::update(float deltaTime, glm::vec3 position, float yaw, float pitc
 
         wood.rotation.z += this->attack_offsets.z;
 		metal.rotation.z += this->attack_offsets.z;
-    }
 
+    }
+    if (hit_active) {
+        update_hit_collider();
+    }
 }
 
 bool CLAYMORE::get_weapon(glm::vec3 playerPos) {
@@ -65,11 +70,15 @@ void CLAYMORE::attack(float deltaTime) {
         //총 오프셋 앞으로
         this->attack_offsets.z -= glm::radians(800.0f * deltaTime);
 	
+        if (is_in_hit_angle() && !hit_trigger) {
+            create_hit_collider();
+            hit_trigger = true;
+        }
+
         if (this->attack_offsets.z < glm::radians(-90.0f)) {
             this->recoil_mode = true;
             this->attack_offsets.z = glm::radians(-90.0f);
    
-
         }
     }
     else if (this->recoil_mode) {
@@ -80,11 +89,51 @@ void CLAYMORE::attack(float deltaTime) {
             this->recoil_mode = false;
             this->attack_offsets.z = glm::radians(0.0f);
             this->on_attak = false;
-    
+
+            hit_active = false;
+            hit_trigger = false;
         }
     }
    metal.rotation.z=wood.rotation.z = this->attack_offsets.z;
 }
 void CLAYMORE::zoom_in(bool mode, float deltaTime) {
 	//빠따는 줌인모드 없음
+}
+
+bool CLAYMORE::is_in_hit_angle() const {
+    float swing_angle = glm::degrees(this->attack_offsets.z);
+    return (swing_angle >= -60.0f && swing_angle <= -30.0f);
+}
+
+glm::vec3 CLAYMORE::get_club_tip_position() const {
+    if (!this->is_get) return glm::vec3(0);
+
+    glm::vec3 club_tip_offset = glm::vec3(0.0f, 0.5f, -0.30f);
+
+    glm::mat4 clubTransform = glm::mat4(1.0f);
+    clubTransform = glm::translate(clubTransform, this->metal.position);
+    clubTransform = glm::rotate(clubTransform, this->metal.rotation.y, glm::vec3(0, 1, 0));
+    clubTransform = glm::rotate(clubTransform, this->metal.rotation.z, glm::vec3(0, 0, 1));
+
+    glm::vec4 tip_world = clubTransform * glm::vec4(club_tip_offset, 1.0f);
+    return glm::vec3(tip_world);
+}
+
+void CLAYMORE::create_hit_collider() {
+
+    if (hit_active) return;
+
+    glm::vec3 tip_pos = get_club_tip_position();
+
+    collision.center = tip_pos;
+    collision.halfsize = glm::vec3(0.2f, 0.2f, 0.3f);
+    hit_active = true;
+
+    std::cout << "콜라이더 생성" << std::endl;
+}
+
+void CLAYMORE::update_hit_collider() {
+    if (hit_active) {
+        collision.center = get_club_tip_position();
+    }
 }

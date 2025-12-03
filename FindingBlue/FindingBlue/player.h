@@ -3,6 +3,10 @@
 #include <GL/glm/glm.hpp>
 #include<vector>
 #include"weapon.h"
+#include "Collision.h"
+
+class FIELD;
+
 class Player {
 public:
     glm::vec3 position;
@@ -13,21 +17,25 @@ public:
 
     std::vector<Weapon*> weapons;
     int currentWeapon = 0;
-    // --- Á¡ÇÁ °ü·Ã ---
-    bool isGrounded = true;      // ¹Ù´Ú À§ÀÎÁö
-    float verticalVelocity = 0.0f; // yÃà ¼Óµµ
-    float gravity = -9.8f;        // Áß·Â
-    float jumpPower = 6.0f;       // Á¡ÇÁ ¼¼±â
+    // --- ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ---
+    bool isGrounded = true;      // ï¿½Ù´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    float verticalVelocity = 0.0f; // yï¿½ï¿½ ï¿½Óµï¿½
+    float gravity = -9.8f;        // ï¿½ß·ï¿½
+    float jumpPower = 6.0f;       // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
     bool keys[256] = { false };
-	bool mouses[4] = { false }; //ÁÂÅ¬ ¿ìÅ¬ ÈÙÀ§ ÈÙ¾Æ·¡
+	bool mouses[4] = { false }; //ï¿½ï¿½Å¬ ï¿½ï¿½Å¬ ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¾Æ·ï¿½
     float speed = 5.0f;
 
+    Collision collision;
+    FIELD* field = nullptr; // ï¿½ï¿½ï¿½ï¿½ ï¿½æµ¹ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+
     Player() :
-       // position(0.8f, 0.0f, 5.0f),<-¿øº»Àº ÀÌ°Å
-		position(10.0f, 0.0f, 5.0f),    //µð¹ö±ë¿ë
+       // position(0.8f, 0.0f, 5.0f),<-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì°ï¿½
+		position(10.0f, 0.0f, 5.0f),    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         front(0.0f, 0.0f, -1.0f),
-        up(0.0f, 1.0f, 0.0f)
+        up(0.0f, 1.0f, 0.0f),
+        collision(glm::vec3(0.3f,0.8f,0.3f))
     {
     }
 
@@ -42,5 +50,10 @@ public:
 		return position;
 	}
     void zoom_in(float deltaTime);
-    void jump();
+
+   void jump();
+    //ï¿½æµ¹ ï¿½Ô¼ï¿½
+    void set_field(FIELD* field_ref) { field = field_ref; }
+    bool check_collision(const glm::vec3& next_position);
+
 };
