@@ -35,6 +35,8 @@ void TimerFunction(int value);
 GLvoid KeyboardDown(unsigned char key, int x, int y);
 GLvoid KeyboardUp(unsigned char key, int x, int y);
 void mouseWheel(int button, int dir, int x, int y);
+GLvoid SKeyboardDown(int key, int x, int y);
+GLvoid SKeyboardup(int key, int x, int y);
 void MouseMove(int x, int y);
 
 //���� �߰��� ������
@@ -208,7 +210,8 @@ void main(int argc, char** argv) //--- ������ ����ϰ� ��
 	glutMotionFunc(MouseMove);
 	glutPassiveMotionFunc(MouseMove);
 	glutMouseWheelFunc(mouseWheel);
-
+	glutSpecialFunc(SKeyboardDown);
+	glutSpecialUpFunc(SKeyboardup);
 	//--- ���̴� ���α׷� �����
 	glutDisplayFunc(drawScene); //--- ��� �ݹ� �Լ�
 	//glutIdleFunc(drawScene);
@@ -757,4 +760,20 @@ void mouseWheel(int button, int dir, int x, int y) {
 			new_index = player.weapons.size() - 1;
 		player.change_weapon(new_index);
 	}
+}
+GLvoid SKeyboardDown(int key, int x, int y) {
+	switch (key) {
+	case GLUT_KEY_SHIFT_L:
+		player.speed = 10.0f;
+		break;
+	}
+	glutPostRedisplay();
+}
+GLvoid SKeyboardup(int key, int x, int y) {
+	switch (key) {
+	case GLUT_KEY_SHIFT_L:
+		player.speed = 5.0f;
+		break;
+	}
+	glutPostRedisplay();
 }
