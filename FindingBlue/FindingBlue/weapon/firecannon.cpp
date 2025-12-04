@@ -76,6 +76,7 @@ bool FIRECANNON::get_weapon(glm::vec3 playerPos) {
 }
 
 void FIRECANNON::attack(float deltaTime) {
+    if (this->ammo <= 0) return;
     if (!this->recoil_mode) {
         //총 오프셋 뒤로
         this->offsets.z += 3.0f * deltaTime;
@@ -85,6 +86,7 @@ void FIRECANNON::attack(float deltaTime) {
             //이 부분에 총알 생성 넣으면 될거같다
 			fires.push_back(shoot_fire(this->for_bullet_offset, this->front));
             this->ammo -= 1;
+            if (this->ammo < 0)this->ammo = 0;
 			//fires.push_back(shoot_fire(this->for_bullet_offset, this->front));
             //마지막 불 각도조절
             //fires.back()->fire.rotation.x = 90.0f;

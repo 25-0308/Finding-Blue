@@ -65,6 +65,9 @@ bool AK_47::get_weapon(glm::vec3 playerPos) {
 }
 
 void AK_47::attack(float deltaTime) {
+    if (this->ammo <= 0) {
+		return;
+    }
 	//총 반동 구현
     if (!this->recoil_mode) {
         //총 오프셋 뒤로
@@ -75,7 +78,7 @@ void AK_47::attack(float deltaTime) {
             //이 부분에 총알 생성 넣으면 될거같다
 			bullets.push_back(shoot_bullet(this->for_bullet_offset, this->front));
             this->ammo -= 1;
-
+            if (this->ammo<0)this->ammo = 0;
             //std::cout << this->front.x << " " << this->front.y << " " << this->front.z << std::endl;
 		}
 	}

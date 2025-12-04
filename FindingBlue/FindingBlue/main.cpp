@@ -652,10 +652,13 @@ void TimerFunction(int value)
 
 			//���� �ѱ���� �ݵ�
 			if (rifle == (player.weapons[player.currentWeapon])) {
-				player.weapons[player.currentWeapon]->attack(deltaTime);
-				camera.pitch += (rand() % 100 / 100.0f) * 40.0f * deltaTime; //�¿�ణ��鸲
+				if (rifle->ammo > 0) {
+					player.weapons[player.currentWeapon]->attack(deltaTime);
+					camera.pitch += (rand() % 100 / 100.0f) * 40.0f * deltaTime; //�¿�ణ��鸲
+				}
 			}
 			if (firecannon == (player.weapons[player.currentWeapon])) {
+				if(firecannon->ammo>0)
 				player.weapons[player.currentWeapon]->attack(deltaTime);
 			
 			}
@@ -668,17 +671,21 @@ void TimerFunction(int value)
 			}
 			if (minigun == (player.weapons[player.currentWeapon]))
 			{
-				player.weapons[player.currentWeapon]->attack(deltaTime);
-				camera.pitch += ((rand() % 100 / 100.0f) - 0.5f) * 80.0f * deltaTime; //����
-				camera.yaw += ((rand() % 100 / 100.0f) - 0.5f) * 80.0f * deltaTime; //�¿�
+				if (minigun->ammo > 0) {
+					player.weapons[player.currentWeapon]->attack(deltaTime);
+					camera.pitch += ((rand() % 100 / 100.0f) - 0.5f) * 80.0f * deltaTime; //����
+					camera.yaw += ((rand() % 100 / 100.0f) - 0.5f) * 80.0f * deltaTime; //�¿�
+				}
 			}
 			//���ѵ� �ܹ߽����� �����
 			if (pistol == (player.weapons[player.currentWeapon]))
 			{
-				if (pistol->get_shoot_cooldown() <= 0.0f) {
-					player.weapons[player.currentWeapon]->on_attak = true;
-					camera.pitch += (rand() % 100 / 100.0f) * 200.0f * deltaTime; //�¿�ణ��鸲
-					//pistol->set_shoot_cooldown(1.0f);
+				if (pistol->ammo > 0) {
+					if (pistol->get_shoot_cooldown() <= 0.0f) {
+						player.weapons[player.currentWeapon]->on_attak = true;
+						camera.pitch += (rand() % 100 / 100.0f) * 200.0f * deltaTime; //�¿�ణ��鸲
+						//pistol->set_shoot_cooldown(1.0f);
+					}
 				}
 			}
 

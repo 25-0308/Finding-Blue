@@ -78,6 +78,7 @@ void MINIGUN::attack(float deltaTime) {
 			this->head_rotate_angle_offset = 0.0f;
             bullets.push_back(shoot_bullet(this->for_bullet_offset, this->front));
             this->ammo -= 1;
+            if (this->ammo < 0)this->ammo = 0;
         }
     }
    
