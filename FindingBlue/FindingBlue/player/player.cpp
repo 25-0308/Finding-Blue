@@ -108,3 +108,16 @@ bool Player::check_collision(const glm::vec3& next_position) {
 	return false; // �浹 �̹߻�
 }
 
+void Player::draw_health_bar(GLuint shader) {
+
+
+	health_bar.draw(shader);
+
+}
+void Player::update_health_bar() {
+	float health = static_cast<float>(this->health) / 100.0f;
+	health_bar.scale.x = (health);
+	//체력바가 왼쪽에 있어야하니까 체력비율만큼 왼쪽으로 이동 기본피봇은 10.0
+	health_bar.position.z = 10.0 - (1.0-health)*10.0f;
+	std::cout << health_bar.position.z << std::endl;
+}

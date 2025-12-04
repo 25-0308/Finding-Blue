@@ -30,13 +30,26 @@ public:
     Collision collision;
     FIELD* field = nullptr; // ���� �浹���� ����
 
+    //체력
+	int health = 100;
+	Object health_bar;
+
+   
     Player() :
         position(0.8f, 0.0f, 5.0f),//<-������ �̰�
 		//position(10.0f, 0.0f, 5.0f),    //������
         front(0.0f, 0.0f, -1.0f),
         up(0.0f, 1.0f, 0.0f),
-        collision(glm::vec3(0.3f,0.8f,0.3f))
+        collision(glm::vec3(0.3f,0.8f,0.3f)),
+        health_bar("asset/UI/health_bar.obj", "asset/UI/health_bar.png")
     {
+    }
+    void init() {
+		health_bar.init();
+		health_bar.position = glm::vec3(1.0,0.0f, 5.0f);
+		health_bar.rotation.y = glm::radians(270.0f);
+        health_bar.scale = glm::vec3(1.0f);
+    
     }
 
     void move(float deltaTime);
@@ -56,4 +69,6 @@ public:
     void set_field(FIELD* field_ref) { field = field_ref; }
     bool check_collision(const glm::vec3& next_position);
 
+    void draw_health_bar(GLuint shader);
+    void update_health_bar();
 };

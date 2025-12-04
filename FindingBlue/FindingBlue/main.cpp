@@ -61,7 +61,6 @@ std::vector<BULLET>* bullets = new std::vector<BULLET>();
 //�÷��̾�
 Player player;
 Camera camera(player);
-
 //�����
 AIRPLANE* airplane;
 //�̻���
@@ -171,7 +170,9 @@ void main(int argc, char** argv) //--- ������ ����ϰ� ��
 	firecannon->init();
 	field = new FIELD();
 	field->init();
+	player.init();
 	player.set_field(field); //�÷��̾� �ʵ� ���� ����
+	
 	//�ʵ� ���������ϱ� ��ư�� ����
 	for (int i = 0;i < 2;++i) {
 		BUTTON* button = new BUTTON();
@@ -396,9 +397,7 @@ GLvoid drawScene() {
 		for (auto& m : missiles) {
 			m->draw(shaderProgramID);
 		}
-	}
-
-
+	}	
 	player.draw_weapon(shaderProgramID);
 	glm::mat4 MVP = glm::mat4(1.0);
 	glUniformMatrix4fv(
@@ -406,8 +405,46 @@ GLvoid drawScene() {
 		1, GL_FALSE,
 		glm::value_ptr(MVP)
 	);
-	
+
 	Debug_Draw::Render();
+	//UI그리는거 체력이랑 탄창
+	//UI는 평행투영
+	//뷰포트
+	int miniWidth = width / 4;  // 전체의 1/4 크기
+	int miniHeight = height / 8;
+	int miniX = 10;
+	int miniY = height - miniHeight - 10;
+	int health_bar_width = 200;
+	glViewport(miniX, miniY, miniWidth, miniHeight);
+	// 투영 행렬: 탑뷰니까 정사영
+	// 투영 행렬: 탑뷰니까 정사영
+	glm::mat4 topProjection = glm::ortho(0.0f, 20.0f, -2.0f, 2.0f, 0.1f, 10.0f);
+
+	glm::mat4 topView = glm::lookAt(
+		glm::vec3(-1.0f, 0.0f, 0.0f),
+		glm::vec3(0.0f, 0.0f, 0.0f),
+		glm::vec3(0.0f, 1.0f, 0.0f)
+	);
+
+	
+
+	glUniform1f(glGetUniformLocation(shaderProgramID, "material.shininess"), 0.0f);
+	glUniform1f(glGetUniformLocation(shaderProgramID, "material.specularStrength"), 1.1f);
+	glUniform1f(glGetUniformLocation(shaderProgramID, "material.metallic"), 0.0f);
+	glUniform1f(glGetUniformLocation(shaderProgramID, "lightIntensity"), 1.0f);
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "view"), 1, GL_FALSE, glm::value_ptr(topView));
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "projection"), 1, GL_FALSE, glm::value_ptr(topProjection));
+	glUniform1i(glGetUniformLocation(shaderProgramID, "useLight"), false);
+	
+	player.draw_health_bar(shaderProgramID);
+
+	glUniform1i(glGetUniformLocation(shaderProgramID, "useLight"), true);
+
+
+	glViewport(0, 0, width, height);
+
+
+	
 
 	glutSwapBuffers();
 }
@@ -515,6 +552,9 @@ GLvoid KeyboardDown(unsigned char key, int x, int y) {
 	case' ':
 
 		player.jump();
+		break;
+	case't':
+		player.health -= 10;
 		break;
 	case 'q':
 		exit(0);
@@ -738,8 +778,9 @@ void TimerFunction(int value)
 			field->update(deltaTime, i);
 		}
 	}
-
-
+	//체력관련
+	player.update_health_bar();
+	
 	drawScene();
 
 	glutTimerFunc(value, TimerFunction, value);
