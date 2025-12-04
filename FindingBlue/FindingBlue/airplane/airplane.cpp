@@ -39,7 +39,7 @@ void AIRPLANE::update(float deltaTime)
 	}
 
 	//
-	if (airplane.position.z >= 80.0f) {
+	if (airplane.position.z >= 100.0f) {
 		this->is_active = false;
 	}
 }
@@ -47,7 +47,7 @@ void AIRPLANE::update(float deltaTime)
 
 bool AIRPLANE::missile_ready(float deltaTime) {
 	//비행기가 특정 좌표 지날때 미사일 발사준비
-	if (airplane.position.z > 0.0f &&airplane.position.z<=78.0f) {
+	if (airplane.position.z > 0.0f &&airplane.position.z<=90.0f) {
 		missile_cooldown += deltaTime;
 		if (missile_cooldown > 1.0f) {
 			missile_cooldown = 0.0f;
