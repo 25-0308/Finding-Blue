@@ -77,6 +77,7 @@ void MINIGUN::attack(float deltaTime) {
         if (this->head_rotate_angle_offset > glm::radians(360.0f)) {
 			this->head_rotate_angle_offset = 0.0f;
             bullets.push_back(shoot_bullet(this->for_bullet_offset, this->front));
+            this->ammo -= 1;
         }
     }
    

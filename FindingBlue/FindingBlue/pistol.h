@@ -31,6 +31,7 @@ public:
         metal.init();
         head.scale = metal.scale = glm::vec3(0.05f);
         head.position = metal.position = glm::vec3(0.5f, -0.2f, 0.3f);
+        ammo = 10;
     }
 
     void draw(GLuint shader)override {

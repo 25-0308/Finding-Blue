@@ -92,7 +92,7 @@ void PISTOL::attack(float deltaTime) {
             this->recoil_mode = false;
             this->offsets.z = -0.1f;
             bullets.push_back(shoot_bullet(this->for_bullet_offset, this->front));
-
+            this->ammo -= 1;
         }
     }
 }

@@ -20,6 +20,7 @@
 #include"firecannon.h"
 #include"airplane.h"
 #include"missile.h"
+#include"numbers.h"	
 //--- �Ʒ� 5�� �Լ��� ����� ���� �Լ� ��
 void make_vertexShaders();
 void make_fragmentShaders();
@@ -65,6 +66,9 @@ Camera camera(player);
 AIRPLANE* airplane;
 //�̻���
 std::vector<MISSILE*> missiles;
+//숫자
+NUMBER* number_display;
+
 
 //��
 std::vector<ENEMY>* enemies = new std::vector<ENEMY>();
@@ -172,7 +176,7 @@ void main(int argc, char** argv) //--- ������ ����ϰ� ��
 	field->init();
 	player.init();
 	player.set_field(field); //�÷��̾� �ʵ� ���� ����
-	
+
 	//�ʵ� ���������ϱ� ��ư�� ����
 	for (int i = 0;i < 2;++i) {
 		BUTTON* button = new BUTTON();
@@ -200,7 +204,8 @@ void main(int argc, char** argv) //--- ������ ����ϰ� ��
 		enemies->emplace_back();                  // ���� �ȿ� ���� ����
 		enemies->back().init(E_pos_list[i]);      // �ٷ� �ʱ�ȭ
 	}
-	
+	number_display = new NUMBER();
+	number_display->init();
 	//�����ʱ�ȭ
 
 	light1.lightPos = glm::vec3(45.0f, 25.0f, 45.0f);
@@ -398,6 +403,7 @@ GLvoid drawScene() {
 			m->draw(shaderProgramID);
 		}
 	}	
+	
 	player.draw_weapon(shaderProgramID);
 	glm::mat4 MVP = glm::mat4(1.0);
 	glUniformMatrix4fv(
@@ -438,12 +444,31 @@ GLvoid drawScene() {
 	
 	player.draw_health_bar(shaderProgramID);
 
+	
+
+
+
+	//총알UI
+	 miniWidth = width / 4;  // 전체의 1/4 크기
+	 miniHeight = height / 8;
+	 miniX = 10;
+	 miniY = 10;
+	 health_bar_width = 200;
+	glViewport(miniX, miniY, miniWidth, miniHeight);
+	// 투영 행렬: 탑뷰니까 정사영
+	// 투영 행렬: 탑뷰니까 정사영
+	 topProjection = glm::ortho(0.0f, 7.0f, -2.0f, 2.0f, 0.1f, 10.0f);
+	topView = glm::lookAt(
+		glm::vec3(-1.0f, 0.0f, 0.0f),
+		glm::vec3(0.0f, 0.0f, 0.0f),
+		glm::vec3(0.0f, 1.0f, 0.0f)
+	);glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "view"), 1, GL_FALSE, glm::value_ptr(topView));
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "projection"), 1, GL_FALSE, glm::value_ptr(topProjection));
+
+	number_display->draw_number(shaderProgramID, player.get_ammo(), glm::vec3(1.0f, 0.0f, 1.0f));
 	glUniform1i(glGetUniformLocation(shaderProgramID, "useLight"), true);
-
-
 	glViewport(0, 0, width, height);
-
-
+	
 	
 
 	glutSwapBuffers();

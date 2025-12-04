@@ -119,5 +119,5 @@ void Player::update_health_bar() {
 	health_bar.scale.x = (health);
 	//체력바가 왼쪽에 있어야하니까 체력비율만큼 왼쪽으로 이동 기본피봇은 10.0
 	health_bar.position.z = 10.0 - (1.0-health)*10.0f;
-	std::cout << health_bar.position.z << std::endl;
+	//std::cout << health_bar.position.z << std::endl;
 }

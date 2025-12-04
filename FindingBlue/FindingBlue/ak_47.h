@@ -32,6 +32,7 @@ public:
         metal.init();
 		wood.scale = metal.scale = glm::vec3(0.3f);
 		wood.position = metal.position = glm::vec3(5.0f, -0.2f, 10.0f);
+        ammo = 390;
     }
 
     void draw(GLuint shader)override {

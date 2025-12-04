@@ -31,6 +31,7 @@ public:
         body.init();
         head.scale = body.scale = glm::vec3(0.3f);
         head.position = body.position = glm::vec3(45.0f, -0.2f, 45.0f);
+        ammo = 99;
     }
 
     void draw(GLuint shader)override {

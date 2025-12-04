@@ -71,4 +71,8 @@ public:
 
     void draw_health_bar(GLuint shader);
     void update_health_bar();
+	int get_ammo() {
+		if (weapons.empty()) return 0;
+		return weapons[currentWeapon]->ammo;
+	}
 };

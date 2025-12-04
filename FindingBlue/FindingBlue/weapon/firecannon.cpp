@@ -84,6 +84,7 @@ void FIRECANNON::attack(float deltaTime) {
             this->offsets.z = 0.05f;
             //이 부분에 총알 생성 넣으면 될거같다
 			fires.push_back(shoot_fire(this->for_bullet_offset, this->front));
+            this->ammo -= 1;
 			//fires.push_back(shoot_fire(this->for_bullet_offset, this->front));
             //마지막 불 각도조절
             //fires.back()->fire.rotation.x = 90.0f;

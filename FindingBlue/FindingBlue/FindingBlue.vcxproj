@@ -145,6 +145,7 @@
     <ClCompile Include="field\field.cpp" />
     <ClCompile Include="intro\intro.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="numbers.cpp" />
     <ClCompile Include="object\ModelLoader.cpp" />
     <ClCompile Include="object\object.cpp" />
     <ClCompile Include="object\TextManager.cpp" />
@@ -180,6 +181,7 @@
     <ClInclude Include="minigun.h" />
     <ClInclude Include="missile.h" />
     <ClInclude Include="ModelLoader.h" />
+    <ClInclude Include="numbers.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="pistol.h" />
     <ClInclude Include="player.h" />
