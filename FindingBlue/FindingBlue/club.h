@@ -68,5 +68,5 @@ public:
     bool get_recoil_mode() { return this->recoil_mode; };
     void set_recoil_mode(bool mode) { this->recoil_mode = mode; };
     void zoom_in(bool mode, float deltaTime)override;
-
+    void reload() override;
 };

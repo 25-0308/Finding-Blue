@@ -554,9 +554,20 @@ GLvoid KeyboardDown(unsigned char key, int x, int y) {
 		}
 		//���⼭���� �����۰� �浹ó��
 		for (auto& it : items) {
-			if (it->get_item(player.position)) {
-				//���⼭ ���� ȿ��
-
+			int result = it->get_item(player.position);
+			std::cout << result << std::endl;
+			if (result == 0) {
+				player.health += 50;
+				if (player.health > 100)
+					player.health = 100;
+			}
+			else if (result == 1) {
+				player.health -= 30;
+			}
+			else if (result == 2) {
+				//탄약회복
+				if (!player.weapons.empty())
+					player.weapons[player.currentWeapon]->reload();
 			}
 		}
 		break;

@@ -137,3 +137,7 @@ void CLAYMORE::update_hit_collider() {
         collision.center = get_club_tip_position();
     }
 }
+
+void CLAYMORE::reload() {
+	
+}

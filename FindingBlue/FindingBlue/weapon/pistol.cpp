@@ -116,3 +116,6 @@ void PISTOL::zoom_in(bool mode, float deltaTime) {
     }
 }
 
+void PISTOL::reload() {
+	this->ammo = 10;
+}

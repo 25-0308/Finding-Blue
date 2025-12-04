@@ -141,3 +141,6 @@ void CLUB::update_hit_collider() {
         collision.center = get_club_tip_position();
     }
 }
+void CLUB::reload() {
+	
+}

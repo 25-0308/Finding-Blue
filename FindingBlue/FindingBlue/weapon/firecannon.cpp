@@ -139,3 +139,6 @@ ASH* shoot_ash(glm::vec3 postion, glm::vec3 direction) {
 	new_ash->set_front(direction);
 	return new_ash;
 }
+void FIRECANNON::reload() {
+	this->ammo = 360;
+}

@@ -61,13 +61,14 @@ public:
         return is_get;
     }
 
-    bool get_item(glm::vec3 playerPos) {
+    int get_item(glm::vec3 playerPos) {
         float distance = glm::length(playerPos - this->item.position);
         if (distance < 1.5f && !this->is_get) {
             this->is_get = true;
-            return true;
+           
+            return int(type);
         }
-        return false;
+        return -1;
 
     }
 

@@ -66,6 +66,6 @@ public:
     void create_hit_collider();
     void update_hit_collider();
     glm::vec3 get_club_tip_position() const;
-
+    void reload() override;
 };
 

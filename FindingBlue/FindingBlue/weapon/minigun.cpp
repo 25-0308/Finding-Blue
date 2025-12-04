@@ -102,3 +102,6 @@ void MINIGUN::zoom_in(bool mode, float deltaTime) {
     }
 }
 
+void MINIGUN::reload() {
+	this->ammo = 230;
+}

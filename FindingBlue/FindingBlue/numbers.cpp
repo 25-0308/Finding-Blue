@@ -53,7 +53,7 @@ void NUMBER::draw_number(GLuint shader, int number, glm::vec3 startPos) {
 
     for (int i = 0; i < s.size(); i++) {
 	
-        int digit = s[i] - '0';	std::cout << digit << std::endl;
+        int digit = s[i] - '0';
 
         Object& d = digits[digit];
 

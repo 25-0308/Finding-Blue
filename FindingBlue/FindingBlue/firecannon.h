@@ -74,7 +74,7 @@ public:
     bool get_recoil_mode() { return this->recoil_mode; };
     void set_recoil_mode(bool mode) { this->recoil_mode = mode; };
     void zoom_in(bool mode, float deltaTime)override;
-
+    void reload() override;
 };
 FIRE* shoot_fire(glm::vec3 postion, glm::vec3 direction);
 ASH* shoot_ash(glm::vec3 postion, glm::vec3 direction);

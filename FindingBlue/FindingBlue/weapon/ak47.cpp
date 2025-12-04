@@ -117,3 +117,6 @@ BULLET* shoot_bullet(glm::vec3 postion, glm::vec3 direction) {
 	new_bullet->set_front(direction);
 	return new_bullet;
 }
+void AK_47::reload() {
+	this->ammo = 120;
+}

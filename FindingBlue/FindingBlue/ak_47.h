@@ -32,7 +32,7 @@ public:
         metal.init();
 		wood.scale = metal.scale = glm::vec3(0.3f);
 		wood.position = metal.position = glm::vec3(5.0f, -0.2f, 10.0f);
-        ammo = 390;
+        ammo = 120;
     }
 
     void draw(GLuint shader)override {
@@ -69,6 +69,6 @@ public:
     bool get_recoil_mode() { return this->recoil_mode; };
 	void set_recoil_mode(bool mode) { this->recoil_mode = mode; };
     void zoom_in(bool mode, float deltaTime)override;
-
+	void reload() override;
 };
 BULLET* shoot_bullet(glm::vec3 postion, glm::vec3 direction);
