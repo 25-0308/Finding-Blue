@@ -501,6 +501,12 @@ void mouseCallback(int button, int state, int x, int y) {
 	else if (button == GLUT_LEFT_BUTTON && state == GLUT_UP)
 	{
 		player.mouses[0] = false;
+		//미니건회전속도초기화
+		if (!player.weapons.empty()) {
+			if (minigun==(player.weapons[player.currentWeapon])) {
+				minigun->set_rotation_speed(0.0f);
+			}
+		}
 	}
 	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
 	{

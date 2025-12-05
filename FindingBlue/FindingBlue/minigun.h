@@ -69,5 +69,8 @@ public:
     void set_recoil_mode(bool mode) { this->recoil_mode = mode; };
     void zoom_in(bool mode, float deltaTime)override;
     void reload() override;
+    void set_rotation_speed(float speed) {
+        this->rotate_speed = speed;
+    };
 };
 BULLET* shoot_bullet(glm::vec3 postion, glm::vec3 direction);
