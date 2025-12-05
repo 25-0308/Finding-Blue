@@ -313,6 +313,9 @@ GLvoid drawScene() {
 	light1.apply(shaderProgramID);
 	//�÷��̾�==ī�޶�
 	glm::mat4 view = camera.getView();
+	if (!player.is_alive) {
+
+	}
 	if (current_step == 0) {
 		
 		view = glm::lookAt(
@@ -621,6 +624,7 @@ void MouseMove(int x, int y) {
 	int dy = y - centerY;
 	if (current_step == 0)
 		return;
+	if (!player.is_alive)return;
 	camera.updateDirection(dx, dy, deltaTime);
 
 	glutWarpPointer(centerX, centerY);
@@ -639,8 +643,11 @@ void TimerFunction(int value)
 	}
 	else if (current_step != 0) {
 		//��ŸŸ�� ���
-		
+		if(player.is_alive)
 		player.move(deltaTime);
+		else if (!player.is_alive) {
+			camera.death_view(deltaTime);
+		}
 		rifle->update(deltaTime, player.position, camera.yaw, camera.pitch);
 		club->update(deltaTime, player.position, camera.yaw, camera.pitch);
 		claymore->update(deltaTime, player.position, camera.yaw, camera.pitch);

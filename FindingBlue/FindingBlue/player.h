@@ -33,7 +33,7 @@ public:
     //체력
 	int health = 100;
 	Object health_bar;
-
+	bool is_alive = true;
    
     Player() :
         position(0.8f, 0.0f, 5.0f),//<-������ �̰�
@@ -75,4 +75,5 @@ public:
 		if (weapons.empty()) return 0;
 		return weapons[currentWeapon]->ammo;
 	}
+
 };

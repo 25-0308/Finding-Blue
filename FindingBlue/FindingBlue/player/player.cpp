@@ -4,6 +4,7 @@
 #include<iostream>
 void Player::move(float deltaTime)
 {
+	if (!this->is_alive)return;
     glm::vec3 forward = glm::normalize(glm::vec3(front.x, 0.0f, front.z));
     glm::vec3 right = glm::normalize(glm::cross(forward, up));
 	glm::vec3 nextposition = position;
@@ -120,4 +121,9 @@ void Player::update_health_bar() {
 	//체력바가 왼쪽에 있어야하니까 체력비율만큼 왼쪽으로 이동 기본피봇은 10.0
 	health_bar.position.z = 10.0 - (1.0-health)*10.0f;
 	//std::cout << health_bar.position.z << std::endl;
+
+	//체력이 0이되면 상태 죽음으로
+	if (this->health <= 0)
+		this->is_alive = false;
+
 }
