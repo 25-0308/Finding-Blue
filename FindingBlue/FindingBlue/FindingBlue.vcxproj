@@ -111,6 +111,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalOptions>glew32.lib opengl32.lib %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalLibraryDirectories>D:\CGproject\Finding-Blue\FindingBlue\FindingBlue\lib;D:\CGproject\Finding-Blue\FindingBlue\FindingBlue\include;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -127,6 +128,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>D:\CGproject\Finding-Blue\FindingBlue\FindingBlue\include;D:\CGproject\Finding-Blue\FindingBlue\FindingBlue\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>glew32.lib opengl32.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

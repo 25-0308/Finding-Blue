@@ -45,6 +45,7 @@ public:
 
 	bool is_dead() const { return !active; }
 };
+static const char* getTexturePath(int t);
 class ENEMY {
 private:
     //총이 가지고 있어야하는 그런것들임
@@ -79,7 +80,7 @@ private:
 	int health = 100;
 	bool is_dead = false;
 	
-
+	int type; //1은 파랑 2는 흰색
 
 public:
     Object head;
@@ -95,21 +96,21 @@ public:
 	std::vector<BLOOD*> bloods;
 	Collision collision;
 	
-    ENEMY()
-		: head("asset/enemy/blue/head.obj", "asset/enemy/blue/blue_enemy.png"),
-		body("asset/enemy/blue/body.obj", "asset/enemy/blue/blue_enemy.png"),
-		Rarm1("asset/enemy/blue/Rarm1.obj", "asset/enemy/blue/blue_enemy.png"),
-		Rarm2("asset/enemy/blue/Rarm2.obj", "asset/enemy/blue/blue_enemy.png"),
-		Larm1("asset/enemy/blue/Larm1.obj", "asset/enemy/blue/blue_enemy.png"),
-		Larm2("asset/enemy/blue/Larm2.obj", "asset/enemy/blue/blue_enemy.png"),
-		Rleg1("asset/enemy/blue/Rleg1.obj", "asset/enemy/blue/blue_enemy.png"),
-		Rleg2("asset/enemy/blue/Rleg2.obj", "asset/enemy/blue/blue_enemy.png"),
-		Lleg1("asset/enemy/blue/Lleg1.obj", "asset/enemy/blue/blue_enemy.png"),
-		Lleg2("asset/enemy/blue/Lleg2.obj", "asset/enemy/blue/blue_enemy.png")
+    ENEMY(int type)
+		:type(type), head("asset/enemy/blue/head.obj", getTexturePath(type)),
+		body("asset/enemy/blue/body.obj", getTexturePath(type)),
+		Rarm1("asset/enemy/blue/Rarm1.obj", getTexturePath(type)),
+		Rarm2("asset/enemy/blue/Rarm2.obj", getTexturePath(type)),
+		Larm1("asset/enemy/blue/Larm1.obj", getTexturePath(type)),
+		Larm2("asset/enemy/blue/Larm2.obj", getTexturePath(type)),
+		Rleg1("asset/enemy/blue/Rleg1.obj", getTexturePath(type)),
+		Rleg2("asset/enemy/blue/Rleg2.obj", getTexturePath(type)),
+		Lleg1("asset/enemy/blue/Lleg1.obj", getTexturePath(type)),
+		Lleg2("asset/enemy/blue/Lleg2.obj", getTexturePath(type))
     {
     }
 
-    void init(glm::vec3 position) {
+    void init(glm::vec3 position,int type) {
 		head.init();
 		body.init();
 		Rarm1.init();
@@ -120,6 +121,7 @@ public:
 		Rleg2.init();
 		Lleg1.init();
 		Lleg2.init();
+		this->type = type;
 	
 		this->position = glm::vec3(position.x, position.y, position.z);
 		this->scale = glm::vec3(0.3f);
@@ -192,3 +194,11 @@ glm::vec3 rotateAroundPivot(glm::vec3 point, glm::vec3 pivot, float angleZ);
 
 
 
+static const char* getTexturePath(int t) {
+	switch (t) {
+	case 1: return "asset/enemy/blue/blue_enemy.png";
+	case 2: return "asset/enemy/blue/white_enemy.png";
+
+	}
+	return "";
+}

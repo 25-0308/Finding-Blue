@@ -71,7 +71,7 @@ NUMBER* number_display;
 
 
 //��
-std::vector<ENEMY>* enemies = new std::vector<ENEMY>();
+std::vector<ENEMY*> enemies;
 glm::vec3 E_pos_list[11] = {
 	{20.0,-0.7f,20.0f},
 	{50.0,-0.7,20.f},
@@ -86,6 +86,7 @@ glm::vec3 E_pos_list[11] = {
 	{},
 
 };
+int enemy_type_list[10] = { 1,2,1,1,1,1,1,1,1,2 };
 int item_list[] = { 0,0,1,2,2,2,2 }; //1:���� 2:�������� 3:ź��
 glm::vec3 item_pos[7] = {
 	{9.0,0.1f,10.0f },
@@ -197,12 +198,15 @@ void main(int argc, char** argv) //--- ������ ����ϰ� ��
 	//�����
 	airplane = new AIRPLANE();
 	airplane->init();
-
-	enemies->reserve(13);
+	
+	enemies.reserve(13);
 	//�������ε�
 	for (int i = 0;i < 10;++i) {
-		enemies->emplace_back();                  // ���� �ȿ� ���� ����
-		enemies->back().init(E_pos_list[i]);      // �ٷ� �ʱ�ȭ
+		ENEMY* e= new ENEMY(enemy_type_list[i]);              // ���� �ȿ� ���� ����
+		//enemies->back().init(E_pos_list[i],enemy_type_list[i]);      // �ٷ� �ʱ�ȭ
+		e->init(E_pos_list[i],enemy_type_list[i]);
+		enemies.push_back(e);                         
+
 	}
 	number_display = new NUMBER();
 	number_display->init();
@@ -391,8 +395,8 @@ GLvoid drawScene() {
 		b->draw(shaderProgramID);
 	}
 	//��
-	for (auto& e : *enemies) {
-		e.draw(shaderProgramID);
+	for (auto& e : enemies) {
+		e->draw(shaderProgramID);
 	}
 
 
@@ -713,21 +717,21 @@ void TimerFunction(int value)
 
 		}
 		if (!airplane->get_is_active()) {
-			for (auto& e : *enemies) {
-				if (e.update(deltaTime, player.position)) {
+			for (auto& e : enemies) {
+				if (e->update(deltaTime, player.position)) {
 					//�� ����Ϸ�
-					e.~ENEMY();
+					e->~ENEMY();
 				}
 			}
 		}
-		for (auto& enemy : *enemies) {
+		for (auto& enemy : enemies) {
 			// AK-47 �Ѿ� �˻�
 			if (rifle && rifle->get_is_get()) {
 				for (size_t i = 0; i < rifle->bullets.size(); ++i) {
 					BULLET* bullet = rifle->bullets[i];
-					if (enemy.collision.check_collision(bullet->collision)) {
+					if (enemy->collision.check_collision(bullet->collision)) {
 						std::cout << "ENEMY과 AK-47 BULLET 충돌!" << std::endl;
-						enemy.take_damage(10);
+						enemy->take_damage(10);
 						delete bullet;
 						rifle->bullets.erase(rifle->bullets.begin() + i);
 						break;
@@ -738,9 +742,9 @@ void TimerFunction(int value)
 			if (pistol && pistol->get_is_get()) {
 				for (size_t i = 0; i < pistol->bullets.size(); ++i) {
 					BULLET* bullet = pistol->bullets[i];
-					if (enemy.collision.check_collision(bullet->collision)) {
+					if (enemy->collision.check_collision(bullet->collision)) {
 						std::cout << "ENEMY과 Pistol BULLET 충돌" << std::endl;
-						enemy.take_damage(40);
+						enemy->take_damage(40);
 						delete bullet;
 						pistol->bullets.erase(pistol->bullets.begin() + i);
 						break;
@@ -751,9 +755,9 @@ void TimerFunction(int value)
 			if (minigun && minigun->get_is_get()) {
 				for (size_t i = 0; i < minigun->bullets.size(); ++i) {
 					BULLET* bullet = minigun->bullets[i];
-					if (enemy.collision.check_collision(bullet->collision)) {
+					if (enemy->collision.check_collision(bullet->collision)) {
 						std::cout << "ENEMY과 MINIGUN BULLET 충돌!" << std::endl;
-						enemy.take_damage(10);
+						enemy->take_damage(10);
 						delete bullet;
 						minigun->bullets.erase(minigun->bullets.begin() + i);
 						break;
@@ -763,9 +767,9 @@ void TimerFunction(int value)
 			if (firecannon && firecannon->get_is_get()) {
 				for (size_t i = 0; i < firecannon->fires.size(); ++i) {
 					FIRE* fire = firecannon->fires[i];
-					if (enemy.collision.check_collision(fire->collision)) {
+					if (enemy->collision.check_collision(fire->collision)) {
 						std::cout << "ENEMY과 FIRECANNON FIRE 충돌!" << std::endl;
-						enemy.take_damage(50);
+						enemy->take_damage(50);
 						delete fire;
 						firecannon->fires.erase(firecannon->fires.begin() + i);
 						break;
@@ -774,19 +778,19 @@ void TimerFunction(int value)
 			}
 			// Ŭ�� ��Ʈ �ݶ��̴� �˻�
 			if (club && club->get_is_get() && club->hit_active) {
-				if (enemy.collision.check_collision(club->collision)) {
+				if (enemy->collision.check_collision(club->collision)) {
 					std::cout << "ENEMY과 CLUB HIT 충돌!" << std::endl;
-					enemy.hit(player.position);
-					enemy.take_damage(35);
+					enemy->hit(player.position);
+					enemy->take_damage(35);
 					club->hit_active = false;  // ������ ����
 					break;
 				}
 			}
 			if (claymore && claymore->get_is_get() && claymore->hit_active) {
-				if (enemy.collision.check_collision(claymore->collision)) {
+				if (enemy->collision.check_collision(claymore->collision)) {
 					std::cout << "ENEMY과 CLUB HIT 충돌!" << std::endl;
-					enemy.hit(player.position);
-					enemy.take_damage(35);
+					enemy->hit(player.position);
+					enemy->take_damage(35);
 					claymore->hit_active = false;  // ������ ����
 					break;
 				}
