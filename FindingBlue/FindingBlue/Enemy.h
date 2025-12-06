@@ -183,7 +183,9 @@ public:
 	void take_damage(int damage);
 	void spawn_blood();
 	//void death_motion(float deltaTime);
-
+	int get_type() {
+		return this->type;
+	}
 
 
 };

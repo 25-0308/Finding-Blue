@@ -720,6 +720,7 @@ void TimerFunction(int value)
 			for (auto& e : enemies) {
 				if (e->update(deltaTime, player.position)) {
 					//�� ����Ϸ�
+					if (e->get_type() == 2)player.health -= 20;
 					e->~ENEMY();
 				}
 			}
