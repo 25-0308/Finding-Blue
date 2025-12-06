@@ -21,6 +21,7 @@
 #include"airplane.h"
 #include"missile.h"
 #include"numbers.h"	
+#include"clearlogo.h"
 //--- �Ʒ� 5�� �Լ��� ����� ���� �Լ� ��
 void make_vertexShaders();
 void make_fragmentShaders();
@@ -62,6 +63,9 @@ std::vector<BULLET>* bullets = new std::vector<BULLET>();
 //�÷��̾�
 Player player;
 Camera camera(player);
+int current_killed_enemy = 0;
+bool game_clear = false;
+CLEARLOGO* clearlogo;
 //�����
 AIRPLANE* airplane;
 //�̻���
@@ -208,6 +212,8 @@ void main(int argc, char** argv) //--- ������ ����ϰ� ��
 		enemies.push_back(e);                         
 
 	}
+	clearlogo = new CLEARLOGO();
+	clearlogo->init();
 	number_display = new NUMBER();
 	number_display->init();
 	//�����ʱ�ȭ
@@ -410,7 +416,7 @@ GLvoid drawScene() {
 			m->draw(shaderProgramID);
 		}
 	}	
-	
+	clearlogo->draw(shaderProgramID);
 	player.draw_weapon(shaderProgramID);
 	glm::mat4 MVP = glm::mat4(1.0);
 	glUniformMatrix4fv(
@@ -474,6 +480,29 @@ GLvoid drawScene() {
 
 	number_display->draw_number(shaderProgramID, player.get_ammo(), glm::vec3(1.0f, 0.0f, 1.0f));
 	glUniform1i(glGetUniformLocation(shaderProgramID, "useLight"), true);
+
+	//클리어로고
+	//화면중앙에 뷰포트
+	miniWidth = width / 2;  // 전체의 1/4 크기
+	miniHeight = height / 2;
+	miniX = (width - miniWidth) / 2;
+	miniY = (height - miniHeight) / 2;
+	glViewport(miniX, miniY, miniWidth, miniHeight);
+	topProjection = glm::ortho(-15.0f, 15.0f, -15.0f, 15.0f, 0.1f, 10.0f);
+	topView = glm::lookAt(
+		glm::vec3(-1.0f, 0.0f, 0.0f),
+		glm::vec3(0.0f, 0.0f, 0.0f),
+		glm::vec3(0.0f, 1.0f, 0.0f)
+	);glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "view"), 1, GL_FALSE, glm::value_ptr(topView));
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "projection"), 1, GL_FALSE, glm::value_ptr(topProjection));
+
+
+
+
+
+	if (game_clear) {
+		clearlogo->draw(shaderProgramID);
+	}
 	glViewport(0, 0, width, height);
 	
 	
@@ -605,6 +634,9 @@ GLvoid KeyboardDown(unsigned char key, int x, int y) {
 	case't':
 		player.health -= 10;
 		break;
+	case'n':
+		game_clear = true;
+		break;
 	case 'q':
 		exit(0);
 		break;
@@ -635,6 +667,7 @@ void MouseMove(int x, int y) {
 	if (current_step == 0)
 		return;
 	if (!player.is_alive)return;
+	if (game_clear)return;
 	camera.updateDirection(dx, dy, deltaTime);
 
 	glutWarpPointer(centerX, centerY);
@@ -648,6 +681,18 @@ void TimerFunction(int value)
 	auto currentTime = std::chrono::high_resolution_clock::now();
 	deltaTime = std::chrono::duration<float>(currentTime - lastTime).count();
 	lastTime = currentTime;
+
+	//클리어
+	if (current_killed_enemy >= 8 && current_step != 0) {
+		//클리어 시 나오는거 추가예정
+		game_clear = true;
+		clearlogo->Clogo.position = player.front;
+		
+	}
+	if (game_clear) {
+		clearlogo->update(deltaTime);
+	}
+
 	if (current_step == 0) {
 		intro->update(deltaTime);
 	}
@@ -721,6 +766,7 @@ void TimerFunction(int value)
 				if (e->update(deltaTime, player.position)) {
 					//�� ����Ϸ�
 					if (e->get_type() == 2)player.health -= 20;
+					else if (e->get_type() == 1)current_killed_enemy += 1;
 					e->~ENEMY();
 				}
 			}

@@ -172,6 +172,7 @@
     <ClInclude Include="button.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="claymore.h" />
+    <ClInclude Include="clearlogo.h" />
     <ClInclude Include="club.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Enemy.h" />
