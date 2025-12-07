@@ -1,7 +1,7 @@
 #include"../Enemy.h"
 #include<iostream>
 #include <random>
-
+#include"../SoundManager.h"
 
 bool ENEMY::update(float deltaTime, glm::vec3 target) {
 	//거리에 따라 행동 다르게
@@ -21,6 +21,7 @@ bool ENEMY::update(float deltaTime, glm::vec3 target) {
 	}
 	else if (this->is_dead) {
 		//사망모션
+		SoundManager::Play("안민용");
 		this->head.position.y += 15.5f * deltaTime;
 		for (int i = 0; i < bloods.size(); i++) {
 			bloods[i]->update(deltaTime);

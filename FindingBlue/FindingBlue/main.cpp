@@ -22,6 +22,7 @@
 #include"missile.h"
 #include"numbers.h"	
 #include"clearlogo.h"
+#include"SoundManager.h"
 //--- �Ʒ� 5�� �Լ��� ����� ���� �Լ� ��
 void make_vertexShaders();
 void make_fragmentShaders();
@@ -72,7 +73,6 @@ AIRPLANE* airplane;
 std::vector<MISSILE*> missiles;
 //숫자
 NUMBER* number_display;
-
 
 //��
 std::vector<ENEMY*> enemies;
@@ -181,6 +181,7 @@ void main(int argc, char** argv) //--- ������ ����ϰ� ��
 	field->init();
 	player.init();
 	player.set_field(field); //�÷��̾� �ʵ� ���� ����
+	SoundManager::Init();
 
 	//�ʵ� ���������ϱ� ��ư�� ����
 	for (int i = 0;i < 2;++i) {
@@ -640,6 +641,7 @@ GLvoid KeyboardDown(unsigned char key, int x, int y) {
 		break;
 	case 'q':
 		exit(0);
+		SoundManager::Shutdown();
 		break;
 	}
 	glutPostRedisplay();
@@ -679,6 +681,7 @@ void MouseMove(int x, int y) {
 
 void TimerFunction(int value)
 {
+	SoundManager::Update();
 	auto currentTime = std::chrono::high_resolution_clock::now();
 	deltaTime = std::chrono::duration<float>(currentTime - lastTime).count();
 	lastTime = currentTime;
