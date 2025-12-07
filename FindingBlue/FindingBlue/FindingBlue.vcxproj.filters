@@ -119,6 +119,9 @@
     <ClCompile Include="numbers.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Sound_manager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stb_image.h">
@@ -200,6 +203,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="clearlogo.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Sound_manager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
