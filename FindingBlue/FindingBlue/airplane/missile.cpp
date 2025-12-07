@@ -1,4 +1,5 @@
 #include"../missile.h"
+#include"../SoundManager.h"
 
 
 bool MISSILE::update(float deltaTime)
@@ -8,6 +9,7 @@ bool MISSILE::update(float deltaTime)
 	//¹Ù´Ú°ú µµÂø½Ã
 	if (missile.position.y < 0.0f && !exploded) {
 		exploded = true;
+		SoundManager::Play("boom", 0.7f);
 	}
 
 	if (this->exploded && !this->explosion_decrease) {
