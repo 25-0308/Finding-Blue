@@ -552,6 +552,7 @@ void mouseCallback(int button, int state, int x, int y) {
 	}
 }
 GLvoid KeyboardDown(unsigned char key, int x, int y) {
+	printf("key down: %d\n", key);
 	switch (key) {
 
 	case'w':
@@ -681,7 +682,12 @@ void TimerFunction(int value)
 	auto currentTime = std::chrono::high_resolution_clock::now();
 	deltaTime = std::chrono::duration<float>(currentTime - lastTime).count();
 	lastTime = currentTime;
-
+	if (player.keys[GLUT_KEY_SHIFT_L]) {
+		player.speed = 10.0f;
+	}
+	else {
+		player.speed = 5.0f;
+	}
 	//클리어
 	if (current_killed_enemy >= 8 && current_step != 0) {
 		//클리어 시 나오는거 추가예정
@@ -910,17 +916,20 @@ void mouseWheel(int button, int dir, int x, int y) {
 	}
 }
 GLvoid SKeyboardDown(int key, int x, int y) {
+	player.keys[key] = true;
+	printf("key down: %d\n", key);
 	switch (key) {
 	case GLUT_KEY_SHIFT_L:
-		player.speed = 10.0f;
+		//player.speed = 10.0f;
 		break;
 	}
 	glutPostRedisplay();
 }
 GLvoid SKeyboardup(int key, int x, int y) {
+	player.keys[key] = false;
 	switch (key) {
 	case GLUT_KEY_SHIFT_L:
-		player.speed = 5.0f;
+		//player.speed = 5.0f;
 		break;
 	}
 	glutPostRedisplay();
