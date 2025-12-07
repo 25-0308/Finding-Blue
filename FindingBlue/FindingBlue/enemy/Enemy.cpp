@@ -3,6 +3,8 @@
 #include <random>
 #include"../SoundManager.h"
 
+
+
 bool ENEMY::update(float deltaTime, glm::vec3 target) {
 	//거리에 따라 행동 다르게
 	float distance = glm::length(target - this->position);
@@ -21,7 +23,20 @@ bool ENEMY::update(float deltaTime, glm::vec3 target) {
 	}
 	else if (this->is_dead) {
 		//사망모션
-		SoundManager::Play("안민용");
+		if (!dead_sound) {
+			static std::mt19937 rng(std::random_device{}()); // 한 번만 초기화
+			std::uniform_int_distribution<int> dist(1, 4);
+			int sound_index = dist(rng);
+			if (sound_index == 1)
+				SoundManager::Play("신동호");
+			else if (sound_index == 2)
+				SoundManager::Play("양현빈");
+			else if (sound_index == 3)
+				SoundManager::Play("김태건");
+			else if (sound_index == 4)
+				SoundManager::Play("안민용");
+			dead_sound = true;
+		}
 		this->head.position.y += 15.5f * deltaTime;
 		for (int i = 0; i < bloods.size(); i++) {
 			bloods[i]->update(deltaTime);

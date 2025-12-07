@@ -5,6 +5,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <filesystem>
 
 
 SoundManager* SoundManager::instance = nullptr;
@@ -41,7 +42,7 @@ SoundManager::~SoundManager() {
 }
 
 bool SoundManager::Init() {
-    if (instance) return true; // 이미 초기화됨
+    if (instance) return true;
 
     instance = new SoundManager();
     if (!instance || !instance->system) {
@@ -61,28 +62,75 @@ bool SoundManager::Init() {
 
     std::cout << "SoundManager 완전 초기화 성공!\n";
 
+    // 디버깅 정보 출력
+    std::cout << "현재 작업 디렉토리: " << std::filesystem::current_path() << "\n";
+
+    // sound 폴더 존재 확인
+    if (std::filesystem::exists("sound")) {
+        std::cout << "sound 폴더 존재함\n";
+        std::cout << "sound 폴더 내 파일들:\n";
+        for (const auto& entry : std::filesystem::directory_iterator("sound")) {
+            std::cout << "  - " << entry.path().filename() << "\n";
+        }
+    }
+    else if (std::filesystem::exists("./sound")) {
+        std::cout << "./sound 폴더 존재함\n";
+    }
+    else {
+        std::cerr << "sound 폴더가 존재하지 않습니다!\n";
+    }
+
     struct S { std::string name, path; bool loop; };
     std::vector<S> list = {
-        {"신동호", "sound/신동호.wav", false},
-        {"양현빈", "sound/양현빈.wav", false},
-        {"김태건", "sound/김태건.wav", false},
-        {"안민용", "sound/안민용.wav", false},
+        {"신동호", "sound/sin.wav", false},
+        {"양현빈", "sound/bin.wav", false},
+        {"김태건", "sound/gun.wav", false},
+        {"안민용", "sound/yong.wav", false},
     };
 
     for (const auto& s : list) {
+        std::cout << "[Sound] 파일 경로 체크: " << s.path << "\n";
+
+        if (!std::filesystem::exists(s.path)) {
+            std::cerr << "[Sound] 파일이 존재하지 않음: " << s.path << "\n";
+            continue;
+        }
+
         FMOD::Sound* sound = nullptr;
-        FMOD_MODE mode = s.loop ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF;
+
+        // FMOD_DEFAULT 사용 (가장 호환성 좋음)
+        FMOD_MODE mode = FMOD_DEFAULT;
+        if (s.loop) mode |= FMOD_LOOP_NORMAL;
+
         FMOD_RESULT r = instance->system->createSound(s.path.c_str(), mode, nullptr, &sound);
-        
+
+        // 실패하면 다른 모드들 시도
+        if (r != FMOD_OK) {
+            std::cout << "[Sound] FMOD_DEFAULT 실패, CREATESTREAM 시도...\n";
+            mode = FMOD_CREATESTREAM;
+            if (s.loop) mode |= FMOD_LOOP_NORMAL;
+            r = instance->system->createSound(s.path.c_str(), mode, nullptr, &sound);
+        }
+
+        if (r != FMOD_OK) {
+            std::cout << "[Sound] CREATESTREAM 실패, 압축해제 모드 시도...\n";
+            mode = FMOD_CREATESAMPLE;
+            if (s.loop) mode |= FMOD_LOOP_NORMAL;
+            r = instance->system->createSound(s.path.c_str(), mode, nullptr, &sound);
+        }
+
+        std::cout << "[Sound] createSound 결과: " << r << " (" << FMOD_ErrorString(r) << ")\n";
+
         if (r == FMOD_OK && sound) {
             instance->sounds[s.name] = sound;
             std::cout << "[Sound] 로드 완료: " << s.name << "\n";
         }
         else {
-            std::cerr << "[Sound] 로드 실패: " << s.name << " (" << s.path << ")\n";
+            std::cerr << "[Sound] 로드 실패: " << s.name << " (" << s.path << ") - "
+                << FMOD_ErrorString(r) << "\n";
         }
     }
- 
+
     return true;
 }
 void SoundManager::Update() {

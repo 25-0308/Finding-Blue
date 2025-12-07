@@ -82,6 +82,8 @@ private:
 	
 	int type; //1Àº ÆÄ¶û 2´Â Èò»ö
 
+	bool dead_sound = false;
+
 public:
     Object head;
     Object body;
