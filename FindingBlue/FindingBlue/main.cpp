@@ -718,6 +718,7 @@ void TimerFunction(int value)
 		pistol->update(deltaTime, player.position, camera.yaw, camera.pitch);
 		minigun->update(deltaTime, player.position, camera.yaw, camera.pitch);
 		firecannon->update(deltaTime, player.position, camera.yaw, camera.pitch);
+		player.update(deltaTime);
 		player.zoom_in(deltaTime);
 		if (player.mouses[0] && !player.weapons.empty()) {
 
@@ -852,6 +853,15 @@ void TimerFunction(int value)
 					claymore->hit_active = false;  // ������ ����
 					break;
 				}
+			}
+			// player vs enemy collision
+			if (enemy->collision.check_collision(player.collision)) {
+				if (player.hit_timer <= 0.0f) {
+					player.health -= 10;
+					player.hit_timer = 1.0f; // 1초 피격 무적 시간
+					SoundManager::Play("hit");
+				}
+				enemy->hit(player.position);
 			}
 			if (club && club->get_is_get() && club->hit_active) {
 				for (int i = 0;i < buttons.size();++i) {

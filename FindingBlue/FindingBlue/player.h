@@ -35,6 +35,8 @@ public:
 	Object health_bar;
 	bool is_alive = true;
    
+	float hit_timer = 0.0f;
+
     Player() :
         position(0.8f, 0.0f, 5.0f),//<-������ �̰�
 		//position(10.0f, 0.0f, 5.0f),    //������
@@ -51,7 +53,9 @@ public:
         health_bar.scale = glm::vec3(1.0f);
     
     }
-
+    void update(float deltaTime) {
+		hit_timer -= deltaTime;
+    }
     void move(float deltaTime);
     void change_weapon(int index);
 	void draw_weapon(GLuint shader) {
@@ -75,5 +79,11 @@ public:
 		if (weapons.empty()) return 0;
 		return weapons[currentWeapon]->ammo;
 	}
-
+    void get_damage(int damage) {
+        health -= damage;
+		hit_timer = 1.0f;
+        if (health <= 0) {
+            health = 0;
+        }
+    }
 };
