@@ -3,6 +3,10 @@
 #include"Collision.h"
 #include<iostream>
 #include<vector>
+#include "field.h"
+
+class FIELD;
+
 class BLOOD {
 private:
 	glm::vec3 position;
@@ -83,8 +87,8 @@ private:
 	int type; //1은 파랑 2는 흰색
 
 	bool dead_sound = false;
-
 public:
+	FIELD* field_ref = nullptr;
     Object head;
     Object body;
     Object Rarm1;
@@ -174,7 +178,9 @@ public:
 		}
 		collision.Debug_Draw();
     }
+	void set_field_reference(FIELD* field) { field_ref = field; }
     //여기 아래로는 cpp 파일에 작성할 것들
+	bool check_collision(const glm::vec3& next_position);
 	bool update(float deltaTime,glm::vec3 target);
     void run(float deltaTime,glm::vec3 target);
 	void idle(float deltaTime);

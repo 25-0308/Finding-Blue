@@ -1,4 +1,4 @@
-#include"../Enemy.h"
+ï»¿#include"../Enemy.h"
 #include<iostream>
 #include <random>
 #include"../SoundManager.h"
@@ -6,15 +6,15 @@
 
 
 bool ENEMY::update(float deltaTime, glm::vec3 target) {
-	//°Å¸®¿¡ µû¶ó Çàµ¿ ´Ù¸£°Ô
+	//ê±°ë¦¬ì— ë”°ë¼ í–‰ë™ ë‹¤ë¥´ê²Œ
 	float distance = glm::length(target - this->position);
 	
-	//Äİ¶óÀÌ´õ À§Ä¡ ¾÷µ¥ÀÌÆ®
+	//ì½œë¼ì´ë” ìœ„ì¹˜ ì—…ë°ì´íŠ¸
 	collision.center = this->position;
 	collision.center.y += 0.5f;
 	if (!this->is_dead) {
 		if (distance < 10.0f) {
-			//´Ş·Á¿È
+			//ë‹¬ë ¤ì˜´
 			this->run(deltaTime, target);
 		}
 		else if (distance >= 10.0f) {
@@ -22,9 +22,9 @@ bool ENEMY::update(float deltaTime, glm::vec3 target) {
 		}
 	}
 	else if (this->is_dead) {
-		//»ç¸Á¸ğ¼Ç
+		//ì‚¬ë§ëª¨ì…˜
 		if (!dead_sound) {
-			static std::mt19937 rng(std::random_device{}()); // ÇÑ ¹ø¸¸ ÃÊ±âÈ­
+			static std::mt19937 rng(std::random_device{}()); // í•œ ë²ˆë§Œ ì´ˆê¸°í™”
 			std::uniform_int_distribution<int> dist(1, 5);
 			int sound_index = dist(rng);
 			if (sound_index == 1)
@@ -57,26 +57,30 @@ bool ENEMY::update(float deltaTime, glm::vec3 target) {
 }
 
 void ENEMY::run(float deltaTime,glm::vec3 target) {
-	//Æ÷Áö¼ÇÀ» Å¸°ÙÀ» ÇâÇØ Á¶±İ¾¿ ÀÌµ¿
+	//í¬ì§€ì…˜ì„ íƒ€ê²Ÿì„ í–¥í•´ ì¡°ê¸ˆì”© ì´ë™
 	glm::vec3 direction = glm::normalize(target - this->position);
-	float speed = 2.0f; // ÀûÀÇ ÀÌµ¿ ¼Óµµ
+	float speed = 2.0f; // ì ì˜ ì´ë™ ì†ë„
 	float temp = this->position.y;
 	
-	this->position += direction * speed * deltaTime;
-	this->position.y = temp; // yÃà °íÁ¤
+	glm::vec3 next_position = this->position + direction * speed * deltaTime;
+	if (check_collision(next_position)) {
+	}
+	else {
+		this->position += direction * speed * deltaTime;
+		this->position.y = temp; // yì¶• ê³ ì •
+	}
 	
 	
-	
-	//ÀûÀÌ ÇÃ·¹ÀÌ¾î¸¦ ¹Ù¶óº¸°Ô yÃà °¢µµ ±¸ÇÏ±â
+	//ì ì´ í”Œë ˆì´ì–´ë¥¼ ë°”ë¼ë³´ê²Œ yì¶• ê°ë„ êµ¬í•˜ê¸°
 	glm::vec3 toTarget = glm::normalize(target - this->position);
 	float desiredYaw = glm::degrees(atan2(toTarget.x, toTarget.z));
 	head.rotation.y = body.rotation.y = Rarm1.rotation.y = Rarm2.rotation.y = Larm1.rotation.y = Larm2.rotation.y = Rleg1.rotation.y = Rleg2.rotation.y = Lleg1.rotation.y = Lleg2.rotation.y = glm::radians(desiredYaw-90.0f);
 
 
-	//µ¨Å¸Å¸ÀÓ¿¡ µû¶ó È¸Àü
-	float motion_angle =  glm::radians(200.0f * deltaTime); // È¸Àü ¼Óµµ Á¶Àı
+	//ë¸íƒ€íƒ€ì„ì— ë”°ë¼ íšŒì „
+	float motion_angle =  glm::radians(200.0f * deltaTime); // íšŒì „ ì†ë„ ì¡°ì ˆ
 
-	//ÆÈÀÇ Ã¹¹øÂ°
+	//íŒ”ì˜ ì²«ë²ˆì§¸
 	if (this->Rarm1_rotate_dir) {
 		
 		Rarm1_rotate_angle += motion_angle;
@@ -109,7 +113,7 @@ void ENEMY::run(float deltaTime,glm::vec3 target) {
 			this->Larm1_rotate_dir = true;
 		}
 	}
-	//À§ °¢µµµé 360µµ ³Ñ¾î°¡¸é ´Ù½Ã ÁÙ¿©¾ßÇÔ
+	//ìœ„ ê°ë„ë“¤ 360ë„ ë„˜ì–´ê°€ë©´ ë‹¤ì‹œ ì¤„ì—¬ì•¼í•¨
 	if (Rarm1.rotation.z > glm::radians(360.0f) || Rarm1.rotation.z < glm::radians(-360.0f)) {
 		Rarm1.rotation.z = 0.0f;
 	}
@@ -118,10 +122,10 @@ void ENEMY::run(float deltaTime,glm::vec3 target) {
 	}
 
 	
-	//ÇÁ¶óÀÌºøÀÇ position, front¸¦ ÆÄÃ÷µéÀÇ ¸ğµ¨¸ÅÆ®¸¯½º¿¡ Àû¿ë
+	//í”„ë¼ì´ë¹—ì˜ position, frontë¥¼ íŒŒì¸ ë“¤ì˜ ëª¨ë¸ë§¤íŠ¸ë¦­ìŠ¤ì— ì ìš©
 	head.position=body.position=Rarm1.position=Rarm2.position=Larm1.position =Larm2.position =Rleg1.position =Rleg2.position =Lleg1.position =Lleg2.position = this->position;
 
-	//¸öÅëyÃàÈ¸ÀÜ
+	//ëª¸í†µyì¶•íšŒì”
 	float B_angle = glm::radians(20.0f * deltaTime);
 
 	if (this->body_bobbing_dir) {
@@ -142,10 +146,10 @@ void ENEMY::run(float deltaTime,glm::vec3 target) {
 	
 	Rarm1.position.y += 0.5f * this->scale.y;
 	Larm1.position.y += 0.5f * this->scale.y;
-	//ÆÈÀÇ µÎ¹ø¤Š
+	//íŒ”ì˜ ë‘ë²ˆì¨°
 	glm::vec3 p1 = Rarm1.position;
 	glm::vec3 p2 = Larm1.position;
-	// Arm2°¡ Arm1 ±âÁØÀ¸·Î ¶³¾îÁø °Å¸®
+	// Arm2ê°€ Arm1 ê¸°ì¤€ìœ¼ë¡œ ë–¨ì–´ì§„ ê±°ë¦¬
 	float length = 0.2f;
 
 	
@@ -153,7 +157,7 @@ void ENEMY::run(float deltaTime,glm::vec3 target) {
 
 	glm::vec4 localOffset(0.0f, length, 0.0f, 1.0f);
 
-	// Arm1ÀÇ È¸Àü
+	// Arm1ì˜ íšŒì „
 	glm::mat4 arm1Model =
 		glm::translate(glm::mat4(1.0f), Rarm1.position) 
 		* glm::rotate(glm::mat4(1.0f), body.rotation.y, glm::vec3(0, 1,0 ))
@@ -162,7 +166,7 @@ void ENEMY::run(float deltaTime,glm::vec3 target) {
 	glm::vec4 worldPos = arm1Model * localOffset;
 	Rarm2.position = glm::vec3(worldPos) + glm::vec3(0, 0.05f, 0);
 	
-	//¿ŞÆÈÈ¸Àü
+	//ì™¼íŒ”íšŒì „
 	glm::mat4 arm1Model_L =
 		glm::translate(glm::mat4(1.0f), Larm1.position)
 		* glm::rotate(glm::mat4(1.0f), body.rotation.y, glm::vec3(0, 1, 0))
@@ -174,9 +178,9 @@ void ENEMY::run(float deltaTime,glm::vec3 target) {
 
 
 
-	motion_angle = glm::radians(150.0f * deltaTime); // È¸Àü ¼Óµµ Á¶Àı
-	//´Ù¸®ºÎºĞ
-	//´Ù¸®1
+	motion_angle = glm::radians(150.0f * deltaTime); // íšŒì „ ì†ë„ ì¡°ì ˆ
+	//ë‹¤ë¦¬ë¶€ë¶„
+	//ë‹¤ë¦¬1
 	float limit = glm::radians(45.0f);
 	Rarm2.rotation.z = glm::clamp(Rarm1.rotation.z, -limit, limit);
 	Larm2.rotation.z = glm::clamp(Larm1.rotation.z, -limit, limit);
@@ -205,7 +209,7 @@ void ENEMY::run(float deltaTime,glm::vec3 target) {
 			this->Rleg1_rotate_dir = true;
 	}
 
-	//¿Ş´Ù¸®1
+	//ì™¼ë‹¤ë¦¬1
 	if (this->Lleg1_rotate_dir)
 	{
 		Lleg1_rotate_angle += leg_motion_angle;
@@ -232,7 +236,7 @@ void ENEMY::run(float deltaTime,glm::vec3 target) {
 		Lleg1.rotation.z = 0.0f;
 	Rleg1.position.y += 0.3f;
 	Lleg1.position.y += 0.3f;
-	//´Ù¸®2
+	//ë‹¤ë¦¬2
 
 	localOffset=glm::vec4(0.07f, length, 0.0f, 1.0f);
 
@@ -244,7 +248,7 @@ void ENEMY::run(float deltaTime,glm::vec3 target) {
 	 worldPos = leg1Model * localOffset;
 	Rleg2.position = glm::vec3(worldPos) + glm::vec3(0, 0.05f, 0);
 	Rleg2.position.y -= 0.05f;
-	//¿Ş´Ù¸®È¸Àü
+	//ì™¼ë‹¤ë¦¬íšŒì „
 	glm::mat4 leg1Model_L =
 		glm::translate(glm::mat4(1.0f), Lleg1.position)
 		* glm::rotate(glm::mat4(1.0f), body.rotation.y, glm::vec3(0, 1, 0))
@@ -260,7 +264,7 @@ void ENEMY::idle(float deltaTime)
 {
 	float speed = glm::radians(200.0f) * deltaTime;
 
-	// ======== È¸Àü º¹±¸ ÇÔ¼ö ========
+	// ======== íšŒì „ ë³µêµ¬ í•¨ìˆ˜ ========
 	auto recoverTo = [&](float& rot, float target)
 		{
 			float diff = target - rot;
@@ -286,13 +290,13 @@ void ENEMY::idle(float deltaTime)
 	Rleg2.rotation.z = -Rleg1.rotation.z;
 	Lleg2.rotation.z = -Lleg1.rotation.z;
 	// ==========================================
-	//           Arm2 À§Ä¡ °è»ê (Pivot)
+	//           Arm2 ìœ„ì¹˜ ê³„ì‚° (Pivot)
 	// ==========================================
 
 	float length = 0.2f;
 	glm::vec4 localOffset(0.0f, length, 0.0f, 1.0f);
 
-	// ===== ¿À¸¥ÆÈ =====
+	// ===== ì˜¤ë¥¸íŒ” =====
 	glm::mat4 Rarm1Model =
 		glm::translate(glm::mat4(1.0f), Rarm1.position)
 		* glm::rotate(glm::mat4(1.0f), body.rotation.y, glm::vec3(0, 1, 0))
@@ -301,7 +305,7 @@ void ENEMY::idle(float deltaTime)
 	glm::vec4 Rworld = Rarm1Model * localOffset;
 	Rarm2.position = glm::vec3(Rworld) + glm::vec3(0, 0.05f, 0);
 
-	// ===== ¿ŞÆÈ =====
+	// ===== ì™¼íŒ” =====
 	glm::mat4 Larm1Model =
 		glm::translate(glm::mat4(1.0f), Larm1.position)
 		* glm::rotate(glm::mat4(1.0f), body.rotation.y, glm::vec3(0, 1, 0))
@@ -312,14 +316,14 @@ void ENEMY::idle(float deltaTime)
 
 
 	// ==========================================
-	//           Leg2 À§Ä¡ °è»ê (Pivot)
+	//           Leg2 ìœ„ì¹˜ ê³„ì‚° (Pivot)
 	// ==========================================
 
-	// ´Ù¸® ±æÀÌ (ÇÊ¿ä½Ã Á¶Á¤)
+	// ë‹¤ë¦¬ ê¸¸ì´ (í•„ìš”ì‹œ ì¡°ì •)
 	float legLength = 0.25f;
 	glm::vec4 legOffset(0.0f, -legLength, 0.0f, 1.0f);
 
-	// ===== ¿À¸¥´Ù¸® =====
+	// ===== ì˜¤ë¥¸ë‹¤ë¦¬ =====
 	glm::mat4 Rleg1Model =
 		glm::translate(glm::mat4(1.0f), Rleg1.position)
 		* glm::rotate(glm::mat4(1.0f), body.rotation.y, glm::vec3(0, 1, 0))
@@ -328,7 +332,7 @@ void ENEMY::idle(float deltaTime)
 	glm::vec4 RlegWorld = Rleg1Model * legOffset;
 	Rleg2.position = glm::vec3(RlegWorld);
 
-	// ===== ¿Ş´Ù¸® =====
+	// ===== ì™¼ë‹¤ë¦¬ =====
 	glm::mat4 Lleg1Model =
 		glm::translate(glm::mat4(1.0f), Lleg1.position)
 		* glm::rotate(glm::mat4(1.0f), body.rotation.y, glm::vec3(0, 1, 0))
@@ -341,7 +345,7 @@ void ENEMY::idle(float deltaTime)
 	Rleg2.position.y -=0.48;
 	Lleg2.position.y -= 0.48;
 	// ----------------------------------------
-	// ÃÖÃÊ 1È¸ ÃÊ±â À§Ä¡ º¸Á¤
+	// ìµœì´ˆ 1íšŒ ì´ˆê¸° ìœ„ì¹˜ ë³´ì •
 	// ----------------------------------------
 	if (!this->initialized)
 	{
@@ -363,33 +367,33 @@ void ENEMY::idle(float deltaTime)
 
 glm::vec3 rotateAroundPivot(glm::vec3 point, glm::vec3 pivot, float angleZ)
 {
-	// pivot ±âÁØÀ¸·Î ·ÎÄÃ ÁÂÇ¥ ±¸ÇÔ
+	// pivot ê¸°ì¤€ìœ¼ë¡œ ë¡œì»¬ ì¢Œí‘œ êµ¬í•¨
 	glm::vec3 local = point - pivot;
 
-	// ZÃà È¸Àü Çà·Ä
+	// Zì¶• íšŒì „ í–‰ë ¬
 	glm::mat3 rotZ(
 		glm::vec3(cos(angleZ), sin(angleZ), 0.0f),
 		glm::vec3(-sin(angleZ), cos(angleZ), 0.0f),
 		glm::vec3(0.0f, 0.0f, 1.0f)
 	);
 
-	// ·ÎÄÃ ÁÂÇ¥ È¸Àü
+	// ë¡œì»¬ ì¢Œí‘œ íšŒì „
 	glm::vec3 rotatedLocal = rotZ * local;
 
-	// ´Ù½Ã pivot ±âÁØÀ¸·Î µÇµ¹¸²
+	// ë‹¤ì‹œ pivot ê¸°ì¤€ìœ¼ë¡œ ë˜ëŒë¦¼
 	return pivot + rotatedLocal;
 }
 void ENEMY::take_damage(int damage) {
 	this->health -= damage;
-	std::cout << "ENEMY Ã¼·Â: " << this->health << std::endl;
+	std::cout << "ENEMY ì²´ë ¥: " << this->health << std::endl;
 	if (this->health <= 0&&!this->is_dead) {
 		is_dead = true;
 		this->spawn_blood();
-		std::cout << "ENEMY »ç¸Á!" << std::endl;
+		std::cout << "ENEMY ì‚¬ë§!" << std::endl;
 	}
 }
 float frand(float a, float b) {
-	static std::mt19937 rng(std::random_device{}()); // ÇÑ ¹ø¸¸ ÃÊ±âÈ­
+	static std::mt19937 rng(std::random_device{}()); // í•œ ë²ˆë§Œ ì´ˆê¸°í™”
 	std::uniform_real_distribution<float> dist(a, b);
 	return dist(rng);
 }
@@ -403,27 +407,45 @@ void ENEMY::spawn_blood() {
 
 		BLOOD* b = new BLOOD();
 
-		// °¢ ÆÄÆ¼Å¬ÀÌ ÆÛÁú ¹æÇâ
+		// ê° íŒŒí‹°í´ì´ í¼ì§ˆ ë°©í–¥
 		glm::vec3 dir;
 
-		// i¿¡ µû¶ó »çºĞ¸é ºĞ¹è
-		if (i < count/4*1) {             // 1»çºĞ¸é (+x, +z)
+		// iì— ë”°ë¼ ì‚¬ë¶„ë©´ ë¶„ë°°
+		if (i < count/4*1) {             // 1ì‚¬ë¶„ë©´ (+x, +z)
 			dir = glm::vec3(frand(0.5f, 1.0f), frand(0.2f, 1.0f), frand(0.5f, 1.0f));
 		}
-		else if (i < count / 4 * 2) {       // 2»çºĞ¸é (-x, +z)
+		else if (i < count / 4 * 2) {       // 2ì‚¬ë¶„ë©´ (-x, +z)
 			dir = glm::vec3(frand(-1.0f, -0.5f), frand(0.2f, 1.0f), frand(0.5f, 1.0f));
 		}
-		else if (i < count / 4 * 3) {       // 3»çºĞ¸é (-x, -z)
+		else if (i < count / 4 * 3) {       // 3ì‚¬ë¶„ë©´ (-x, -z)
 			dir = glm::vec3(frand(-1.0f, -0.5f), frand(0.2f, 1.0f), frand(-1.0f, -0.5f));
 		}
-		else {                  // 4»çºĞ¸é (+x, -z)
+		else {                  // 4ì‚¬ë¶„ë©´ (+x, -z)
 			dir = glm::vec3(frand(0.5f, 1.0f), frand(0.2f, 1.0f), frand(-1.0f, -0.5f));
 		}
 
-		// ¼Óµµ Á¶Àı
+		// ì†ë„ ì¡°ì ˆ
 		dir = glm::normalize(dir) * frand(3.0f, 7.0f);
 
 		b->init(headPos, dir);
 		bloods.push_back(b);
 	}
+}
+bool ENEMY::check_collision(const glm::vec3& next_position) {
+	if (!field_ref) return false; // ï¿½Êµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½æµ¹ ï¿½ï¿½ï¿½ï¿½
+
+	// ï¿½İ¶ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½
+	Collision test_collision = collision;
+	test_collision.center = next_position;
+	test_collision.center.y += 0.4f;
+
+	// ï¿½æµ¹ ï¿½Ë»ï¿½
+	for (const auto& wall_collision : field_ref->collisions) {
+		if (test_collision.check_collision(wall_collision)) {
+			std::cout << "ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ ï¿½ï¿½ ï¿½æµ¹!" << std::endl;
+			return true; // ï¿½æµ¹ ï¿½ß»ï¿½
+		}
+	}
+
+	return false; // ï¿½æµ¹ ï¿½Ì¹ß»ï¿½
 }

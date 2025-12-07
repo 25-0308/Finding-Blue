@@ -210,6 +210,7 @@ void main(int argc, char** argv) //--- ������ ����ϰ� ��
 		ENEMY* e= new ENEMY(enemy_type_list[i]);              // ���� �ȿ� ���� ����
 		//enemies->back().init(E_pos_list[i],enemy_type_list[i]);      // �ٷ� �ʱ�ȭ
 		e->init(E_pos_list[i],enemy_type_list[i]);
+		e->set_field_reference(field); 
 		enemies.push_back(e);                         
 
 	}
