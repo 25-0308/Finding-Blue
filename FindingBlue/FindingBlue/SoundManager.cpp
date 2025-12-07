@@ -11,6 +11,8 @@
 SoundManager* SoundManager::instance = nullptr;
 FMOD::System* SoundManager::system = nullptr;
 std::map<std::string, FMOD::Sound*> SoundManager::sounds;
+std::map<std::string, FMOD::Channel*> SoundManager::channels;
+
 
 #define FMOD_CHECK(result)                                               \
     do {                                                                 \
@@ -82,10 +84,21 @@ bool SoundManager::Init() {
 
     struct S { std::string name, path; bool loop; };
     std::vector<S> list = {
-        {"신동호", "sound/sin.wav", false},
-        {"양현빈", "sound/bin.wav", false},
-        {"김태건", "sound/gun.wav", false},
-        {"안민용", "sound/yong.wav", false},
+        {"sin", "sound/sin.wav", false},
+        {"bin", "sound/bin.wav", false},
+        {"gun", "sound/gun.wav", false},
+        {"yong", "sound/yong.wav", false},
+        {"kark", "sound/kark.wav", false},
+        {"reload", "sound/reload.wav", false},
+        {"button", "sound/button.wav", false},
+        {"door", "sound/door.wav", false},
+        {"swing", "sound/swing.wav", false},
+        {"sword", "sound/sword.wav", false},
+        {"siren", "sound/siren.wav", false},
+        {"reload", "sound/reload.wav", false},
+        {"hit", "sound/hit.wav", false},
+        {"fire", "sound/fire.wav", false},
+        {"gunshot", "sound/gunshot.wav", false},
     };
 
     for (const auto& s : list) {
@@ -134,12 +147,56 @@ bool SoundManager::Init() {
     return true;
 }
 void SoundManager::Update() {
-    if (instance && instance->system)
-        instance->system->update();
+    if (!instance || !instance->system) return;
+
+    instance->system->update();
+
+    // 끝난 채널들을 정리
+    auto it = instance->channels.begin();
+    while (it != instance->channels.end()) {
+        bool isPlaying = false;
+        FMOD_RESULT r = it->second->isPlaying(&isPlaying);
+
+        if (r != FMOD_OK || !isPlaying) {
+            // 채널이 유효하지 않거나 재생이 끝났으면 제거
+            it = instance->channels.erase(it);
+        }
+        else {
+            ++it;
+        }
+    }
 }
+
 void SoundManager::Shutdown() {
     delete instance;
     instance = nullptr;
+}
+bool SoundManager::IsPlaying(const std::string& name) {
+    if (!instance || !instance->system) return false;
+
+    auto it = instance->channels.find(name);
+    if (it == instance->channels.end()) {
+        return false; // 해당 사운드가 재생된 적이 없음
+    }
+
+    FMOD::Channel* channel = it->second;
+    if (!channel) return false;
+
+    bool isPlaying = false;
+    FMOD_RESULT r = channel->isPlaying(&isPlaying);
+
+    if (r != FMOD_OK) {
+        // 채널이 유효하지 않으면 맵에서 제거
+        instance->channels.erase(it);
+        return false;
+    }
+
+    // 재생이 끝났으면 맵에서 제거
+    if (!isPlaying) {
+        instance->channels.erase(it);
+    }
+
+    return isPlaying;
 }
 void SoundManager::Play(const std::string& name, float volume, bool loop) {
     if (!instance || !instance->system) return;
@@ -152,29 +209,47 @@ void SoundManager::Play(const std::string& name, float volume, bool loop) {
 
     FMOD::Channel* channel = nullptr;
     FMOD_RESULT r = instance->system->playSound(it->second, nullptr, true, &channel);
-    
-    if (channel) {
+
+    if (r == FMOD_OK && channel) {
         channel->setVolume(volume);
         if (loop) channel->setMode(FMOD_LOOP_NORMAL);
-
         channel->setPaused(false);
 
+        // 채널을 맵에 저장
+        instance->channels[name] = channel;
+
+        std::cout << "[Sound] 재생 시작: " << name << "\n";
+    }
+    else {
+        std::cerr << "[Sound] 재생 실패: " << name << " - " << FMOD_ErrorString(r) << "\n";
     }
 }
 
+void SoundManager::StopSound(const std::string& name) {
+    if (!instance || !instance->system) return;
 
-// ----------------------------------------------------------------------
-// 9. Stop() - 사운드 정지 (기능 제거됨)
-// ----------------------------------------------------------------------
-void SoundManager::Stop(const std::string& name) {
-    // 채널 관리를 하지 않으므로, 이름으로 특정 사운드를 정지시키는 기능은 구현하지 않습니다.
-    std::cout << "[SoundManager] Stop 기능은 현재 구현되어 있지 않습니다 (채널 관리 제거됨).\n";
+    auto it = instance->channels.find(name);
+    if (it == instance->channels.end()) {
+        std::cout << "[Sound] 재생 중이지 않음: " << name << "\n";
+        return;
+    }
+
+    FMOD::Channel* channel = it->second;
+    if (channel) {
+        FMOD_RESULT r = channel->stop();
+        if (r == FMOD_OK) {
+            std::cout << "[Sound] 정지됨: " << name << "\n";
+        }
+        else {
+            std::cerr << "[Sound] 정지 실패: " << name << " - " << FMOD_ErrorString(r) << "\n";
+        }
+    }
+
+    // 맵에서 제거
+    instance->channels.erase(it);
 }
 
 
-// ----------------------------------------------------------------------
-// 10. SetVolume() - 마스터 볼륨 설정
-// ----------------------------------------------------------------------
 void SoundManager::SetVolume(float volume) {
     if (!instance || !instance->system) return;
 

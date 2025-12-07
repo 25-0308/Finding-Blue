@@ -25,16 +25,18 @@ bool ENEMY::update(float deltaTime, glm::vec3 target) {
 		//사망모션
 		if (!dead_sound) {
 			static std::mt19937 rng(std::random_device{}()); // 한 번만 초기화
-			std::uniform_int_distribution<int> dist(1, 4);
+			std::uniform_int_distribution<int> dist(1, 5);
 			int sound_index = dist(rng);
 			if (sound_index == 1)
-				SoundManager::Play("신동호");
+				SoundManager::Play("sin");
 			else if (sound_index == 2)
-				SoundManager::Play("양현빈");
+				SoundManager::Play("bin");
 			else if (sound_index == 3)
-				SoundManager::Play("김태건");
+				SoundManager::Play("gun");
 			else if (sound_index == 4)
-				SoundManager::Play("안민용");
+				SoundManager::Play("yong");
+			else if (sound_index == 5)
+				SoundManager::Play("kark");
 			dead_sound = true;
 		}
 		this->head.position.y += 15.5f * deltaTime;

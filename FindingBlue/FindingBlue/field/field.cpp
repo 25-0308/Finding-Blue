@@ -1,5 +1,6 @@
 #include"../field.h"
 #include<iostream>
+#include"../SoundManager.h"
 
 FIELD::FIELD() {
     const char* obj = "asset/tile/tile.obj";
@@ -235,6 +236,9 @@ void FIELD::update(float deltaTime, int idx) {
 	int idx2 = collision_wall_idx[idx];
 	idx = opening_walls_idx[idx];
     if (walls[idx].position.y > -10.0f) {
+		if(!SoundManager::IsPlaying("door")&& walls[idx].position.y > -5.0f) {
+			SoundManager::Play("door");
+		}
         walls[idx].position.y -= 2.0f * deltaTime;
         collisions[idx2].center = walls[idx].position;
     }

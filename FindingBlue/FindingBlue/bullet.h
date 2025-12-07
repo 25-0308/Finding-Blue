@@ -1,6 +1,7 @@
 #pragma once
 #include"object.h"
 #include"Collision.h"
+#include"SoundManager.h"
 
 class BULLET {
 private:
@@ -28,6 +29,7 @@ public:
         bullet_obj.position = glm::vec3(5.0f, -0.2f, 10.0f);
         collision.center = bullet_obj.position;
         collision.halfsize = collision.halfsize * bullet_obj.scale;
+		SoundManager::Play("gunshot",0.4f);
     }
 
     void draw(GLuint shader) {

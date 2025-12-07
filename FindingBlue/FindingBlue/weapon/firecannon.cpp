@@ -1,4 +1,6 @@
 #include"../firecannon.h"
+#include"../SoundManager.h"
+
 
 #include<iostream>
 void FIRECANNON::update(float deltaTime, glm::vec3 position, float yaw, float pitch)
@@ -78,6 +80,9 @@ bool FIRECANNON::get_weapon(glm::vec3 playerPos) {
 void FIRECANNON::attack(float deltaTime) {
     if (this->ammo <= 0) return;
     if (!this->recoil_mode) {
+        if (!SoundManager::IsPlaying("fire")) {
+			SoundManager::Play("fire", 0.7f);
+        }
         //총 오프셋 뒤로
         this->offsets.z += 3.0f * deltaTime;
         if (this->offsets.z > 0.05f) {

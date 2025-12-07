@@ -1,5 +1,6 @@
 #include"../club.h"
 #include <iostream>
+#include "../SoundManager.h"
 
 void CLUB::update(float deltaTime, glm::vec3 position, float yaw, float pitch)
 {
@@ -64,6 +65,9 @@ bool CLUB::get_weapon(glm::vec3 playerPos) {
 
 void CLUB::attack(float deltaTime) {
     if (!this->recoil_mode) {
+        if (!SoundManager::IsPlaying("swing")) {
+            SoundManager::Play("swing", 0.4f);
+        };
         this->attack_offsets.z -= glm::radians(800.0f * deltaTime);
 
         // 각도에 들어왔을 때 콜라이더 생성 (한 번만)

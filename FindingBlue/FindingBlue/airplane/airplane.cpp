@@ -1,5 +1,5 @@
 #include"../airplane.h"
-
+#include"../SoundManager.h"
 
 void AIRPLANE::update(float deltaTime)
 {
@@ -13,6 +13,7 @@ void AIRPLANE::update(float deltaTime)
 
 	//시작 블랙홀,사이크론은 비행기의 좌표가 20이하일 때 커지고 그 이상은 작아져야함
 	if (airplane.position.z < 20.0f) {
+		if (!SoundManager::IsPlaying("siren"))SoundManager::Play("siren",0.7f);
 		start_blackhole.scale = start_cyclone.scale += glm::vec3(5.5f) * deltaTime;
 		if (start_blackhole.scale.x >= 13.0f) {
 			start_blackhole.scale = start_cyclone.scale = glm::vec3(13.0f);

@@ -11,6 +11,7 @@ private:
    static SoundManager* instance;
     static FMOD::System* system; 
     static std::map<std::string, FMOD::Sound*> sounds; 
+    static std::map<std::string, FMOD::Channel*> channels;
 
 public:
     static bool Init();     
@@ -18,6 +19,7 @@ public:
     static void Shutdown(); 
 
     static void Play(const std::string& name, float volume = 1.0f, bool loop = false);
-    static void Stop(const std::string& name);      
+    static void StopSound(const std::string& name);
+    static bool IsPlaying(const std::string& name);
     static void SetVolume(float volume);            
 };

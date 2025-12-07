@@ -729,15 +729,17 @@ void TimerFunction(int value)
 				}
 			}
 			if (firecannon == (player.weapons[player.currentWeapon])) {
-				if(firecannon->ammo>0)
-				player.weapons[player.currentWeapon]->attack(deltaTime);
-			
+				if (firecannon->ammo > 0) {
+					player.weapons[player.currentWeapon]->attack(deltaTime);
+				}
 			}
 			//��� �������� �ٽ� ���ƿ;��ϴϱ�
 			if (club == (player.weapons[player.currentWeapon])) {
+				
 				player.weapons[player.currentWeapon]->on_attak = true;
 			}
 			if (claymore == (player.weapons[player.currentWeapon])) {
+				
 				player.weapons[player.currentWeapon]->on_attak = true;
 			}
 			if (minigun == (player.weapons[player.currentWeapon]))
@@ -857,6 +859,7 @@ void TimerFunction(int value)
 						std::cout << "��ư�� CLUB HIT �浹!" << std::endl;
 						club->hit_active = false;  // ������ ����
 						buttons[i]->set_is_hit(true);
+						SoundManager::Play("button");
 
 						break;
 					}

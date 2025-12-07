@@ -1,5 +1,6 @@
 #include"../claymore.h"
 #include <iostream>
+#include "../SoundManager.h"
 
 void CLAYMORE::update(float deltaTime, glm::vec3 position, float yaw, float pitch)
 {
@@ -66,6 +67,9 @@ bool CLAYMORE::get_weapon(glm::vec3 playerPos) {
 void CLAYMORE::attack(float deltaTime) {
     //이건 x축에대해 회전적용할거임
     if (!this->recoil_mode) {
+        if (!SoundManager::IsPlaying("sword")) {
+            SoundManager::Play("sword");
+        };
         //총 오프셋 뒤로
         //총 오프셋 앞으로
         this->attack_offsets.z -= glm::radians(800.0f * deltaTime);
