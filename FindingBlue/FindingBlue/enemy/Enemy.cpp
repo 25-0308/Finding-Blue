@@ -40,7 +40,7 @@ bool ENEMY::update(float deltaTime, glm::vec3 target) {
 			else if (sound_index == 6)
 				SoundManager::Play("uk");
 			else if (sound_index == 7)
-				SoundManager::Play("uk");
+				SoundManager::Play("yu");
 			dead_sound = true;
 		}
 		this->head.position.y += 15.5f * deltaTime;
