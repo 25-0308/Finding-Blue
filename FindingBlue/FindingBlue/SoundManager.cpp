@@ -100,6 +100,7 @@ bool SoundManager::Init() {
         {"fire", "sound/fire.wav", false},
         {"gunshot", "sound/gunshot.wav", false},
         {"boom", "sound/boom.wav", false},
+        {"uk", "sound/uk.wav", false},
     };
 
     for (const auto& s : list) {
