@@ -637,7 +637,7 @@ GLvoid KeyboardDown(unsigned char key, int x, int y) {
 		player.jump();
 		break;
 	case't':
-		player.health -= 10;
+		player.health += 10;
 		break;
 	case'n':
 		game_clear = true;
