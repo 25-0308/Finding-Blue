@@ -74,6 +74,8 @@ std::vector<MISSILE*> missiles;
 //숫자
 NUMBER* number_display;
 bool draw_coll = false;
+
+
 //��
 std::vector<ENEMY*> enemies;
 glm::vec3 E_pos_list[11] = {
@@ -426,8 +428,8 @@ GLvoid drawScene() {
 		1, GL_FALSE,
 		glm::value_ptr(MVP)
 	);
+	if(draw_coll) Debug_Draw::Render();
 
-	if (draw_coll) Debug_Draw::Render();
 	//UI그리는거 체력이랑 탄창
 	//UI는 평행투영
 	//뷰포트
