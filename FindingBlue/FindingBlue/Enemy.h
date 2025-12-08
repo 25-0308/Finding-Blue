@@ -194,7 +194,9 @@ public:
 	int get_type() {
 		return this->type;
 	}
-
+	bool get_deadstate() {
+		return is_dead;
+	}
 
 };
 

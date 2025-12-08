@@ -794,7 +794,7 @@ void TimerFunction(int value)
 			if (rifle && rifle->get_is_get()) {
 				for (size_t i = 0; i < rifle->bullets.size(); ++i) {
 					BULLET* bullet = rifle->bullets[i];
-					if (enemy->collision.check_collision(bullet->collision)) {
+					if (!enemy->get_deadstate() && enemy->collision.check_collision(bullet->collision)) {
 						std::cout << "ENEMY과 AK-47 BULLET 충돌!" << std::endl;
 						enemy->take_damage(10);
 						delete bullet;
@@ -807,7 +807,7 @@ void TimerFunction(int value)
 			if (pistol && pistol->get_is_get()) {
 				for (size_t i = 0; i < pistol->bullets.size(); ++i) {
 					BULLET* bullet = pistol->bullets[i];
-					if (enemy->collision.check_collision(bullet->collision)) {
+					if (!enemy->get_deadstate() && enemy->collision.check_collision(bullet->collision)) {
 						std::cout << "ENEMY과 Pistol BULLET 충돌" << std::endl;
 						enemy->take_damage(40);
 						delete bullet;
@@ -820,7 +820,7 @@ void TimerFunction(int value)
 			if (minigun && minigun->get_is_get()) {
 				for (size_t i = 0; i < minigun->bullets.size(); ++i) {
 					BULLET* bullet = minigun->bullets[i];
-					if (enemy->collision.check_collision(bullet->collision)) {
+					if (!enemy->get_deadstate() && enemy->collision.check_collision(bullet->collision)) {
 						std::cout << "ENEMY과 MINIGUN BULLET 충돌!" << std::endl;
 						enemy->take_damage(10);
 						delete bullet;
@@ -832,7 +832,7 @@ void TimerFunction(int value)
 			if (firecannon && firecannon->get_is_get()) {
 				for (size_t i = 0; i < firecannon->fires.size(); ++i) {
 					FIRE* fire = firecannon->fires[i];
-					if (enemy->collision.check_collision(fire->collision)) {
+					if (!enemy->get_deadstate() && enemy->collision.check_collision(fire->collision)) {
 						std::cout << "ENEMY과 FIRECANNON FIRE 충돌!" << std::endl;
 						enemy->take_damage(50);
 						delete fire;
@@ -843,7 +843,7 @@ void TimerFunction(int value)
 			}
 			// Ŭ�� ��Ʈ �ݶ��̴� �˻�
 			if (club && club->get_is_get() && club->hit_active) {
-				if (enemy->collision.check_collision(club->collision)) {
+				if (!enemy->get_deadstate() && enemy->collision.check_collision(club->collision)) {
 					std::cout << "ENEMY과 CLUB HIT 충돌!" << std::endl;
 					enemy->hit(player.position);
 					enemy->take_damage(35);
@@ -852,7 +852,7 @@ void TimerFunction(int value)
 				}
 			}
 			if (claymore && claymore->get_is_get() && claymore->hit_active) {
-				if (enemy->collision.check_collision(claymore->collision)) {
+				if (!enemy->get_deadstate() && enemy->collision.check_collision(claymore->collision)) {
 					std::cout << "ENEMY과 CLUB HIT 충돌!" << std::endl;
 					enemy->hit(player.position);
 					enemy->take_damage(35);
@@ -862,7 +862,7 @@ void TimerFunction(int value)
 			}
 			// player vs enemy collision
 			if (enemy->collision.check_collision(player.collision)) {
-				if (player.hit_timer <= 0.0f) {
+				if (!enemy->get_deadstate()&&player.hit_timer <= 0.0f) {
 					player.health -= 10;
 					player.hit_timer = 1.0f; // 1초 피격 무적 시간
 					SoundManager::Play("hit");
