@@ -176,7 +176,7 @@ public:
 				b->draw(shader);
 
 		}
-		collision.Debug_Draw();
+		if (!this ->is_dead) collision.Debug_Draw();
     }
 	void set_field_reference(FIELD* field) { field_ref = field; }
     //여기 아래로는 cpp 파일에 작성할 것들
