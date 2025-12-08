@@ -73,7 +73,7 @@ AIRPLANE* airplane;
 std::vector<MISSILE*> missiles;
 //숫자
 NUMBER* number_display;
-
+bool draw_coll = false;
 //��
 std::vector<ENEMY*> enemies;
 glm::vec3 E_pos_list[11] = {
@@ -427,7 +427,7 @@ GLvoid drawScene() {
 		glm::value_ptr(MVP)
 	);
 
-	Debug_Draw::Render();
+	if (draw_coll) Debug_Draw::Render();
 	//UI그리는거 체력이랑 탄창
 	//UI는 평행투영
 	//뷰포트
@@ -639,6 +639,9 @@ GLvoid KeyboardDown(unsigned char key, int x, int y) {
 		break;
 	case'n':
 		game_clear = true;
+		break;
+	case'c':
+		draw_coll = !draw_coll;
 		break;
 	case 'q':
 		exit(0);
