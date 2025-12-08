@@ -126,13 +126,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>FMOD_STATIC</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\CGproject\Finding-Blue\FindingBlue\FindingBlue\fmod;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalOptions>glew32.lib opengl32.lib %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalLibraryDirectories>C:\Users\00rhk\Desktop\Finding-Blue\FindingBlue\FindingBlue</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\00rhk\Desktop\Finding-Blue\FindingBlue\FindingBlue;D:\CGproject\Finding-Blue\FindingBlue\FindingBlue\fmod</AdditionalLibraryDirectories>
       <AdditionalDependencies>fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -144,14 +145,15 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>FMOD_STATIC</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\CGproject\Finding-Blue\FindingBlue\FindingBlue\fmod;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\00rhk\Desktop\Finding-Blue\FindingBlue\FindingBlue</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\00rhk\Desktop\Finding-Blue\FindingBlue\FindingBlue;D:\CGproject\Finding-Blue\FindingBlue\FindingBlue\fmod</AdditionalLibraryDirectories>
       <AdditionalOptions>glew32.lib opengl32.lib %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
