@@ -640,7 +640,7 @@ GLvoid KeyboardDown(unsigned char key, int x, int y) {
 		player.health += 10;
 		break;
 	case'n':
-		game_clear = true;
+		//game_clear = true;
 		break;
 	case'c':
 		draw_coll = !draw_coll;
