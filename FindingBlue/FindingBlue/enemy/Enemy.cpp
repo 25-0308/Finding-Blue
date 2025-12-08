@@ -25,7 +25,7 @@ bool ENEMY::update(float deltaTime, glm::vec3 target) {
 		//사망모션
 		if (!dead_sound) {
 			static std::mt19937 rng(std::random_device{}()); // 한 번만 초기화
-			std::uniform_int_distribution<int> dist(1, 6);
+			std::uniform_int_distribution<int> dist(1, 7);
 			int sound_index = dist(rng);
 			if (sound_index == 1)
 				SoundManager::Play("sin");
@@ -38,6 +38,8 @@ bool ENEMY::update(float deltaTime, glm::vec3 target) {
 			else if (sound_index == 5)
 				SoundManager::Play("kark");
 			else if (sound_index == 6)
+				SoundManager::Play("uk");
+			else if (sound_index == 7)
 				SoundManager::Play("uk");
 			dead_sound = true;
 		}
