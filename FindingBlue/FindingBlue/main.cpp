@@ -544,6 +544,8 @@ void mouseCallback(int button, int state, int x, int y) {
 				minigun->set_rotation_speed(0.0f);
 			}
 		}
+		//사운드 총 멈춤
+		SoundManager::StopSound("fire");
 	}
 	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
 	{
